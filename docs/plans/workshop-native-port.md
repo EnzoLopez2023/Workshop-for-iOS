@@ -55,16 +55,20 @@ Stock SwiftUI+SwiftData template, 1 commit, no remote. Wrong everything: plain X
 
 ## Phase 0 — Prerequisites (backend + config, before any Swift)
 
-**0.1 Pull Entra config** (needs Enzo/az): read `AZURE_TENANT_ID`, `API_AUDIENCE`, `VITE_AZURE_CLIENT_ID` from `app-workshop-prod-lwxhu7jxlrbtu` App Service config. Verify the Entra app registration has **Expose an API** scope (`api://<clientId>/access_as_user`) AND an **iOS platform redirect** `msauth.com.nintek.workshop://auth` (the two ShopKeep deploy landmines: missing runtime env vars → 503; missing scope → AADSTS500011 login loop).
+> **PROGRESS (2026-07-22):** 0.3 ✅ done & committed (`d10f83d`, iOS repo). 0.2 ✅
+> code-complete & verified locally, committed on branch **`feat/dual-auth-apple`**
+> in the workshop repo — **NOT pushed** (push to main auto-deploys; env must be set
+> first). 0.1 ⏳ blocked on Enzo (Azure portal + App Service env). See per-step notes.
 
-**0.2 Port dual-auth to `workshop/server.js`** (copy from `ShopKeep/server.js:44-51, 469-615`):
-- `ACCEPTED_ISSUERS` (v2.0 + `sts.windows.net/<tenant>/`) + `ACCEPTED_AUDIENCES` (`api://<id>` + bare id) — fixes the likely native-token 401.
-- Apple path: `APPLE_JWKS`/`APPLE_ISSUER`/`APPLE_AUDIENCES` verify, `POST /api/auth/apple` (id_token → minted HMAC session access+refresh, `apple_<hash>` userKey), `POST /api/auth/refresh`, `userKeyFromBearer` (own session first, then Entra), `USER_KEY_RE` accepting GUID or `apple_…`, `upsertProfile`/`user_profile` table.
-- Update `resolveReadDb` (`?oid=` image route) to accept `apple_…` keys.
-- New App Service env: `SESSION_SECRET` (or ShopKeep's names), `APPLE_AUDIENCES` (both bundle ids if web Apple sign-in comes later).
-- Deploy via push to main; verify `/api/health` + a real token round-trip (**test acceptance, not just rejection** — playbook rule).
+**0.1 Pull Entra config** (needs Enzo/az): ~~read `AZURE_TENANT_ID`, `API_AUDIENCE`, `VITE_AZURE_CLIENT_ID`~~ — **the GUIDs are already in the repo** at `.github/workflows/deploy.yml` (`VITE_AZURE_CLIENT_ID: 0f303f8f-207f-4b7f-84a5-b5d0abcf49d1`, `VITE_AZURE_TENANT_ID: 52188f12-db6b-46c6-88ff-08c802f0ed3b`; `API_AUDIENCE` == the client id). No `az` needed for IDs. **Still needs Enzo in the portal:** verify the Entra app registration has **Expose an API** scope (`api://<clientId>/access_as_user`) AND add an **iOS platform redirect** `msauth.com.nintek.workshop://auth` (the two ShopKeep deploy landmines: missing runtime env vars → 503; missing scope → AADSTS500011 login loop). **Plus the new App Service env for 0.2 (below): `SESSION_SECRET`, `APPLE_BUNDLE_ID=com.nintek.workshop` — set these BEFORE merging `feat/dual-auth-apple` to main.**
 
-**0.3 Re-scaffold the Xcode project**: delete template sources + `.xcodeproj`; write `project.yml` cloned from ShopKeepNative's (app target `Workshop`, widgets target deferred to Phase 6), `xcodegen generate`, commit. Copy this plan to `docs/plans/`.
+**0.2 Port dual-auth to `workshop/server.js`** ✅ **DONE (branch `feat/dual-auth-apple`, commit `34297a5`, verified locally, NOT pushed).** As built:
+- `ACCEPTED_ISSUERS` (v2.0 + `sts.windows.net/<tenant>/`) + `ACCEPTED_AUDIENCES` (`api://<id>` + bare id) — strict superset of the old single-value check, so no web/Entra regression; fixes the native-token 401.
+- Apple path: `APPLE_JWKS`/`APPLE_ISSUER`/`APPLE_AUDIENCES` verify, `POST /api/auth/apple` (id_token → minted HMAC session access+refresh, `apple_<sha256(sub)>` userKey), `POST /api/auth/refresh`, `verifySession`/`mintSession`, `userKeyFromBearer` (own session first, then Entra), `USER_KEY_RE` (GUID or `apple_<64hex>`) gating `getUserDb`+`resolveReadDb`, `upsertProfile`/`readProfile`/`user_profile` table. Gated by `SESSION_SECRET` (`APPLE_AUTH_ENABLED`) → deploys dark, 503s until configured, Entra path unaffected.
+- **Empty-seed decision (Enzo, 2026-07-22): new non-primary users get a BLANK schema DB, not a copy of the primary user's data.** Dropped the `copyFileSync(SEED_DB_PATH, …)` in `getUserDb`; the seed snapshot now backs demo mode (`getDemoDb`) only. This closes the exposure that opening Apple sign-in would otherwise create (any Apple ID would have inherited Enzo's real projects). Session names: `SESSION_ISSUER='workshop-api'`, `SESSION_AUDIENCE='workshop-clients'`. Env used: `SESSION_SECRET`, `APPLE_BUNDLE_ID` (native audience), optional `APPLE_WEB_SERVICES_ID` (web, later).
+- **Remaining (Enzo):** set App Service env (0.1b) → merge `feat/dual-auth-apple` → main to deploy → verify `/api/health` + a real native token round-trip (**test acceptance, not just rejection** — playbook rule) + web regression.
+
+**0.3 Re-scaffold the Xcode project** ✅ **DONE (iOS repo, commit `d10f83d`).** xcodegen `project.yml` cloned from ShopKeepNative: target `Workshop`, bundle `com.nintek.workshop`, iOS 17, Swift 6, team 3KB968X34U, version 0.1.0/build 1, MSAL+NintekKit. Widgets deferred to Phase 6. `Workshop/App/WorkshopApp.swift` placeholder; builds clean for generic iOS. Dual-auth URL schemes + Apple/App-Group/keychain entitlements declared up front.
 
 ## Phase 1 — Foundation (NintekKit + auth + theme + shell)
 
