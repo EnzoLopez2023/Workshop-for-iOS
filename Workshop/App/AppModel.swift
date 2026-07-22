@@ -130,14 +130,13 @@ final class AppModel: ObservableObject {
         let dest = url.host ?? "dashboard"
         switch dest {
         case "project":
-            // workshop://project/<id>
+            // workshop://project/<id> — the Dashboard grid consumes pendingProjectId.
             if let last = url.pathComponents.last, let id = Int(last) {
                 pendingProjectId = id
-                selectedTab = AppDestination.projects.rawValue
+                selectedTab = AppDestination.dashboard.rawValue
             }
-        case AppDestination.projects.rawValue,
-             AppDestination.shaper.rawValue,
-             AppDestination.shopping.rawValue,
+        case AppDestination.shopping.rawValue,
+             AppDestination.tables.rawValue,
              AppDestination.more.rawValue:
             selectedTab = dest
         default:

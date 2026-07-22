@@ -3,18 +3,18 @@ import SwiftUI
 /// The app's top-level destinations, shared by the iPhone tab bar and the iPad
 /// sidebar so the two layouts stay in sync from one source of truth.
 enum AppDestination: String, CaseIterable, Identifiable {
-    case dashboard, projects, shaper, shopping, more
+    case dashboard, shopping, tables, more
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .dashboard: "Dashboard"; case .projects: "Projects"
-        case .shaper: "Shaper"; case .shopping: "Shopping"; case .more: "More"
+        case .dashboard: "Dashboard"; case .shopping: "Shopping"
+        case .tables: "Tables"; case .more: "More"
         }
     }
     var icon: String {
         switch self {
-        case .dashboard: "square.grid.2x2.fill"; case .projects: "hammer.fill"
-        case .shaper: "cpu.fill"; case .shopping: "cart.fill"; case .more: "ellipsis.circle.fill"
+        case .dashboard: "square.grid.2x2.fill"; case .shopping: "cart.fill"
+        case .tables: "ruler.fill"; case .more: "ellipsis.circle.fill"
         }
     }
 }
@@ -120,9 +120,8 @@ struct RootView: View {
     @ViewBuilder private func destination(_ dest: AppDestination) -> some View {
         switch dest {
         case .dashboard: DashboardView(api: model.api)
-        case .projects:  ProjectsView(api: model.api)
-        case .shaper:    ShaperView(api: model.api)
         case .shopping:  ShoppingView(api: model.api)
+        case .tables:    ConversionTablesView()
         case .more:      MoreView()
         }
     }
