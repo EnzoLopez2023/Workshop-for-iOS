@@ -55,10 +55,13 @@ Stock SwiftUI+SwiftData template, 1 commit, no remote. Wrong everything: plain X
 
 ## Phase 0 — Prerequisites (backend + config, before any Swift)
 
-> **PROGRESS (2026-07-22):** 0.3 ✅ done & committed (`d10f83d`, iOS repo). 0.2 ✅
-> code-complete & verified locally, committed on branch **`feat/dual-auth-apple`**
-> in the workshop repo — **NOT pushed** (push to main auto-deploys; env must be set
-> first). 0.1 ⏳ blocked on Enzo (Azure portal + App Service env). See per-step notes.
+> **PROGRESS (2026-07-22): Phase 0 COMPLETE.** 0.3 ✅ re-scaffold (`d10f83d`, iOS repo).
+> 0.2 ✅ dual-auth **merged to main + deployed to prod** (workshop repo merge `371184f`),
+> verified live: `/api/auth/apple` → 401/400 (enabled, not 503), Entra no-token → 401,
+> SPA + `/api/health` → 200. 0.1 ✅ Entra iOS redirect/scope added by Enzo; App Service
+> env `SESSION_SECRET` + `APPLE_BUNDLE_ID=com.nintek.workshop` set. **Next: Phase 1.**
+> (Deploy note: the GH Actions health-poll can pass against the old container mid
+> rolling-swap — re-test prod ~2 min post-deploy before concluding anything.)
 
 **0.1 Pull Entra config** (needs Enzo/az): ~~read `AZURE_TENANT_ID`, `API_AUDIENCE`, `VITE_AZURE_CLIENT_ID`~~ — **the GUIDs are already in the repo** at `.github/workflows/deploy.yml` (`VITE_AZURE_CLIENT_ID: 0f303f8f-207f-4b7f-84a5-b5d0abcf49d1`, `VITE_AZURE_TENANT_ID: 52188f12-db6b-46c6-88ff-08c802f0ed3b`; `API_AUDIENCE` == the client id). No `az` needed for IDs. **Still needs Enzo in the portal:** verify the Entra app registration has **Expose an API** scope (`api://<clientId>/access_as_user`) AND add an **iOS platform redirect** `msauth.com.nintek.workshop://auth` (the two ShopKeep deploy landmines: missing runtime env vars → 503; missing scope → AADSTS500011 login loop). **Plus the new App Service env for 0.2 (below): `SESSION_SECRET`, `APPLE_BUNDLE_ID=com.nintek.workshop` — set these BEFORE merging `feat/dual-auth-apple` to main.**
 
