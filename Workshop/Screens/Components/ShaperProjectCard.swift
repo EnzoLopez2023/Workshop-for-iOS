@@ -11,19 +11,16 @@ struct ShaperProjectCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topLeading) {
-                Group {
-                    if heroURL != nil {
-                        AuthImage(url: heroURL, contentMode: .fill, placeholderSymbol: "cpu")
-                    } else {
-                        ZStack {
-                            Theme.creamSoft
+                Rectangle().fill(Theme.creamSoft)
+                    .aspectRatio(16.0 / 10.0, contentMode: .fit)
+                    .overlay {
+                        if heroURL != nil {
+                            AuthImage(url: heroURL, contentMode: .fill, placeholderSymbol: "cpu")
+                        } else {
                             Image(systemName: "cpu").font(.system(size: 34)).foregroundStyle(Theme.line)
                         }
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .aspectRatio(16.0 / 10.0, contentMode: .fill)
-                .clipped()
+                    .clipped()
 
                 Text("SHAPER HUB")
                     .font(.system(size: 10, weight: .bold)).tracking(1.4)

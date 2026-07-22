@@ -298,8 +298,9 @@ private struct DashStat: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label.uppercased()).font(.system(size: 10, weight: .semibold)).tracking(0.6).foregroundStyle(Theme.subtle)
+                .lineLimit(2, reservesSpace: true)
             Text(value).font(.system(size: 24, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1).minimumScaleFactor(0.6)
-            Text(sub).font(.system(size: 10)).foregroundStyle(Theme.subtle).lineLimit(1)
+            Text(sub).font(.system(size: 10)).foregroundStyle(Theme.subtle).lineLimit(1).minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

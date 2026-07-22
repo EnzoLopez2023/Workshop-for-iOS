@@ -12,22 +12,19 @@ struct ProjectCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topLeading) {
-                Group {
-                    if heroURL != nil {
-                        AuthImage(url: heroURL, contentMode: .fill)
-                    } else {
-                        ZStack {
-                            Theme.creamSoft
+                Rectangle().fill(Theme.creamSoft)
+                    .aspectRatio(16.0 / 11.0, contentMode: .fit)
+                    .overlay {
+                        if heroURL != nil {
+                            AuthImage(url: heroURL, contentMode: .fill)
+                        } else {
                             Text(project.title.prefix(1))
                                 .font(.system(size: 34, weight: .semibold, design: .serif))
                                 .italic()
                                 .foregroundStyle(Theme.subtle)
                         }
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .aspectRatio(16.0 / 11.0, contentMode: .fill)
-                .clipped()
+                    .clipped()
 
                 StatusBadge(status: project.status, withBackdrop: true)
                     .padding(12)
