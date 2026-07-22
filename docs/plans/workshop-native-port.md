@@ -75,7 +75,7 @@ Stock SwiftUI+SwiftData template, 1 commit, no remote. Wrong everything: plain X
 
 ## Phase 1 — Foundation (NintekKit + auth + theme + shell)
 
-**1.1 NintekKit additions** (`NintekKit/Sources/NintekKit/`):
+**1.1 NintekKit additions** ✅ **DONE (NintekKit repo, commit `dd9b4e0`; 19 tests green; iOS app builds against it).** As built: `Models/WorkshopModels.swift` (WSProject with aggregates optional so bare create/update rows decode; WSProjectDetail fat aggregate; all the row/input/analyze types; `CutPlanConfig`/`StockRow` camelCase-coded for web↔native interop), `WorkshopAPI.swift` (~35 routes, snake_case coders, `imageURL(imageId:userKey:)`/`buildLogImageURL(entryId:userKey:)` with `?oid=`, cut-plan-config via plain coders), `APIClient` +`postMultipart`/`patch`/`putRawJSON`/`MultipartFile` (additive — ShopKeep untouched), plus 6 decode tests. `CutPlan.swift` still deferred to Phase 4. Original spec below:
 - `Models/WorkshopModels.swift`: `WSProject` (list row + detail aggregate), `WSImage`, `CutListItem`, `WSMaterial`, `BuildLogEntry`, `FinishLogEntry`, `ProjectLink`, `WSTemplate`, `ShaperProject`, `ShoppingItem`, `AnalyzeResult`/`ShaperAnalyzeResult`, `CutPlanConfig` (Codable mirror of the web's stock/kerf config JSON). All optionals-heavy, snake_case-decoded; dimensions as `String`.
 - `WorkshopAPI.swift` modeled on `ShopKeepAPI.swift`: one method per route (~35 methods), `productionBaseURL = https://app-workshop-prod-lwxhu7jxlrbtu.azurewebsites.net`, mixed-response handling per endpoint (`{id}` vs full vs `{success}`), `imageURL(_:userKey:)` appending `?oid=`.
 - **`APIClient.postMultipart(path:fields:file:)`** — new: build `multipart/form-data` body (boundary, `file` field with filename+MIME, extra text fields) for image/build-log uploads.
