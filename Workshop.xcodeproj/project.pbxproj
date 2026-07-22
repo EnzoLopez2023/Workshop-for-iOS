@@ -8,16 +8,36 @@
 
 /* Begin PBXBuildFile section */
 		13DCDEE78255515A7FCE2A5B /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C3230F2228F4DBCC175B8B36 /* MSAL */; };
+		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
 		5ACCC513CFDF1DE4C9A976AD /* WorkshopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */; };
+		5C46D338A16821D6CF6092D8 /* AppleAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 588EFFBF642257B4B8549BE2 /* AppleAuth.swift */; };
+		6099E621FB1EFB57E421C0DB /* MSALAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */; };
+		65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148AA1B27DF3EF0320FE04EB /* Theme.swift */; };
 		8A7CE8C45F6193AF2ACA8305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B88A2F381FC79622473BFD0A /* Assets.xcassets */; };
+		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
+		A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2032375E9627FFA9498F242F /* RootView.swift */; };
+		DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567419A91AFD83464561320 /* AppModel.swift */; };
+		EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A3EE9656F690ED9F24E4FC /* SignInView.swift */; };
+		EEC5B8DDF02910E2B1CFF65B /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A64568318FE3FA57CA06E76 /* Palette.swift */; };
 		EF161E56D1B890179046E82B /* NintekKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA77F591CC948B68AD9F1B1 /* NintekKit */; };
+		EF7948FBAEE709BAE23AB7C7 /* Placeholders.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C75708FC3944195E916FE8 /* Placeholders.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthImage.swift; sourceTree = "<group>"; };
+		148AA1B27DF3EF0320FE04EB /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		2032375E9627FFA9498F242F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationAnchor.swift; sourceTree = "<group>"; };
+		5567419A91AFD83464561320 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		588EFFBF642257B4B8549BE2 /* AppleAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuth.swift; sourceTree = "<group>"; };
 		64F4CB70E3C122071AD83DA2 /* NintekKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NintekKit; path = ../NintekKit; sourceTree = SOURCE_ROOT; };
 		70402D41911248F2517937B6 /* Workshop.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Workshop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A64568318FE3FA57CA06E76 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		90A3EE9656F690ED9F24E4FC /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopApp.swift; sourceTree = "<group>"; };
+		AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSALAuth.swift; sourceTree = "<group>"; };
 		B88A2F381FC79622473BFD0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C7C75708FC3944195E916FE8 /* Placeholders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Placeholders.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,9 +62,23 @@
 			);
 			sourceTree = "<group>";
 		};
+		517951C5E68B35AD8FFD05DF /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				C7C75708FC3944195E916FE8 /* Placeholders.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
 		561B189BBCAAA42DF570F2D6 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				5567419A91AFD83464561320 /* AppModel.swift */,
+				0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */,
+				8A64568318FE3FA57CA06E76 /* Palette.swift */,
+				3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */,
+				2032375E9627FFA9498F242F /* RootView.swift */,
+				148AA1B27DF3EF0320FE04EB /* Theme.swift */,
 				A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */,
 			);
 			path = App;
@@ -55,6 +89,8 @@
 			children = (
 				B88A2F381FC79622473BFD0A /* Assets.xcassets */,
 				561B189BBCAAA42DF570F2D6 /* App */,
+				F38C6DBDB004A4B024EFCB20 /* Auth */,
+				517951C5E68B35AD8FFD05DF /* Screens */,
 			);
 			path = Workshop;
 			sourceTree = "<group>";
@@ -73,6 +109,16 @@
 				64F4CB70E3C122071AD83DA2 /* NintekKit */,
 			);
 			name = Packages;
+			sourceTree = "<group>";
+		};
+		F38C6DBDB004A4B024EFCB20 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				588EFFBF642257B4B8549BE2 /* AppleAuth.swift */,
+				AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */,
+				90A3EE9656F690ED9F24E4FC /* SignInView.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +199,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */,
+				5C46D338A16821D6CF6092D8 /* AppleAuth.swift in Sources */,
+				96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */,
+				6099E621FB1EFB57E421C0DB /* MSALAuth.swift in Sources */,
+				EEC5B8DDF02910E2B1CFF65B /* Palette.swift in Sources */,
+				EF7948FBAEE709BAE23AB7C7 /* Placeholders.swift in Sources */,
+				3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */,
+				A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */,
+				EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */,
+				65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */,
 				5ACCC513CFDF1DE4C9A976AD /* WorkshopApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,7 +223,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -254,7 +310,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

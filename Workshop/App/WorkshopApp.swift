@@ -1,33 +1,24 @@
 import SwiftUI
+import MSAL
 
-// Phase 0 placeholder entry point. Phase 1 replaces this with the real
-// AppModel-driven RootView (dual auth, theme, shell). Kept minimal so the
-// re-scaffolded target compiles and archives from day one.
 @main
 struct WorkshopApp: App {
+    @StateObject private var model = AppModel()
+    @StateObject private var theme = ThemeManager.shared
+
+    init() { Theme.configureAppearance() }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environmentObject(model)
+                .environmentObject(theme)
+                .onOpenURL { url in
+                    // workshop:// deep links route within the app; everything else
+                    // is an MSAL redirect returning through the Microsoft broker.
+                    if model.handleDeepLink(url) { return }
+                    _ = MSALPublicClientApplication.handleMSALResponse(url, sourceApplication: nil)
+                }
         }
     }
-}
-
-struct ContentView: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "hammer.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.tint)
-            Text("Workshop")
-                .font(.largeTitle.weight(.semibold))
-            Text("Native port — Phase 0 scaffold")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .padding()
-    }
-}
-
-#Preview {
-    ContentView()
 }
