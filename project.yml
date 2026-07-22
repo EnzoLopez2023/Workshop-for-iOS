@@ -1,0 +1,116 @@
+# Source of truth for Workshop.xcodeproj. Regenerate with `xcodegen generate`
+# after changing files/capabilities. All signing/version/capability settings are
+# encoded here so regeneration never loses state.
+#
+# Workshop native (Phase 1): SwiftUI REST client of the Azure backend
+# (app-workshop-prod-lwxhu7jxlrbtu), dual auth (Entra MSAL + Sign in with Apple →
+# server session), NintekKit shared foundation. Widgets target deferred to Phase 6.
+#
+# The Xcode target/product is "Workshop" (space-free); the repo folder stays
+# "Workshop for iOS". Bundle id com.nintek.workshop.
+name: Workshop
+options:
+  bundleIdPrefix: com.nintek
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "17.0"
+
+packages:
+  NintekKit:
+    path: ../NintekKit
+  MSAL:
+    url: https://github.com/AzureAD/microsoft-authentication-library-for-objc
+    from: "1.5.0"
+
+# One shared app scheme so Xcode doesn't auto-create a run scheme per target.
+schemes:
+  Workshop:
+    build:
+      targets:
+        Workshop: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+
+targets:
+  Workshop:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Workshop
+        excludes:
+          - "**/*.template"
+          - "**/Info.plist"
+          - "**/*.entitlements"
+    dependencies:
+      - package: NintekKit
+      - package: MSAL
+    info:
+      path: Workshop/Info.plist
+      properties:
+        CFBundleDisplayName: Workshop
+        CFBundleIconName: AppIcon
+        # Version comes from the build settings below (single source of truth),
+        # not literals — otherwise xcodegen defaults the plist back to 1.0 (1).
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UILaunchScreen: {}
+        # Camera + photo library for project sketches, build-log photos (Phase 3);
+        # Files/PDF import needs no usage string.
+        NSCameraUsageDescription: Workshop uses the camera to photograph your projects and build progress.
+        NSPhotoLibraryUsageDescription: Workshop uses your photo library to attach sketches and inspiration to projects.
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # MSAL redirect: msauth.<bundleid>://auth — must match the iOS redirect URI
+        # registered on the Workshop Entra app registration (Enzo to add, Phase 0.1).
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Editor
+            CFBundleURLName: com.nintek.workshop
+            CFBundleURLSchemes:
+              - msauth.com.nintek.workshop
+          # Widget/deep links: workshop://project/<id>, workshop://dashboard …
+          - CFBundleTypeRole: Editor
+            CFBundleURLName: com.nintek.workshop.deeplink
+            CFBundleURLSchemes:
+              - workshop
+        LSApplicationQueriesSchemes:
+          - msauthv2
+          - msauthv3
+    entitlements:
+      path: Workshop/Workshop.entitlements
+      properties:
+        # MSAL token cache + Apple session Keychain item.
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.nintek.workshop
+        # Sign in with Apple (alongside Microsoft). Requires the capability
+        # enabled on the App ID in the Apple Developer portal.
+        com.apple.developer.applesignin:
+          - Default
+        # For the widget extension (Phase 6) — declared now so the App Group is
+        # provisioned from the start.
+        com.apple.security.application-groups:
+          - group.com.nintek.workshop
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop
+        PRODUCT_NAME: Workshop
+        # Single source of truth for the app version — Info.plist references these
+        # via $(MARKETING_VERSION)/$(CURRENT_PROJECT_VERSION). Bump every commit:
+        # marketing = major.minor.patch (semver), build = monotonic per commit.
+        # Starts 0.1.0 → 1.0.0 at TestFlight.
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: "3KB968X34U"
