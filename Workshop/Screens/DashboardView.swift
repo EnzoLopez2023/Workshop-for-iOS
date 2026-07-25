@@ -24,6 +24,8 @@ struct DashboardView: View {
     @State private var search = ""
     @State private var path: [DashboardRoute] = []
     @State private var showNewProject = false
+    @State private var cloningTemplateId: Int?
+    @State private var confirmDeleteTemplateId: Int?
 
     private let grid = [GridItem(.adaptive(minimum: 240), spacing: 18)]
 
@@ -211,12 +213,42 @@ struct DashboardView: View {
                             }
                         }
                         .frame(height: 100).frame(maxWidth: .infinity).clipped()
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(t.templateName ?? t.title).font(.system(size: 16, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
-                            Text("\(t.difficulty.rawValue) · \(t.partsCount) part\(t.partsCount == 1 ? "" : "s")")
-                                .font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                        VStack(alignment: .leading, spacing: 10) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(t.templateName ?? t.title).font(.system(size: 16, weight: .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                                Text("\(t.difficulty.rawValue) · \(t.partsCount) part\(t.partsCount == 1 ? "" : "s")")
+                                    .font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                            }
+                            HStack(spacing: 8) {
+                                Button {
+                                    Task { await useTemplate(t) }
+                                } label: {
+                                    HStack(spacing: 5) {
+                                        Image(systemName: "doc.on.doc")
+                                        Text(cloningTemplateId == t.id ? "Creating…" : "Use Template")
+                                    }
+                                    .font(.system(size: 12, weight: .medium))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 7)
+                                }
+                                .disabled(cloningTemplateId == t.id)
+                                .background(Theme.inkSoft, in: RoundedRectangle(cornerRadius: 8))
+                                .foregroundStyle(Theme.cream)
+                                .buttonStyle(.plain)
+
+                                if confirmDeleteTemplateId == t.id {
+                                    Button("Cancel") { confirmDeleteTemplateId = nil }
+                                        .font(.system(size: 12))
+                                    Button { Task { await deleteTemplate(t) } } label: {
+                                        Image(systemName: "trash").foregroundStyle(Theme.fail)
+                                    }
+                                } else {
+                                    Button { confirmDeleteTemplateId = t.id } label: {
+                                        Image(systemName: "trash").foregroundStyle(Theme.subtle)
+                                    }
+                                }
+                            }
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(14)
                     }
                     .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
@@ -300,6 +332,24 @@ struct DashboardView: View {
             loadError = error.localizedDescription
         }
         loading = false
+    }
+
+    private func useTemplate(_ t: WSTemplate) async {
+        cloningTemplateId = t.id
+        do {
+            let project = try await api.cloneTemplate(templateId: t.id)
+            cloningTemplateId = nil
+            path.append(.project(project.id))
+        } catch {
+            cloningTemplateId = nil
+        }
+    }
+
+    private func deleteTemplate(_ t: WSTemplate) async {
+        confirmDeleteTemplateId = nil
+        templates.removeAll { $0.id == t.id }
+        do { try await api.deleteTemplate(id: t.id) }
+        catch { await load() }
     }
 }
 

@@ -1,12 +1,10 @@
 import SwiftUI
 import NintekKit
 
-/// Shopping list — read-only parity with `ShoppingList.tsx`: unpurchased
-/// materials grouped by project, item count + estimated total, and a
-/// "Show purchased" local filter toggle. Marking an item purchased is a write
-/// (`PATCH /api/materials/:id/purchased`) and is deferred to Phase 3 — the
-/// checkbox renders as a read-only indicator here, same pattern as
-/// ProjectDetail's materials section.
+/// Shopping list — parity with `ShoppingList.tsx`: unpurchased materials
+/// grouped by project, item count + estimated total, a "Show purchased" local
+/// filter toggle, and an optimistic purchased toggle per item (matches the
+/// web's revert-on-failure pattern).
 struct ShoppingView: View {
     let api: WorkshopAPI
 
@@ -109,24 +107,28 @@ struct ShoppingView: View {
     }
 
     private func itemRow(_ item: ShoppingItem) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: item.purchased ? "checkmark.square.fill" : "square")
-                .foregroundStyle(item.purchased ? Theme.accent : Theme.subtle)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.name).font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(item.purchased ? Theme.subtle : Theme.ink)
-                    .strikethrough(item.purchased)
-                if let q = item.qtyLabel, !q.isEmpty {
-                    Text(q).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+        Button { Task { await togglePurchased(item) } } label: {
+            HStack(spacing: 14) {
+                Image(systemName: item.purchased ? "checkmark.square.fill" : "square")
+                    .foregroundStyle(item.purchased ? Theme.accent : Theme.subtle)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(item.name).font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(item.purchased ? Theme.subtle : Theme.ink)
+                        .strikethrough(item.purchased)
+                    if let q = item.qtyLabel, !q.isEmpty {
+                        Text(q).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                    }
+                }
+                Spacer()
+                if item.cost > 0 {
+                    Text(money(item.cost)).font(.system(size: 14).monospacedDigit())
+                        .foregroundStyle(item.purchased ? Theme.subtle : Theme.ink).strikethrough(item.purchased)
                 }
             }
-            Spacer()
-            if item.cost > 0 {
-                Text(money(item.cost)).font(.system(size: 14).monospacedDigit())
-                    .foregroundStyle(item.purchased ? Theme.subtle : Theme.ink).strikethrough(item.purchased)
-            }
+            .padding(.horizontal, 16).padding(.vertical, 13)
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, 16).padding(.vertical, 13)
+        .buttonStyle(.plain)
     }
 
     // MARK: States
@@ -153,6 +155,14 @@ struct ShoppingView: View {
         do { items = try await api.shoppingList() }
         catch { loadError = error.localizedDescription }
         loading = false
+    }
+
+    private func togglePurchased(_ item: ShoppingItem) async {
+        guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
+        let next = !item.purchased
+        items[idx].purchased = next
+        do { try await api.setPurchased(id: item.id, purchased: next) }
+        catch { await load() }
     }
 }
 

@@ -1,11 +1,13 @@
 import SwiftUI
+import PhotosUI
 import NintekKit
 
-/// Project detail — read-only parity with `ProjectDetail.tsx`: hero banner +
-/// overlapping meta card (status, title, description, plan links, stat grid),
-/// wood/tools chips, sketches + inspiration galleries (with PDF tiles → PDFKit),
-/// cut-list table, materials (read + purchased display), finish log, build-log
-/// timeline, linked projects. Writes (edit/delete/toggle/add) land in Phase 3.
+/// Project detail — parity with `ProjectDetail.tsx`: hero banner + overlapping
+/// meta card (status, title, description, plan links, stat grid), wood/tools
+/// chips, sketches + inspiration galleries (with PDF tiles → PDFKit), cut-list
+/// table, materials (with optimistic purchased toggle), finish log CRUD,
+/// build-log CRUD (note + optional photo), linked projects CRUD, save-as-
+/// template, and delete with confirm.
 struct ProjectDetailView: View {
     let api: WorkshopAPI
     let projectId: Int
@@ -17,6 +19,30 @@ struct ProjectDetailView: View {
     @State private var gallery: GalleryPreview?
     @State private var pdfURL: IdentifiableURL?
     @State private var showEditForm = false
+    @Environment(\.dismiss) private var dismiss
+    @State private var confirmDelete = false
+    @State private var deleting = false
+    @State private var savedAsTemplate = false
+
+    // Finish log
+    @State private var showFinishForm = false
+    @State private var finishForm = FinishFormState()
+    @State private var finishSaving = false
+
+    // Build log
+    @State private var showBuildForm = false
+    @State private var buildNote = ""
+    @State private var buildPhotoData: Data?
+    @State private var buildPhotoItem: PhotosPickerItem?
+    @State private var buildSaving = false
+    @State private var buildUploadProgress: Double?
+
+    // Linked projects
+    @State private var showLinkForm = false
+    @State private var allProjects: [WSProject] = []
+    @State private var linkProjectId: Int?
+    @State private var linkRelationship = "related"
+    @State private var linkSaving = false
 
     var body: some View {
         ScrollView {
@@ -53,7 +79,26 @@ struct ProjectDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showEditForm = true } label: { Image(systemName: "pencil") }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button {
+                            Task { await saveAsTemplate() }
+                        } label: {
+                            Label(savedAsTemplate ? "Saved!" : "Save as Template",
+                                 systemImage: savedAsTemplate ? "checkmark" : "doc.on.doc")
+                        }
+                        Button(role: .destructive) { confirmDelete = true } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
             }
+        }
+        .confirmationDialog("Delete this project?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) { Task { await deleteProject() } }
+            Button("Cancel", role: .cancel) {}
         }
         .task { await load() }
         .fullScreenCover(item: $gallery) { ImageLightbox(preview: $0) }
@@ -232,22 +277,26 @@ struct ProjectDetailView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(d.materials.enumerated()), id: \.element.id) { i, m in
                         if i > 0 { Divider().overlay(Theme.line) }
-                        HStack(spacing: 14) {
-                            Image(systemName: m.purchased ? "checkmark.square.fill" : "square")
-                                .foregroundStyle(m.purchased ? Theme.accent : Theme.subtle)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(m.name).font(.system(size: 15, weight: .medium))
-                                    .foregroundStyle(m.purchased ? Theme.subtle : Theme.ink)
-                                    .strikethrough(m.purchased)
-                                if let q = m.qtyLabel, !q.isEmpty {
-                                    Text(q).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                        Button { Task { await togglePurchased(m) } } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: m.purchased ? "checkmark.square.fill" : "square")
+                                    .foregroundStyle(m.purchased ? Theme.accent : Theme.subtle)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(m.name).font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(m.purchased ? Theme.subtle : Theme.ink)
+                                        .strikethrough(m.purchased)
+                                    if let q = m.qtyLabel, !q.isEmpty {
+                                        Text(q).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                                    }
                                 }
+                                Spacer()
+                                Text(money(m.cost)).font(.system(size: 14).monospacedDigit())
+                                    .foregroundStyle(m.purchased ? Theme.subtle : Theme.ink).strikethrough(m.purchased)
                             }
-                            Spacer()
-                            Text(money(m.cost)).font(.system(size: 14).monospacedDigit())
-                                .foregroundStyle(m.purchased ? Theme.subtle : Theme.ink).strikethrough(m.purchased)
+                            .padding(.horizontal, 16).padding(.vertical, 13)
+                            .contentShape(Rectangle())
                         }
-                        .padding(.horizontal, 16).padding(.vertical, 13)
+                        .buttonStyle(.plain)
                     }
                 }
                 .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
@@ -258,11 +307,20 @@ struct ProjectDetailView: View {
 
     // MARK: Finish log
 
+    private static let finishTypes = ["Stain", "Oil", "Wax", "Varnish", "Lacquer", "Sealant", "Primer", "Paint", "Other"]
+
     @ViewBuilder private func finishLogSection(_ d: WSProjectDetail) -> some View {
-        SectionBox(title: "Finish Log", icon: "drop.fill") {
-            if d.finishLog.isEmpty {
+        SectionBox(title: "Finish Log", icon: "drop.fill",
+                   trailing: AnyView(toggleButton(showFinishForm, "Add Entry") {
+                       if showFinishForm { finishForm = FinishFormState() }
+                       showFinishForm.toggle()
+                   })) {
+            if showFinishForm {
+                finishAddForm()
+            }
+            if d.finishLog.isEmpty && !showFinishForm {
                 emptyNote("No finish entries yet.")
-            } else {
+            } else if !d.finishLog.isEmpty {
                 VStack(spacing: 0) {
                     ForEach(Array(d.finishLog.enumerated()), id: \.element.id) { i, e in
                         if i > 0 { Divider().overlay(Theme.line) }
@@ -276,6 +334,9 @@ struct ProjectDetailView: View {
                             }
                             Spacer()
                             Text(shortDate(e.appliedAt)).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                            Button { Task { await deleteFinishEntry(e) } } label: {
+                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                            }
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
                     }
@@ -286,13 +347,47 @@ struct ProjectDetailView: View {
         }
     }
 
+    private func finishAddForm() -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            TextField("Product name (e.g. Minwax Early American)", text: $finishForm.productName)
+            Picker("Type", selection: $finishForm.finishType) {
+                Text("— select —").tag("")
+                ForEach(Self.finishTypes, id: \.self) { Text($0).tag($0.lowercased()) }
+            }
+            TextField("Color", text: $finishForm.color)
+            HStack {
+                TextField("Coats", text: $finishForm.coats).keyboardType(.numberPad)
+                DatePicker("Applied", selection: $finishForm.appliedAt, displayedComponents: .date)
+                    .labelsHidden()
+            }
+            TextField("Notes", text: $finishForm.notes)
+            Button {
+                Task { await addFinishEntry() }
+            } label: {
+                Text(finishSaving ? "Saving…" : "Save Entry")
+            }
+            .disabled(finishSaving || finishForm.productName.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        .textFieldStyle(.roundedBorder)
+        .padding(16)
+        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
+        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+    }
+
     // MARK: Build log
 
     @ViewBuilder private func buildLogSection(_ d: WSProjectDetail) -> some View {
-        SectionBox(title: "Build Log", icon: "book.closed.fill") {
-            if d.buildLog.isEmpty {
+        SectionBox(title: "Build Log", icon: "book.closed.fill",
+                   trailing: AnyView(toggleButton(showBuildForm, "Add Note") {
+                       if showBuildForm { buildNote = ""; buildPhotoData = nil; buildPhotoItem = nil }
+                       showBuildForm.toggle()
+                   })) {
+            if showBuildForm {
+                buildAddForm()
+            }
+            if d.buildLog.isEmpty && !showBuildForm {
                 emptyNote("No build notes yet. Document your progress here.")
-            } else {
+            } else if !d.buildLog.isEmpty {
                 VStack(spacing: 12) {
                     ForEach(d.buildLog) { e in
                         HStack(alignment: .top, spacing: 14) {
@@ -312,6 +407,9 @@ struct ProjectDetailView: View {
                                 }
                             }
                             Spacer(minLength: 0)
+                            Button { Task { await deleteBuildEntry(e) } } label: {
+                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                            }
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -323,13 +421,54 @@ struct ProjectDetailView: View {
         }
     }
 
+    private func buildAddForm() -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            TextField("Cut all the legs to length… First coat looks great…", text: $buildNote, axis: .vertical)
+                .lineLimit(3...6).textFieldStyle(.roundedBorder)
+            HStack(spacing: 12) {
+                PhotosPicker(selection: $buildPhotoItem, matching: .images) {
+                    Label(buildPhotoData == nil ? "Attach photo" : "Photo attached", systemImage: "camera")
+                }
+                .onChange(of: buildPhotoItem) { _, item in
+                    Task {
+                        if let item, let data = try? await item.loadTransferable(type: Data.self) { buildPhotoData = data }
+                    }
+                }
+                if buildPhotoData != nil {
+                    Button("Remove") { buildPhotoData = nil; buildPhotoItem = nil }
+                        .font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                }
+            }
+            .font(.system(size: 14))
+            if let pct = buildUploadProgress {
+                ProgressView(value: pct).tint(Theme.accent)
+            }
+            Button {
+                Task { await addBuildEntry() }
+            } label: {
+                Text(buildSaving ? "Saving…" : "Save Note")
+            }
+            .disabled(buildSaving || (buildNote.trimmingCharacters(in: .whitespaces).isEmpty && buildPhotoData == nil))
+        }
+        .padding(16)
+        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
+        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+    }
+
     // MARK: Linked projects
 
     @ViewBuilder private func linksSection(_ d: WSProjectDetail) -> some View {
-        SectionBox(title: "Linked Projects", icon: "link") {
-            if d.links.isEmpty {
+        SectionBox(title: "Linked Projects", icon: "link",
+                   trailing: AnyView(toggleButton(showLinkForm, "Link Project") {
+                       showLinkForm.toggle()
+                       if showLinkForm { Task { await loadAllProjects() } }
+                   })) {
+            if showLinkForm {
+                linkAddForm(d)
+            }
+            if d.links.isEmpty && !showLinkForm {
                 emptyNote("No linked projects.")
-            } else {
+            } else if !d.links.isEmpty {
                 VStack(spacing: 0) {
                     ForEach(Array(d.links.enumerated()), id: \.element.id) { i, link in
                         if i > 0 { Divider().overlay(Theme.line) }
@@ -341,6 +480,9 @@ struct ProjectDetailView: View {
                                 .padding(.horizontal, 8).padding(.vertical, 3)
                                 .background(Theme.creamSoft, in: Capsule())
                             StatusBadge(status: link.linkedStatus)
+                            Button { Task { await removeLink(link) } } label: {
+                                Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.subtle)
+                            }
                         }
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
@@ -348,6 +490,38 @@ struct ProjectDetailView: View {
                 .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
             }
+        }
+    }
+
+    private func linkAddForm(_ d: WSProjectDetail) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Picker("Project", selection: $linkProjectId) {
+                Text("— select a project —").tag(Int?.none)
+                ForEach(allProjects.filter { $0.id != d.id }) { p in
+                    Text(p.title).tag(Int?.some(p.id))
+                }
+            }
+            Picker("Relationship", selection: $linkRelationship) {
+                ForEach(["related", "parent", "child", "sequel", "variant"], id: \.self) { r in
+                    Text(r.capitalized).tag(r)
+                }
+            }
+            Button {
+                Task { await addLink() }
+            } label: {
+                Text(linkSaving ? "Linking…" : "Link")
+            }
+            .disabled(linkSaving || linkProjectId == nil)
+        }
+        .padding(16)
+        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
+        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+    }
+
+    private func toggleButton(_ shown: Bool, _ label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(shown ? "Cancel" : label, systemImage: shown ? "chevron.up" : "plus")
+                .font(.system(size: 13))
         }
     }
 
@@ -394,6 +568,132 @@ struct ProjectDetailView: View {
         catch { loadError = error.localizedDescription }
         loading = false
     }
+
+    // MARK: Materials — optimistic purchased toggle
+
+    private func togglePurchased(_ m: WSMaterial) async {
+        guard let idx = d?.materials.firstIndex(where: { $0.id == m.id }) else { return }
+        let next = !m.purchased
+        d?.materials[idx].purchased = next
+        do { try await api.setPurchased(id: m.id, purchased: next) }
+        catch { await load() }
+    }
+
+    // MARK: Save as template / delete
+
+    private func saveAsTemplate() async {
+        guard let d else { return }
+        do {
+            _ = try await api.saveAsTemplate(projectId: d.id, name: d.title)
+            savedAsTemplate = true
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            savedAsTemplate = false
+        } catch { /* best-effort, matches the web */ }
+    }
+
+    private func deleteProject() async {
+        deleting = true
+        do {
+            try await api.deleteProject(id: projectId)
+            dismiss()
+        } catch {
+            deleting = false
+        }
+    }
+
+    // MARK: Finish log
+
+    private func addFinishEntry() async {
+        finishSaving = true
+        let f = finishForm
+        let dateStr = Self.ymdOutput.string(from: f.appliedAt)
+        let input = FinishLogInput(
+            productName: f.productName,
+            finishType: f.finishType.isEmpty ? nil : f.finishType,
+            color: f.color.isEmpty ? nil : f.color,
+            coats: Int(f.coats),
+            notes: f.notes.isEmpty ? nil : f.notes,
+            appliedAt: dateStr
+        )
+        do {
+            _ = try await api.addFinishLogEntry(projectId: projectId, input)
+            await load()
+            finishForm = FinishFormState()
+            showFinishForm = false
+        } catch { /* keep form open with entered data on failure */ }
+        finishSaving = false
+    }
+
+    private func deleteFinishEntry(_ e: FinishLogEntry) async {
+        d?.finishLog.removeAll { $0.id == e.id }
+        do { try await api.deleteFinishLogEntry(id: e.id) }
+        catch { await load() }
+    }
+
+    // MARK: Build log
+
+    private func addBuildEntry() async {
+        guard let projectId = d?.id else { return }
+        buildSaving = true
+        do {
+            let file = buildPhotoData.flatMap { data -> MultipartFile? in
+                guard let jpeg = UIImage(data: data)?.jpegData(compressionQuality: 0.85) else { return nil }
+                return MultipartFile(filename: "build-\(Int(Date().timeIntervalSince1970)).jpg",
+                                     mimeType: "image/jpeg", data: jpeg)
+            }
+            let entry = try await api.addBuildLogEntry(projectId: projectId, note: buildNote, file: file) { pct in
+                Task { @MainActor in buildUploadProgress = pct }
+            }
+            d?.buildLog.insert(entry, at: 0)
+            buildNote = ""; buildPhotoData = nil; buildPhotoItem = nil; buildUploadProgress = nil
+            showBuildForm = false
+        } catch { /* keep form open on failure */ }
+        buildSaving = false
+    }
+
+    private func deleteBuildEntry(_ e: BuildLogEntry) async {
+        d?.buildLog.removeAll { $0.id == e.id }
+        do { try await api.deleteBuildLogEntry(id: e.id) }
+        catch { await load() }
+    }
+
+    // MARK: Linked projects
+
+    private func loadAllProjects() async {
+        guard allProjects.isEmpty else { return }
+        allProjects = (try? await api.listProjects()) ?? []
+    }
+
+    private func addLink() async {
+        guard let linkProjectId, let projectId = d?.id else { return }
+        linkSaving = true
+        do {
+            try await api.addProjectLink(projectId: projectId, linkedProjectId: linkProjectId, relationship: linkRelationship)
+            await load()
+            self.linkProjectId = nil; showLinkForm = false
+        } catch { /* keep form open on failure */ }
+        linkSaving = false
+    }
+
+    private func removeLink(_ link: ProjectLink) async {
+        d?.links.removeAll { $0.id == link.id }
+        do { try await api.removeProjectLink(id: link.id) }
+        catch { await load() }
+    }
+
+    private static let ymdOutput: DateFormatter = {
+        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX"); return f
+    }()
+}
+
+/// Local draft state for the "Add Entry" finish-log form.
+private struct FinishFormState {
+    var productName = ""
+    var finishType = ""
+    var color = ""
+    var coats = ""
+    var notes = ""
+    var appliedAt = Date()
 }
 
 // MARK: - Small shared pieces
