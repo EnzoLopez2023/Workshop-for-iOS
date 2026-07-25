@@ -23,6 +23,7 @@ struct DashboardView: View {
     @State private var filter: StatusFilter = .all
     @State private var search = ""
     @State private var path: [DashboardRoute] = []
+    @State private var showNewProject = false
 
     private let grid = [GridItem(.adaptive(minimum: 240), spacing: 18)]
 
@@ -49,10 +50,21 @@ struct DashboardView: View {
             }
             .creamBackground()
             .navigationTitle("Dashboard")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showNewProject = true } label: { Image(systemName: "plus") }
+                }
+            }
             .navigationDestination(for: DashboardRoute.self) { route in
                 switch route {
                 case .project(let id): ProjectDetailView(api: api, projectId: id)
                 case .shaper(let id):  ShaperDetailView(api: api, shaperId: id)
+                }
+            }
+            .sheet(isPresented: $showNewProject) {
+                ProjectFormView(api: api, projectId: nil) { newId in
+                    Task { await load() }
+                    path.append(.project(newId))
                 }
             }
             .task { await load() }

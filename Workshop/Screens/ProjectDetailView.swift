@@ -16,6 +16,7 @@ struct ProjectDetailView: View {
     @State private var loadError: String?
     @State private var gallery: GalleryPreview?
     @State private var pdfURL: IdentifiableURL?
+    @State private var showEditForm = false
 
     var body: some View {
         ScrollView {
@@ -47,9 +48,21 @@ struct ProjectDetailView: View {
         .creamBackground()
         .navigationTitle(d?.title ?? "Project")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if d != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showEditForm = true } label: { Image(systemName: "pencil") }
+                }
+            }
+        }
         .task { await load() }
         .fullScreenCover(item: $gallery) { ImageLightbox(preview: $0) }
         .sheet(item: $pdfURL) { PDFViewerSheet(url: $0.url) }
+        .sheet(isPresented: $showEditForm) {
+            ProjectFormView(api: api, projectId: projectId) { _ in
+                Task { await load() }
+            }
+        }
     }
 
     // MARK: Hero + meta

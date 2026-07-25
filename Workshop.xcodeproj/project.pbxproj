@@ -32,6 +32,7 @@
 		EF161E56D1B890179046E82B /* NintekKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA77F591CC948B68AD9F1B1 /* NintekKit */; };
 		FA516B0575697E740BF045DC /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */; };
 		FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */; };
+		FDE87185C27B7821304A7CCA /* ProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		73282C72252EF835CE9FDDC6 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
 		74B5721D06BC5553A7723584 /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
 		7FEF1D687304FC3EFF440B2C /* ImageLightbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLightbox.swift; sourceTree = "<group>"; };
+		8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFormView.swift; sourceTree = "<group>"; };
 		8A64568318FE3FA57CA06E76 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectCard.swift; sourceTree = "<group>"; };
 		90A3EE9656F690ED9F24E4FC /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */,
 				AFD1366C665EF510EA7A526B /* MoreView.swift */,
 				74B5721D06BC5553A7723584 /* ProjectDetailView.swift */,
+				8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */,
 				CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */,
 				73282C72252EF835CE9FDDC6 /* ShoppingView.swift */,
 				4A7898CA7EF555EC1F71606E /* Components */,
@@ -254,6 +257,7 @@
 				3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */,
 				E1448FA81D4C4367D102778B /* ProjectCard.swift in Sources */,
 				59D6FB1A722F4CA756623CA6 /* ProjectDetailView.swift in Sources */,
+				FDE87185C27B7821304A7CCA /* ProjectFormView.swift in Sources */,
 				A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */,
 				980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */,
 				C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */,
@@ -275,7 +279,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -362,7 +366,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
