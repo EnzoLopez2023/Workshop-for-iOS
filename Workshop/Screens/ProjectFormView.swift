@@ -1,14 +1,17 @@
 import SwiftUI
+import PhotosUI
+import UniformTypeIdentifiers
 import NintekKit
 
-/// Create/edit a project — parity with `ProjectForm.tsx` (Phase 3.1 scope):
-/// all top-level fields, status/difficulty pickers, wood/tools tag editors,
-/// and cut-list + materials row editors with native `List` reordering
-/// (replaces the web's dnd-kit) that persists `sort_order` per row on move.
+/// Create/edit a project — parity with `ProjectForm.tsx`: all top-level
+/// fields, status/difficulty pickers, wood/tools tag editors, cut-list +
+/// materials row editors with native `List` reordering (replaces the web's
+/// dnd-kit) that persists `sort_order` per row on move, and photo/PDF uploads
+/// (PhotosPicker + camera + Files, sketch/inspiration kinds, add-by-URL,
+/// delete) with progress cards.
 ///
 /// Deliberately out of scope here (later phases): AI "Analyze with URL"
-/// (Phase 5.1), photo/PDF upload (Phase 3.2 — existing images show read-only),
-/// delete/save-as-template (Phase 3.3).
+/// (Phase 5.1), delete/save-as-template (Phase 3.3).
 struct ProjectFormView: View {
     let api: WorkshopAPI
     /// nil = create a new project; non-nil = edit that project.
@@ -38,6 +41,16 @@ struct ProjectFormView: View {
     @State private var saving = false
     @State private var saveError: String?
 
+    // Uploads
+    @State private var uploads: [UploadEntry] = []
+    @State private var sketchPickerItems: [PhotosPickerItem] = []
+    @State private var inspirationPickerItems: [PhotosPickerItem] = []
+    @State private var showSketchCamera = false
+    @State private var showInspirationCamera = false
+    @State private var showPDFImporter = false
+    @State private var showInspirationURLField = false
+    @State private var inspirationURLInput = ""
+
     private var editing: Bool { projectId != nil }
 
     init(api: WorkshopAPI, projectId: Int?, onSaved: @escaping (Int) -> Void) {
@@ -59,6 +72,10 @@ struct ProjectFormView: View {
                 } else {
                     form
                 }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                UploadProgressPanel(uploads: uploads) { id in uploads.removeAll { $0.id == id } }
+                    .padding(16)
             }
             .creamBackground()
             .navigationTitle(editing ? "Edit Project" : "New Project")
@@ -105,22 +122,38 @@ struct ProjectFormView: View {
                 TextField("Tools needed (comma-separated)", text: $toolsInput)
             }
 
-            if editing {
-                Section("Sketches & Plans") {
+            if let projectId {
+                Section {
                     if sketches.isEmpty {
                         Text("No sketches yet.").foregroundStyle(.secondary).font(.footnote)
                     } else {
-                        imageStrip(sketches)
+                        imageStrip(sketches, kind: .sketch)
                     }
-                    Text("Photo & PDF upload lands in a later update.")
-                        .font(.caption).foregroundStyle(.secondary)
+                    uploadButtons(kind: .sketch, projectId: projectId, allowPDF: true)
+                } header: {
+                    Text("Sketches & Plans")
                 }
-                Section("Inspiration") {
+                Section {
                     if inspiration.isEmpty {
                         Text("No inspiration images yet.").foregroundStyle(.secondary).font(.footnote)
                     } else {
-                        imageStrip(inspiration)
+                        imageStrip(inspiration, kind: .inspiration)
                     }
+                    uploadButtons(kind: .inspiration, projectId: projectId, allowPDF: false)
+                    if showInspirationURLField {
+                        HStack {
+                            TextField("https://…", text: $inspirationURLInput)
+                                .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            Button("Add") { Task { await addInspirationURL(projectId: projectId) } }
+                                .disabled(inspirationURLInput.trimmingCharacters(in: .whitespaces).isEmpty)
+                        }
+                    } else {
+                        Button { showInspirationURLField = true } label: {
+                            Label("Add by URL", systemImage: "link")
+                        }
+                    }
+                } header: {
+                    Text("Inspiration")
                 }
             } else {
                 Section {
@@ -222,21 +255,73 @@ struct ProjectFormView: View {
         .padding(.vertical, 4)
     }
 
-    private func imageStrip(_ images: [WSImage]) -> some View {
+    private func imageStrip(_ images: [WSImage], kind: ImageKind) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
                 ForEach(images) { img in
                     let url = model.userKey.map { api.imageURL(imageId: img.id, userKey: $0) }
-                    Group {
-                        if img.isPDF {
-                            ZStack { Theme.creamSoft; Image(systemName: "doc.text.fill").foregroundStyle(Theme.accent) }
-                        } else {
-                            AuthImage(url: url, contentMode: .fill)
+                    ZStack(alignment: .topTrailing) {
+                        Group {
+                            if img.isPDF {
+                                ZStack { Theme.creamSoft; Image(systemName: "doc.text.fill").foregroundStyle(Theme.accent) }
+                            } else {
+                                AuthImage(url: url, contentMode: .fill)
+                            }
                         }
+                        .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 10))
+
+                        Button { Task { await removeImage(img, kind: kind) } } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 10, weight: .bold)).foregroundStyle(.white)
+                                .frame(width: 20, height: 20)
+                                .background(.black.opacity(0.65), in: Circle())
+                        }
+                        .offset(x: 6, y: -6)
                     }
-                    .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
+            .padding(.top, 6).padding(.trailing, 6)
+        }
+    }
+
+    /// Upload row: PhotosPicker (multi-select), Camera (if available), Files (PDF, sketches only).
+    private func uploadButtons(kind: ImageKind, projectId: Int, allowPDF: Bool) -> some View {
+        HStack(spacing: 16) {
+            PhotosPicker(
+                selection: kind == .sketch ? $sketchPickerItems : $inspirationPickerItems,
+                matching: .images
+            ) {
+                Label("Upload", systemImage: "photo.on.rectangle")
+            }
+            .onChange(of: kind == .sketch ? sketchPickerItems : inspirationPickerItems) { _, items in
+                Task { await handlePickerSelection(items, kind: kind, projectId: projectId) }
+            }
+
+            if CameraPicker.isAvailable {
+                Button {
+                    if kind == .sketch { showSketchCamera = true } else { showInspirationCamera = true }
+                } label: {
+                    Label("Camera", systemImage: "camera")
+                }
+            }
+
+            if allowPDF {
+                Button { showPDFImporter = true } label: {
+                    Label("PDF", systemImage: "doc.badge.plus")
+                }
+            }
+        }
+        .font(.system(size: 14))
+        .buttonStyle(.plain)
+        .foregroundStyle(Theme.accent)
+        .sheet(isPresented: kind == .sketch ? $showSketchCamera : $showInspirationCamera) {
+            CameraPicker { image in
+                Task { await uploadCameraImage(image, kind: kind, projectId: projectId) }
+            }
+        }
+        .fileImporter(isPresented: allowPDF ? $showPDFImporter : .constant(false),
+                     allowedContentTypes: [.pdf]) { result in
+            Task { await handlePDFImport(result, projectId: projectId) }
         }
     }
 
@@ -280,6 +365,91 @@ struct ProjectFormView: View {
             let item = MaterialInput(name: row.name, qtyLabel: row.qtyLabel, cost: row.cost,
                                      purchased: row.purchased, sortOrder: idx)
             Task { try? await api.updateMaterial(id: sid, item) }
+        }
+    }
+
+    // MARK: Uploads
+
+    /// PhotosPicker selection → re-encode each to JPEG (avoids HEIC handling on
+    /// the server) → upload → refresh the image lists from the server (WSImage
+    /// has no public initializer, so this is simpler than hand-building rows).
+    private func handlePickerSelection(_ items: [PhotosPickerItem], kind: ImageKind, projectId: Int) async {
+        for item in items {
+            guard let data = try? await item.loadTransferable(type: Data.self),
+                  let uiImage = UIImage(data: data),
+                  let jpeg = uiImage.jpegData(compressionQuality: 0.85) else { continue }
+            await uploadImageData(jpeg, kind: kind, projectId: projectId,
+                                 filename: "photo-\(Int(Date().timeIntervalSince1970)).jpg", mimeType: "image/jpeg")
+        }
+        if kind == .sketch { sketchPickerItems = [] } else { inspirationPickerItems = [] }
+    }
+
+    private func uploadCameraImage(_ image: UIImage, kind: ImageKind, projectId: Int) async {
+        guard let jpeg = image.jpegData(compressionQuality: 0.85) else { return }
+        await uploadImageData(jpeg, kind: kind, projectId: projectId,
+                             filename: "camera-\(Int(Date().timeIntervalSince1970)).jpg", mimeType: "image/jpeg")
+    }
+
+    private func handlePDFImport(_ result: Result<URL, Error>, projectId: Int) async {
+        guard case .success(let url) = result else { return }
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+        guard let data = try? Data(contentsOf: url) else { return }
+        await uploadImageData(data, kind: .sketch, projectId: projectId,
+                             filename: url.lastPathComponent, mimeType: "application/pdf")
+    }
+
+    private func uploadImageData(_ data: Data, kind: ImageKind, projectId: Int, filename: String, mimeType: String) async {
+        let entryId = UUID()
+        uploads.append(UploadEntry(id: entryId, name: filename, progress: 0, status: .uploading))
+        do {
+            let file = MultipartFile(filename: filename, mimeType: mimeType, data: data)
+            try await api.uploadImage(projectId: projectId, kind: kind, file: file) { pct in
+                Task { @MainActor in setUploadProgress(entryId, pct) }
+            }
+            setUploadStatus(entryId, .done)
+            await refreshImages(projectId: projectId)
+            scheduleUploadDismiss(entryId)
+        } catch {
+            setUploadStatus(entryId, .error, error: error.localizedDescription)
+        }
+    }
+
+    private func addInspirationURL(projectId: Int) async {
+        let url = inspirationURLInput.trimmingCharacters(in: .whitespaces)
+        guard !url.isEmpty else { return }
+        do {
+            try await api.addInspirationURL(projectId: projectId, url: url)
+            inspirationURLInput = ""; showInspirationURLField = false
+            await refreshImages(projectId: projectId)
+        } catch { /* silently ignore, matching the web's best-effort behavior */ }
+    }
+
+    private func removeImage(_ img: WSImage, kind: ImageKind) async {
+        try? await api.deleteImage(id: img.id)
+        if kind == .sketch { sketches.removeAll { $0.id == img.id } }
+        else { inspiration.removeAll { $0.id == img.id } }
+    }
+
+    private func refreshImages(projectId: Int) async {
+        guard let d = try? await api.project(id: projectId) else { return }
+        sketches = d.images.filter { $0.kind == .sketch }
+        inspiration = d.images.filter { $0.kind == .inspiration }
+    }
+
+    @MainActor private func setUploadProgress(_ id: UUID, _ pct: Double) {
+        if let idx = uploads.firstIndex(where: { $0.id == id }) { uploads[idx].progress = pct }
+    }
+    private func setUploadStatus(_ id: UUID, _ status: UploadEntry.Status, error: String? = nil) {
+        if let idx = uploads.firstIndex(where: { $0.id == id }) {
+            uploads[idx].status = status; uploads[idx].error = error
+            if status == .done { uploads[idx].progress = 1 }
+        }
+    }
+    private func scheduleUploadDismiss(_ id: UUID) {
+        Task {
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            uploads.removeAll { $0.id == id }
         }
     }
 
