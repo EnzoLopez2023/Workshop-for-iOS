@@ -143,6 +143,7 @@ struct ShoppingView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.selection, trigger: item.purchased)
     }
 
     // MARK: States

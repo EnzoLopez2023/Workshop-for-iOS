@@ -352,9 +352,11 @@ struct ShaperProjectFormView: View {
                 }
             }
 
+            Haptics.success()
             onSaved(savedId)
             dismiss()
         } catch {
+            Haptics.error()
             saveError = "Could not save: \(error.localizedDescription)"
         }
         saving = false

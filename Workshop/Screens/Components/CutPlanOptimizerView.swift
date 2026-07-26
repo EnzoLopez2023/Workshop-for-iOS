@@ -47,6 +47,7 @@ struct CutPlanOptimizerView: View {
         }
         .task { await loadConfig() }
         .sheet(item: $exportedPDF) { ActivityShareSheet(items: [$0.url]) }
+        .sensoryFeedback(.success, trigger: result) { old, new in old == nil && new != nil }
     }
 
     // MARK: Stock panel

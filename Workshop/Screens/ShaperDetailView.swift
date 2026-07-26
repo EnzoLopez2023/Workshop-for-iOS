@@ -241,6 +241,7 @@ struct ShaperDetailView: View {
         deleting = true
         do {
             try await api.deleteShaperProject(id: shaperId)
+            Haptics.success()
             dismiss()
         } catch {
             deleting = false

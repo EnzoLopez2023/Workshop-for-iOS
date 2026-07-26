@@ -349,6 +349,7 @@ struct ProjectDetailView: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        .sensoryFeedback(.selection, trigger: m.purchased)
                     }
                 }
                 .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
@@ -637,6 +638,7 @@ struct ProjectDetailView: View {
         guard let d else { return }
         do {
             _ = try await api.saveAsTemplate(projectId: d.id, name: d.title)
+            Haptics.success()
             savedAsTemplate = true
             try? await Task.sleep(nanoseconds: 3_000_000_000)
             savedAsTemplate = false
@@ -647,6 +649,7 @@ struct ProjectDetailView: View {
         deleting = true
         do {
             try await api.deleteProject(id: projectId)
+            Haptics.success()
             dismiss()
         } catch {
             deleting = false
@@ -669,6 +672,7 @@ struct ProjectDetailView: View {
         )
         do {
             _ = try await api.addFinishLogEntry(projectId: projectId, input)
+            Haptics.success()
             await load()
             finishForm = FinishFormState()
             showFinishForm = false
@@ -697,6 +701,7 @@ struct ProjectDetailView: View {
                 Task { @MainActor in buildUploadProgress = pct }
             }
             d?.buildLog.insert(entry, at: 0)
+            Haptics.success()
             buildNote = ""; buildPhotoData = nil; buildPhotoItem = nil; buildUploadProgress = nil
             showBuildForm = false
         } catch { /* keep form open on failure */ }
@@ -721,6 +726,7 @@ struct ProjectDetailView: View {
         linkSaving = true
         do {
             try await api.addProjectLink(projectId: projectId, linkedProjectId: linkProjectId, relationship: linkRelationship)
+            Haptics.success()
             await load()
             self.linkProjectId = nil; showLinkForm = false
         } catch { /* keep form open on failure */ }

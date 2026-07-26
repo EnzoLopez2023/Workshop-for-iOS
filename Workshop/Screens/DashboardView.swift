@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 import NintekKit
 
 /// Navigation targets pushed from the Dashboard grids.
@@ -348,6 +349,8 @@ struct DashboardView: View {
             async let s = api.listShaperProjects()
             async let t = api.listTemplates()
             (projects, shaper, templates) = try await (p, s, t)
+            WorkshopWidgetStore.save(WorkshopWidgetSnapshot(projects: projects))
+            WidgetCenter.shared.reloadAllTimelines()
         } catch {
             loadError = error.localizedDescription
         }
@@ -358,6 +361,7 @@ struct DashboardView: View {
         cloningTemplateId = t.id
         do {
             let project = try await api.cloneTemplate(templateId: t.id)
+            Haptics.success()
             cloningTemplateId = nil
             path.append(.project(project.id))
         } catch {

@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import WidgetKit
 import MSAL
 import NintekKit
 
@@ -117,6 +118,8 @@ final class AppModel: ObservableObject {
         AppleSessionStore.clear()
         try? msalAuth?.signOut()
         isSignedIn = false
+        WorkshopWidgetStore.clear()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - Deep links

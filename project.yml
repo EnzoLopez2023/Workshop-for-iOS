@@ -47,6 +47,10 @@ targets:
     dependencies:
       - package: NintekKit
       - package: MSAL
+      # Home-screen widgets (WidgetKit extension, Phase 6.2). Embedded into the
+      # app so it ships in the same bundle; shares data via the App Group.
+      - target: WorkshopWidgetsExtension
+        embed: true
     info:
       path: Workshop/Info.plist
       properties:
@@ -95,8 +99,7 @@ targets:
         # enabled on the App ID in the Apple Developer portal.
         com.apple.developer.applesignin:
           - Default
-        # For the widget extension (Phase 6) — declared now so the App Group is
-        # provisioned from the start.
+        # Shared with WorkshopWidgetsExtension — the widget snapshot hand-off.
         com.apple.security.application-groups:
           - group.com.nintek.workshop
     settings:
@@ -108,9 +111,48 @@ targets:
         # marketing = major.minor.patch (semver), build = monotonic per commit.
         # Starts 0.1.0 → 1.0.0 at TestFlight.
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "31"
+        CURRENT_PROJECT_VERSION: "32"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: "3KB968X34U"
+
+  WorkshopWidgetsExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: WorkshopWidgets
+        excludes:
+          - "**/Info.plist"
+          - "**/*.entitlements"
+    dependencies:
+      - package: NintekKit
+    info:
+      path: WorkshopWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Workshop
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # Required for WidgetKit extensions — App Store validation (error 90348)
+        # rejects the build without it. Must live here because xcodegen
+        # regenerates this Info.plist from these properties (so a hand-edited
+        # NSExtension in the file on disk would be overwritten).
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: WorkshopWidgets/WorkshopWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.nintek.workshop
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.widgets
+        PRODUCT_NAME: WorkshopWidgets
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "32"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: "3KB968X34U"
