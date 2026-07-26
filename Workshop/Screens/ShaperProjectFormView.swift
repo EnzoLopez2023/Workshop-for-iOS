@@ -2,14 +2,13 @@ import SwiftUI
 import PhotosUI
 import NintekKit
 
-/// Create/edit a Shaper Hub project — parity with `ShaperProjectForm.tsx`
-/// (non-AI scope): Shaper Hub URL, title, description, photo upload + URL
-/// override with live preview, materials rows, optional cut-list rows,
-/// instructions. Photos upload immediately in edit mode; in create mode they're
-/// queued locally and uploaded right after the project is created (matches the
-/// web's `queuedFiles` pattern — the route needs an id that doesn't exist yet).
-///
-/// Deliberately out of scope: AI "Analyze with URL" (Phase 5.1).
+/// Create/edit a Shaper Hub project — parity with `ShaperProjectForm.tsx`:
+/// Shaper Hub URL + "Analyze with AI" (Phase 5.1), title, description, photo
+/// upload + URL override with live preview, materials rows, optional cut-list
+/// rows, instructions. Photos upload immediately in edit mode; in create mode
+/// they're queued locally and uploaded right after the project is created
+/// (matches the web's `queuedFiles`/`queuedImageUrls` pattern — the route
+/// needs an id that doesn't exist yet).
 struct ShaperProjectFormView: View {
     let api: WorkshopAPI
     let shaperId: Int?
@@ -29,6 +28,7 @@ struct ShaperProjectFormView: View {
     // Photos
     @State private var existingImages: [WSImage] = []
     @State private var queuedPhotos: [Data] = []
+    @State private var queuedImageURLs: [String] = []
     @State private var pickerItems: [PhotosPickerItem] = []
     @State private var uploadStatus: String?
 
@@ -36,6 +36,8 @@ struct ShaperProjectFormView: View {
     @State private var loadError: String?
     @State private var saving = false
     @State private var saveError: String?
+    @State private var analyzing = false
+    @State private var analyzeError: String?
 
     private var editing: Bool { shaperId != nil }
 
@@ -79,10 +81,17 @@ struct ShaperProjectFormView: View {
             Section {
                 TextField("Shaper Hub URL", text: $shaperUrl)
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                Button { Task { await analyze() } } label: {
+                    Label(analyzing ? "Analyzing…" : "Analyze with AI", systemImage: "sparkles")
+                }
+                .disabled(analyzing || shaperUrl.trimmingCharacters(in: .whitespaces).isEmpty)
+                if let analyzeError {
+                    Text(analyzeError).font(.footnote).foregroundStyle(Theme.fail)
+                }
             } header: {
                 Text("Shaper Hub URL")
             } footer: {
-                Text("e.g. https://hub.shapertools.com/creators/…/shares/…")
+                Text("Paste a Shaper Tools Hub share URL and let AI fill in the details.")
             }
 
             Section("Title") {
@@ -247,6 +256,42 @@ struct ShaperProjectFormView: View {
         }
     }
 
+    // MARK: Analyze with AI
+
+    /// Prefills empty fields; materials are replaced wholesale (not appended)
+    /// when the AI returns any, matching the web's behavior. Extra photo URLs
+    /// beyond the primary photo are queued and attached on save.
+    private func analyze() async {
+        let url = shaperUrl.trimmingCharacters(in: .whitespaces)
+        guard !url.isEmpty else { return }
+        analyzeError = nil
+        analyzing = true
+        do {
+            let data = try await api.analyzeShaperURL(url)
+            if title.trimmingCharacters(in: .whitespaces).isEmpty, !data.title.isEmpty {
+                title = data.title
+            }
+            if description.trimmingCharacters(in: .whitespaces).isEmpty, !data.description.isEmpty {
+                description = data.description
+            }
+            let finalPhotoUrl = (photoUrl.trimmingCharacters(in: .whitespaces).isEmpty && !data.photoUrl.isEmpty)
+                ? data.photoUrl : photoUrl
+            if finalPhotoUrl != photoUrl { photoUrl = finalPhotoUrl }
+            if !data.materials.isEmpty {
+                materials = data.materials.map { MatRowDraft(name: $0.name, qty: $0.qty) }
+            }
+            if instructions.trimmingCharacters(in: .whitespaces).isEmpty, !data.instructions.isEmpty {
+                instructions = data.instructions
+            }
+            if let imageUrls = data.imageUrls, !imageUrls.isEmpty {
+                queuedImageURLs = imageUrls.filter { $0 != finalPhotoUrl }
+            }
+        } catch {
+            analyzeError = error.localizedDescription
+        }
+        analyzing = false
+    }
+
     // MARK: Load (edit mode)
 
     private func loadExisting() async {
@@ -290,6 +335,9 @@ struct ShaperProjectFormView: View {
                 let file = MultipartFile(filename: "photo-\(Int(Date().timeIntervalSince1970)).jpg",
                                         mimeType: "image/jpeg", data: data)
                 _ = try? await api.uploadShaperImage(shaperProjectId: savedId, file: file)
+            }
+            for url in queuedImageURLs {
+                _ = try? await api.addShaperImageURL(shaperProjectId: savedId, url: url)
             }
 
             for row in cutRows {

@@ -12,6 +12,7 @@ struct ShoppingView: View {
     @State private var loading = true
     @State private var loadError: String?
     @State private var showPurchased = false
+    @State private var exportURL: IdentifiableURL?
 
     var body: some View {
         NavigationStack {
@@ -38,6 +39,19 @@ struct ShoppingView: View {
             }
             .creamBackground()
             .navigationTitle("Shopping List")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        if let url = ShoppingListPDFExporter.export(groups: grouped, allItems: items) {
+                            exportURL = IdentifiableURL(url: url)
+                        }
+                    } label: {
+                        Image(systemName: "printer")
+                    }
+                    .disabled(grouped.isEmpty)
+                }
+            }
+            .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
             .task { await load() }
             .refreshable { await load() }
         }
@@ -71,7 +85,7 @@ struct ShoppingView: View {
 
     // MARK: Groups
 
-    private struct ProjectGroup: Identifiable {
+    struct ProjectGroup: Identifiable {
         let id: Int
         let title: String
         var items: [ShoppingItem]

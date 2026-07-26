@@ -6,12 +6,9 @@ import NintekKit
 /// Create/edit a project — parity with `ProjectForm.tsx`: all top-level
 /// fields, status/difficulty pickers, wood/tools tag editors, cut-list +
 /// materials row editors with native `List` reordering (replaces the web's
-/// dnd-kit) that persists `sort_order` per row on move, and photo/PDF uploads
+/// dnd-kit) that persists `sort_order` per row on move, photo/PDF uploads
 /// (PhotosPicker + camera + Files, sketch/inspiration kinds, add-by-URL,
-/// delete) with progress cards.
-///
-/// Deliberately out of scope here (later phases): AI "Analyze with URL"
-/// (Phase 5.1), delete/save-as-template (Phase 3.3).
+/// delete) with progress cards, and "Analyze with AI" (Phase 5.1).
 struct ProjectFormView: View {
     let api: WorkshopAPI
     /// nil = create a new project; non-nil = edit that project.
@@ -40,6 +37,8 @@ struct ProjectFormView: View {
     @State private var loadError: String?
     @State private var saving = false
     @State private var saveError: String?
+    @State private var analyzing = false
+    @State private var analyzeError: String?
 
     // Uploads
     @State private var uploads: [UploadEntry] = []
@@ -56,6 +55,10 @@ struct ProjectFormView: View {
     init(api: WorkshopAPI, projectId: Int?, onSaved: @escaping (Int) -> Void) {
         self.api = api; self.projectId = projectId; self.onSaved = onSaved
         _loading = State(initialValue: projectId != nil)
+        if projectId == nil {
+            let raw = UserDefaults.standard.string(forKey: SettingsKeys.defaultProjectStatus)
+            _status = State(initialValue: ProjectStatus(rawValue: raw ?? "") ?? .idea)
+        }
     }
 
     var body: some View {
@@ -97,14 +100,29 @@ struct ProjectFormView: View {
 
     private var form: some View {
         List {
-            Section("Details") {
+            Section {
                 TextField("Title", text: $title)
                 TextField("Plans URL", text: $sourceUrl)
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                Button { Task { await analyze() } } label: {
+                    if analyzing {
+                        Label("Analyzing…", systemImage: "sparkles")
+                    } else {
+                        Label("Analyze with AI", systemImage: "sparkles")
+                    }
+                }
+                .disabled(analyzing || sourceUrl.trimmingCharacters(in: .whitespaces).isEmpty)
+                if let analyzeError {
+                    Text(analyzeError).font(.footnote).foregroundStyle(Theme.fail)
+                }
                 TextField("OptiCutter Cut Plan URL", text: $cutPlanUrl)
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
                 TextField("Description & notes", text: $description, axis: .vertical)
                     .lineLimit(3...8)
+            } header: {
+                Text("Details")
+            } footer: {
+                Text("AI fills in title, description, cut list & materials from the plans URL.")
             }
 
             Section("Status & Estimate") {
@@ -477,6 +495,50 @@ struct ProjectFormView: View {
             loadError = error.localizedDescription
         }
         loading = false
+    }
+
+    // MARK: Analyze with AI
+
+    /// Prefills empty fields and appends AI-suggested cut/material rows,
+    /// matching the web's "only overwrite what the user hasn't touched" rule.
+    private func analyze() async {
+        let url = sourceUrl.trimmingCharacters(in: .whitespaces)
+        guard !url.isEmpty else { return }
+        guard url.range(of: "^https?://", options: [.regularExpression, .caseInsensitive]) != nil else {
+            analyzeError = "URL must start with http:// or https://"
+            return
+        }
+        analyzeError = nil
+        analyzing = true
+        do {
+            let data = try await api.analyzeProjectURL(url)
+
+            if title.trimmingCharacters(in: .whitespaces).isEmpty { title = data.title }
+            if description.trimmingCharacters(in: .whitespaces).isEmpty { description = data.description }
+            difficulty = data.difficulty
+            if estimatedHours == 0 { estimatedHours = data.estimatedHours }
+            if !data.woodTypes.isEmpty, woodInput.trimmingCharacters(in: .whitespaces).isEmpty {
+                woodInput = data.woodTypes.joined(separator: ", ")
+            }
+            if !data.toolsNeeded.isEmpty, toolsInput.trimmingCharacters(in: .whitespaces).isEmpty {
+                toolsInput = data.toolsNeeded.joined(separator: ", ")
+            }
+            for row in data.cutList {
+                var draft = CutRowDraft()
+                draft.partName = row.partName; draft.qty = row.qty == 0 ? 1 : row.qty
+                draft.length = row.length ?? ""; draft.width = row.width ?? ""
+                draft.thickness = row.thickness ?? ""; draft.material = row.material ?? ""
+                cutRows.append(draft)
+            }
+            for row in data.materials {
+                var draft = MaterialRowDraft()
+                draft.name = row.name; draft.qtyLabel = row.qtyLabel ?? ""
+                matRows.append(draft)
+            }
+        } catch {
+            analyzeError = "Could not analyze: \(error.localizedDescription)"
+        }
+        analyzing = false
     }
 
     // MARK: Save

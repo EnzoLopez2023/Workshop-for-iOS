@@ -28,6 +28,9 @@ struct DashboardView: View {
     @State private var cloningTemplateId: Int?
     @State private var confirmDeleteTemplateId: Int?
 
+    @AppStorage(SettingsKeys.dashboardSort) private var dashboardSortRaw = DashboardSort.updated.rawValue
+    @AppStorage(SettingsKeys.showCompletedByDefault) private var showCompletedByDefault = false
+
     private let grid = [GridItem(.adaptive(minimum: 240), spacing: 18)]
 
     var body: some View {
@@ -312,11 +315,17 @@ struct DashboardView: View {
 
     private var filteredProjects: [WSProject] {
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
-        return projects.filter { p in
+        let base = projects.filter { p in
             if filter != .all, p.status != filter.status { return false }
+            if filter == .all, !showCompletedByDefault, p.status == .completed { return false }
             if q.isEmpty { return true }
             let hay = "\(p.title) \(p.description ?? "") \(p.woodTypes.joined(separator: " ")) \(p.cutListNames ?? "") \(p.materialNames ?? "")".lowercased()
             return hay.contains(q)
+        }
+        switch DashboardSort(rawValue: dashboardSortRaw) ?? .updated {
+        case .updated: return base.sorted { $0.updatedAt > $1.updatedAt }
+        case .created: return base.sorted { $0.createdAt > $1.createdAt }
+        case .title:   return base.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
         }
     }
 
@@ -392,6 +401,20 @@ enum StatusFilter: String, CaseIterable, Identifiable {
         switch self {
         case .all: nil; case .idea: .idea; case .planning: .planning
         case .inProgress: .inProgress; case .completed: .completed
+        }
+    }
+}
+
+/// How the dashboard grid orders projects — parity with the web's
+/// `defaultDashboardSort` setting (`Settings.tsx`).
+enum DashboardSort: String, CaseIterable, Identifiable {
+    case updated, created, title
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .updated: "Last Updated"
+        case .created: "Date Created"
+        case .title: "Title (A–Z)"
         }
     }
 }

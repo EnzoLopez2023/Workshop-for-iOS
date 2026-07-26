@@ -18,6 +18,7 @@ struct ProjectDetailView: View {
     @State private var loadError: String?
     @State private var gallery: GalleryPreview?
     @State private var pdfURL: IdentifiableURL?
+    @State private var exportURL: IdentifiableURL?
     @State private var showEditForm = false
     @Environment(\.dismiss) private var dismiss
     @State private var confirmDelete = false
@@ -107,6 +108,7 @@ struct ProjectDetailView: View {
         .task { await load() }
         .fullScreenCover(item: $gallery) { ImageLightbox(preview: $0) }
         .sheet(item: $pdfURL) { PDFViewerSheet(url: $0.url) }
+        .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
         .sheet(isPresented: $showEditForm) {
             ProjectFormView(api: api, projectId: projectId) { _ in
                 Task { await load() }
@@ -253,8 +255,17 @@ struct ProjectDetailView: View {
     @ViewBuilder private func cutListSection(_ d: WSProjectDetail) -> some View {
         if !d.cutList.isEmpty {
             SectionBox(title: "Cut List",
-                       trailing: AnyView(Text("\(d.cutList.count) part\(d.cutList.count == 1 ? "" : "s")")
-                        .font(.system(size: 13)).foregroundStyle(Theme.subtle))) {
+                       trailing: AnyView(HStack(spacing: 10) {
+                        Text("\(d.cutList.count) part\(d.cutList.count == 1 ? "" : "s")")
+                            .font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                        Button {
+                            if let url = CSVExport.cutListCSV(d.cutList, projectTitle: d.title) {
+                                exportURL = IdentifiableURL(url: url)
+                            }
+                        } label: {
+                            Image(systemName: "square.and.arrow.up").font(.system(size: 13))
+                        }
+                       })) {
                 VStack(spacing: 0) {
                     ForEach(Array(d.cutList.enumerated()), id: \.element.id) { i, c in
                         if i > 0 { Divider().overlay(Theme.line) }
@@ -305,7 +316,16 @@ struct ProjectDetailView: View {
     @ViewBuilder private func materialsSection(_ d: WSProjectDetail) -> some View {
         if !d.materials.isEmpty {
             SectionBox(title: "Materials & Hardware",
-                       trailing: AnyView(Text("Total: \(money(d.totalCost))").font(.system(size: 13)).foregroundStyle(Theme.subtle))) {
+                       trailing: AnyView(HStack(spacing: 10) {
+                        Text("Total: \(money(d.totalCost))").font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                        Button {
+                            if let url = CSVExport.materialsCSV(d.materials, projectTitle: d.title) {
+                                exportURL = IdentifiableURL(url: url)
+                            }
+                        } label: {
+                            Image(systemName: "square.and.arrow.up").font(.system(size: 13))
+                        }
+                       })) {
                 VStack(spacing: 0) {
                     ForEach(Array(d.materials.enumerated()), id: \.element.id) { i, m in
                         if i > 0 { Divider().overlay(Theme.line) }

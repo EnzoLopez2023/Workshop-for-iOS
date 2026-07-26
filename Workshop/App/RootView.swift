@@ -23,6 +23,11 @@ struct RootView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var theme: ThemeManager
     @AppStorage("ws.appearance") private var appearanceRaw = Appearance.system.rawValue
+    // Web's "Large Text" bumps root font-size 6.25% (rem-based CSS scales
+    // everything); the closest native lever is Dynamic Type scale, which only
+    // moves text using relative fonts (nav titles, List/Form default text) —
+    // Theme's explicit `.system(size:)` call sites are unaffected either way.
+    @AppStorage("ws.fontSizeLarge") private var fontSizeLarge = false
     // Regular width = iPad full screen (and large split-view). Compact = iPhone,
     // and iPad slide-over / narrow split — where the tab bar is the right idiom.
     @Environment(\.horizontalSizeClass) private var hSize
@@ -49,6 +54,7 @@ struct RootView: View {
         }
         .id(theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
+        .dynamicTypeSize(fontSizeLarge ? .xLarge : .large)
     }
 
     // MARK: iPhone — bottom tab bar, full-width stacked content
@@ -128,7 +134,7 @@ struct RootView: View {
         case .dashboard: DashboardView(api: model.api)
         case .shopping:  ShoppingView(api: model.api)
         case .tables:    ConversionTablesView()
-        case .more:      MoreView()
+        case .more:      MoreView(api: model.api)
         }
     }
 
