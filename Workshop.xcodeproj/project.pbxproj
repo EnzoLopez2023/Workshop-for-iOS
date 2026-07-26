@@ -22,6 +22,7 @@
 		81C2261DF283838B5FCE835A /* PDFViewerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */; };
 		823567341311CBD8EA6A6CE1 /* UploadProgressPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */; };
 		8A7CE8C45F6193AF2ACA8305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B88A2F381FC79622473BFD0A /* Assets.xcassets */; };
+		8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */; };
 		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
 		980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */; };
 		A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2032375E9627FFA9498F242F /* RootView.swift */; };
@@ -44,6 +45,7 @@
 		0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthImage.swift; sourceTree = "<group>"; };
 		148AA1B27DF3EF0320FE04EB /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanPDFExporter.swift; sourceTree = "<group>"; };
 		1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		2032375E9627FFA9498F242F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionTablesView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				F13623EDDF4C567E31761B93 /* CameraPicker.swift */,
 				5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */,
+				1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */,
 				555C827DB4292D29C550072C /* CutPlanSheetView.swift */,
 				0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */,
 				7FEF1D687304FC3EFF440B2C /* ImageLightbox.swift */,
@@ -264,6 +267,7 @@
 				0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */,
 				6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */,
 				C243127F07EACEB2CCB01544 /* CutPlanOptimizerView.swift in Sources */,
+				8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */,
 				F20DFCBF63D1A41DB3749948 /* CutPlanSheetView.swift in Sources */,
 				FA516B0575697E740BF045DC /* DashboardView.swift in Sources */,
 				4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */,
@@ -299,7 +303,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -386,7 +390,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

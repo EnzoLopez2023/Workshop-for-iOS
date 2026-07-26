@@ -24,6 +24,8 @@ struct CutPlanOptimizerView: View {
     @State private var inputError: String?
     @State private var showAll = false
     @State private var hasSavedConfig = false
+    @State private var exportedPDF: IdentifiableURL?
+    @State private var exporting = false
 
     private static let presets: [(label: String, length: String, width: String)] = [
         ("+ 4×8 Sheet", "96", "48"),
@@ -44,6 +46,7 @@ struct CutPlanOptimizerView: View {
             if let result { resultsSection(result) }
         }
         .task { await loadConfig() }
+        .sheet(item: $exportedPDF) { ActivityShareSheet(items: [$0.url]) }
     }
 
     // MARK: Stock panel
@@ -157,6 +160,14 @@ struct CutPlanOptimizerView: View {
                     "\(result.unplacedPieces.count) piece\(result.unplacedPieces.count == 1 ? "" : "s") could not be placed (too large or no matching stock): \(result.unplacedPieces.joined(separator: ", "))"
                 }
             }
+
+            Button {
+                exportPDF(result)
+            } label: {
+                Label(exporting ? "Preparing…" : "Download PDF", systemImage: "square.and.arrow.down")
+                    .font(.system(size: 13))
+            }
+            .disabled(exporting)
 
             VStack(spacing: 20) {
                 ForEach(visibleLayouts(result), id: \.sheetIndex) { layout in
@@ -290,6 +301,15 @@ struct CutPlanOptimizerView: View {
             try await api.saveCutPlanConfig(projectId: projectId, CutPlanConfig(stockRows: stockRows, kerfStr: kerfStr))
             hasSavedConfig = true
         } catch { /* best-effort, matches the web */ }
+    }
+
+    private func exportPDF(_ result: CutPlanResult) {
+        exporting = true
+        if let url = CutPlanPDFExporter.export(result: result, colorMap: colorMap,
+                                               stockLabel: { formatStockLabel(stockRow(for: $0)) }) {
+            exportedPDF = IdentifiableURL(url: url)
+        }
+        exporting = false
     }
 }
 
