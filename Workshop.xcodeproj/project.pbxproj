@@ -11,6 +11,7 @@
 		0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13623EDDF4C567E31761B93 /* CameraPicker.swift */; };
 		13DCDEE78255515A7FCE2A5B /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C3230F2228F4DBCC175B8B36 /* MSAL */; };
 		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
+		4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */; };
 		4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */; };
 		59D6FB1A722F4CA756623CA6 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B5721D06BC5553A7723584 /* ProjectDetailView.swift */; };
 		5ACCC513CFDF1DE4C9A976AD /* WorkshopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */; };
@@ -64,6 +65,7 @@
 		AFD1366C665EF510EA7A526B /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
 		B88A2F381FC79622473BFD0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperDetailView.swift; sourceTree = "<group>"; };
+		DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectFormView.swift; sourceTree = "<group>"; };
 		E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
 		F13623EDDF4C567E31761B93 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,6 +116,7 @@
 				74B5721D06BC5553A7723584 /* ProjectDetailView.swift */,
 				8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */,
 				CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */,
+				DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */,
 				73282C72252EF835CE9FDDC6 /* ShoppingView.swift */,
 				4A7898CA7EF555EC1F71606E /* Components */,
 			);
@@ -268,6 +271,7 @@
 				A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */,
 				980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */,
 				C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */,
+				4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */,
 				E3575F0652173805ABE21EAF /* ShoppingView.swift in Sources */,
 				EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */,
 				FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */,
@@ -287,7 +291,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -374,7 +378,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

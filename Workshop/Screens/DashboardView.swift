@@ -24,6 +24,7 @@ struct DashboardView: View {
     @State private var search = ""
     @State private var path: [DashboardRoute] = []
     @State private var showNewProject = false
+    @State private var showNewShaper = false
     @State private var cloningTemplateId: Int?
     @State private var confirmDeleteTemplateId: Int?
 
@@ -67,6 +68,12 @@ struct DashboardView: View {
                 ProjectFormView(api: api, projectId: nil) { newId in
                     Task { await load() }
                     path.append(.project(newId))
+                }
+            }
+            .sheet(isPresented: $showNewShaper) {
+                ShaperProjectFormView(api: api, shaperId: nil) { newId in
+                    Task { await load() }
+                    path.append(.shaper(newId))
                 }
             }
             .task { await load() }
@@ -171,6 +178,10 @@ struct DashboardView: View {
             HStack(spacing: 10) {
                 Image(systemName: "cpu").font(.system(size: 13)).foregroundStyle(Theme.accent)
                 Eyebrow("Shaper Tools Hub — CNC Projects")
+                Spacer()
+                Button { showNewShaper = true } label: {
+                    Label("Add Project", systemImage: "plus").font(.system(size: 12, weight: .medium))
+                }
             }
             if shaper.isEmpty {
                 Text("No Shaper Hub projects yet.")

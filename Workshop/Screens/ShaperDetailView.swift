@@ -1,19 +1,23 @@
 import SwiftUI
 import NintekKit
 
-/// Shaper project detail — read-only parity with `ShaperProjectDetail.tsx`: photo
-/// hero (uploaded image, else `photo_url`), title + CNC badge + Shaper Hub link,
-/// About, Materials, Instructions, Photos gallery, cut list. Edit/Delete and the
-/// cut-plan optimizer are deferred (Phase 3 / Phase 4).
+/// Shaper project detail — parity with `ShaperProjectDetail.tsx`: photo hero
+/// (uploaded image, else `photo_url`), title + CNC badge + Shaper Hub link,
+/// About, Materials, Instructions, Photos gallery, cut list, edit + delete.
+/// The cut-plan optimizer is deferred (Phase 4).
 struct ShaperDetailView: View {
     let api: WorkshopAPI
     let shaperId: Int
     @EnvironmentObject private var model: AppModel
+    @Environment(\.dismiss) private var dismiss
 
     @State private var p: ShaperProject?
     @State private var loading = true
     @State private var loadError: String?
     @State private var gallery: GalleryPreview?
+    @State private var showEditForm = false
+    @State private var confirmDelete = false
+    @State private var deleting = false
 
     var body: some View {
         ScrollView {
@@ -45,8 +49,29 @@ struct ShaperDetailView: View {
         .creamBackground()
         .navigationTitle(p?.title ?? "Shaper")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if p != nil {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showEditForm = true } label: { Image(systemName: "pencil") }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .destructive) { confirmDelete = true } label: {
+                        Image(systemName: "trash")
+                    }
+                }
+            }
+        }
+        .confirmationDialog("Delete this project?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) { Task { await deleteProject() } }
+            Button("Cancel", role: .cancel) {}
+        }
         .task { await load() }
         .fullScreenCover(item: $gallery) { ImageLightbox(preview: $0) }
+        .sheet(isPresented: $showEditForm) {
+            ShaperProjectFormView(api: api, shaperId: shaperId) { _ in
+                Task { await load() }
+            }
+        }
     }
 
     // MARK: Sections
@@ -186,5 +211,15 @@ struct ShaperDetailView: View {
         do { p = try await api.shaperProject(id: shaperId) }
         catch { loadError = error.localizedDescription }
         loading = false
+    }
+
+    private func deleteProject() async {
+        deleting = true
+        do {
+            try await api.deleteShaperProject(id: shaperId)
+            dismiss()
+        } catch {
+            deleting = false
+        }
     }
 }
