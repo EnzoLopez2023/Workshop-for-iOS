@@ -126,6 +126,19 @@ Order: cheapest-risk first, each screen greps its React source for the full fiel
 - **6.4 Polish round**: adaptive iPad layouts audit (contentColumn caps per screen), pull-to-refresh everywhere, skeleton/loading states, empty states, error toasts.
 - **6.5 TestFlight prep**: icon set (`CFBundleIconName` trap), archive/upload, bump to 1.0.0.
 
+## Phase 7 — Signature native features (beyond Phase 6's basics)
+
+Ideas discussed with Enzo 2026-07-25 — things a React web app structurally can't do, chosen to fit Workshop's actual data (cut lists, dimensions, finish log, materials) rather than generic "native app" checkboxes. Not yet scoped into sub-tasks; pick up when Phase 6's basics are done.
+
+- **7.1 Live Activity cut-list checklist (ActivityKit)**: a running Lock Screen/Dynamic Island checklist for the active project's cut list — tap off parts as they're cut in the shop without unlocking the phone. The single most "couldn't do this on web" feature on the list.
+- **7.2 Interactive widgets (WidgetKit + AppIntents, iOS 17+)**: extend the Phase 6.2 widgets with real buttons, not just display — toggle a shopping-list item purchased directly from the Home Screen widget.
+- **7.3 VisionKit Live Text / DataScanner**: point the camera at a tape measure or a printed cut sheet and pull a dimension straight into a cut-list field, instead of typing "27 1/2" by hand.
+- **7.4 PencilKit sketch canvas** (iPad): sketch directly in-app with Apple Pencil as an alternative to uploading a photo of a paper sketch.
+- **7.5 Share Extension**: "Add to Workshop" from Safari/Pinterest/Photos share sheets, landing in Plans URL or Inspiration — the web's `share_target` is weak on iOS Safari, so this is a real native advantage.
+- **7.6 Swift Charts**: spend-over-time, hours logged via build-log entry counts, materials cost trends. The web app has no analytics/charts at all — cheapest item on this list and a good screenshot.
+- **7.7 Local notifications from finish-log data**: "second coat due" reminders computed from `coats`/`applied_at`, no push infrastructure needed.
+- **7.8 Drag and drop** (iPad): drag a photo from Photos or a PDF from Files straight onto a cut-list section to attach it (complements the existing PhotosPicker/fileImporter uploads).
+
 ## Conventions (from day one)
 - **Version bump every commit** (project.yml `MARKETING_VERSION` semver + `CURRENT_PROJECT_VERSION` monotonic; Info.plist references the vars — never literals).
 - xcodegen `project.yml` is the only project source; regenerate before every build: `cd "/Users/enzo/repos/Xcode - SwiftUI/Workshop for iOS" && xcodegen generate && xcodebuild -scheme Workshop -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO -clonedSourcePackagesDirPath .spm`
