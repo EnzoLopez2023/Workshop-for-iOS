@@ -620,6 +620,10 @@ struct ProjectDetailView: View {
         do { d = try await api.project(id: projectId) }
         catch { loadError = error.localizedDescription }
         loading = false
+        if model.pendingShowCutPlan {
+            showCutPlan = true
+            model.pendingShowCutPlan = false
+        }
     }
 
     // MARK: Materials — optimistic purchased toggle

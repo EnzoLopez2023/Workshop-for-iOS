@@ -1,5 +1,6 @@
 import SwiftUI
 import MSAL
+import CoreSpotlight
 
 @main
 struct WorkshopApp: App {
@@ -18,6 +19,14 @@ struct WorkshopApp: App {
                     // is an MSAL redirect returning through the Microsoft broker.
                     if model.handleDeepLink(url) { return }
                     _ = MSALPublicClientApplication.handleMSALResponse(url, sourceApplication: nil)
+                }
+                .onContinueUserActivity(CSSearchableItemActionType) { activity in
+                    // Spotlight search result tap — the item's uniqueIdentifier IS
+                    // the workshop:// deep link (see SpotlightIndexer), so this
+                    // reuses the exact same routing as widgets/onOpenURL.
+                    guard let id = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
+                          let url = URL(string: id) else { return }
+                    model.handleDeepLink(url)
                 }
         }
     }

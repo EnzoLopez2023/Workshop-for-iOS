@@ -351,6 +351,7 @@ struct DashboardView: View {
             (projects, shaper, templates) = try await (p, s, t)
             WorkshopWidgetStore.save(WorkshopWidgetSnapshot(projects: projects))
             WidgetCenter.shared.reloadAllTimelines()
+            SpotlightIndexer.index(projects: projects)
         } catch {
             loadError = error.localizedDescription
         }

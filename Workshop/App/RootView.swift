@@ -40,6 +40,8 @@ struct RootView: View {
     @State private var columnVisibility: NavigationSplitViewVisibility =
         ProcessInfo.processInfo.isiOSAppOnMac ? .all : .detailOnly
 
+    @StateObject private var intentRouter = IntentRouter.shared
+
     var body: some View {
         Group {
             if model.isSignedIn {
@@ -55,6 +57,11 @@ struct RootView: View {
         .id(theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
         .dynamicTypeSize(fontSizeLarge ? .xLarge : .large)
+        .onChange(of: intentRouter.requestedTab?.id) { _, _ in
+            if let dest = intentRouter.requestedTab?.destination {
+                model.selectedTab = dest.rawValue
+            }
+        }
     }
 
     // MARK: iPhone — bottom tab bar, full-width stacked content

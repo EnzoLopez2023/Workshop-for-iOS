@@ -21,6 +21,10 @@ final class AppModel: ObservableObject {
     /// Set by a deep link (`workshop://project/<id>`); the projects list consumes
     /// it to push the detail, then clears it.
     @Published var pendingProjectId: Int?
+    /// Set alongside `pendingProjectId` when the link carries `?cutplan=1`
+    /// (the Spotlight "Plan Cuts: …" entry); `ProjectDetailView` consumes it to
+    /// auto-expand the Cut Plan Optimizer section, then clears it.
+    @Published var pendingShowCutPlan = false
 
     var userName: String? {
         if let session = AppleSessionStore.load() { return session.displayName ?? "Apple user" }
@@ -120,22 +124,26 @@ final class AppModel: ObservableObject {
         isSignedIn = false
         WorkshopWidgetStore.clear()
         WidgetCenter.shared.reloadAllTimelines()
+        SpotlightIndexer.clear()
     }
 
     // MARK: - Deep links
 
-    /// Routes a `workshop://` URL (opened from a widget in Phase 6, or a share
-    /// link) to the right tab and target. Returns true if handled, so `onOpenURL`
-    /// can fall through to MSAL.
+    /// Routes a `workshop://` URL (opened from a widget, a Spotlight search
+    /// result, or a share link) to the right tab and target. Returns true if
+    /// handled, so `onOpenURL` can fall through to MSAL.
     @discardableResult
     func handleDeepLink(_ url: URL) -> Bool {
         guard url.scheme == "workshop" else { return false }
         let dest = url.host ?? "dashboard"
         switch dest {
         case "project":
-            // workshop://project/<id> — the Dashboard grid consumes pendingProjectId.
+            // workshop://project/<id>[?cutplan=1] — the Dashboard grid consumes
+            // pendingProjectId; ProjectDetailView consumes pendingShowCutPlan.
             if let last = url.pathComponents.last, let id = Int(last) {
                 pendingProjectId = id
+                let query = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+                pendingShowCutPlan = query.contains { $0.name == "cutplan" && $0.value == "1" }
                 selectedTab = AppDestination.dashboard.rawValue
             }
         case AppDestination.shopping.rawValue,
