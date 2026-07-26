@@ -26,8 +26,14 @@ struct RootView: View {
     // Regular width = iPad full screen (and large split-view). Compact = iPhone,
     // and iPad slide-over / narrow split — where the tab bar is the right idiom.
     @Environment(\.horizontalSizeClass) private var hSize
-    // Sidebar starts hidden; the system toolbar toggle shows it as an overlay.
-    @State private var columnVisibility: NavigationSplitViewVisibility = .detailOnly
+    // Sidebar starts hidden on iPad (the system toolbar toggle shows it as an
+    // overlay) — that's the ShopKeep-derived pattern and iPad keeps it as-is.
+    // On Mac ("Designed for iPad", i.e. the iOS binary running unmodified on
+    // Apple Silicon — not a separate Catalyst target) a permanently-collapsed
+    // sidebar reads as broken rather than intentional, since Mac users expect
+    // persistent sidebar navigation; default it open there instead.
+    @State private var columnVisibility: NavigationSplitViewVisibility =
+        ProcessInfo.processInfo.isiOSAppOnMac ? .all : .detailOnly
 
     var body: some View {
         Group {

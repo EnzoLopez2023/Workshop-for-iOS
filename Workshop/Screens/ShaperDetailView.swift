@@ -149,8 +149,13 @@ struct ShaperDetailView: View {
                 ForEach(p.images) { img in
                     if let url = imageURL(id: img.id) {
                         Button { gallery = GalleryPreview(urls: urls, index: urls.firstIndex(of: url) ?? 0) } label: {
-                            AuthImage(url: url, contentMode: .fill)
-                                .aspectRatio(4.0 / 3.0, contentMode: .fill).frame(maxWidth: .infinity).clipped()
+                            // A definite-size Color.clear square (via .fit) bounds the grid
+                            // cell before AuthImage fills it — .fill mode directly on the
+                            // image has an ambiguous proposed height inside a LazyVGrid and
+                            // overflows into the next row otherwise.
+                            Color.clear
+                                .aspectRatio(4.0 / 3.0, contentMode: .fit)
+                                .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                         }.buttonStyle(.plain)
                     }

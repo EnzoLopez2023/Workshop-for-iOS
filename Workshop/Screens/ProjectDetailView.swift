@@ -203,9 +203,7 @@ struct ProjectDetailView: View {
                             }.buttonStyle(.plain)
                         } else if let url = imageURL(img.id) {
                             Button { gallery = GalleryPreview(urls: previewURLs, index: previewURLs.firstIndex(of: url) ?? 0) } label: {
-                                AuthImage(url: url, contentMode: .fill)
-                                    .aspectRatio(1, contentMode: .fill).frame(maxWidth: .infinity).clipped()
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                squareImageTile(url: url)
                             }.buttonStyle(.plain)
                         }
                     }
@@ -223,15 +221,27 @@ struct ProjectDetailView: View {
                     ForEach(inspiration) { img in
                         if let url = inspirationURL(img) {
                             Button { gallery = GalleryPreview(urls: urls, index: urls.firstIndex(of: url) ?? 0) } label: {
-                                AuthImage(url: url, contentMode: .fill)
-                                    .aspectRatio(1, contentMode: .fill).frame(maxWidth: .infinity).clipped()
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                squareImageTile(url: url)
                             }.buttonStyle(.plain)
                         }
                     }
                 }
             }
         }
+    }
+
+    /// A properly-bounded square grid tile. `AuthImage`'s `.fill` content mode
+    /// only clips correctly once its own frame is a *definite* square — inside
+    /// a `LazyVGrid`, `.aspectRatio(1, contentMode: .fill)` on the image itself
+    /// has an ambiguous proposed height and can overflow into the row below
+    /// (this caused the sketch/inspiration tiles to visually overlap). Sizing a
+    /// `Color.clear` square first, via `.fit`, gives the grid a definite cell
+    /// size; the image then fills *that* fixed square instead of guessing.
+    private func squareImageTile(url: URL?) -> some View {
+        Color.clear
+            .aspectRatio(1, contentMode: .fit)
+            .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
+            .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private func imageGrid<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
