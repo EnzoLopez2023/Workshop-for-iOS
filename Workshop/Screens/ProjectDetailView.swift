@@ -44,6 +44,9 @@ struct ProjectDetailView: View {
     @State private var linkRelationship = "related"
     @State private var linkSaving = false
 
+    // Cut plan optimizer
+    @State private var showCutPlan = false
+
     var body: some View {
         ScrollView {
             if let d {
@@ -55,6 +58,7 @@ struct ProjectDetailView: View {
                         sketchesSection(d)
                         inspirationSection(d)
                         cutListSection(d)
+                        if !d.cutList.isEmpty { cutPlanSection(d) }
                         materialsSection(d)
                         finishLogSection(d)
                         buildLogSection(d)
@@ -266,6 +270,24 @@ struct ProjectDetailView: View {
                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
             }
         }
+    }
+
+    // MARK: Cut plan optimizer
+
+    private func cutPlanSection(_ d: WSProjectDetail) -> some View {
+        VStack(alignment: .leading, spacing: showCutPlan ? 16 : 0) {
+            HStack {
+                Text("Cut Plan Optimizer").font(.system(size: 18, weight: .bold)).foregroundStyle(Theme.ink)
+                Spacer()
+                Button { showCutPlan.toggle() } label: {
+                    Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors").font(.system(size: 13))
+                }
+            }
+            if showCutPlan {
+                CutPlanOptimizerView(api: api, cutList: d.cutList, projectId: d.id)
+            }
+        }
+        .padding(.top, 36)
     }
 
     // MARK: Materials

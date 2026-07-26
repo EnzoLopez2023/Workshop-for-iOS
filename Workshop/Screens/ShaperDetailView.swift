@@ -18,6 +18,7 @@ struct ShaperDetailView: View {
     @State private var showEditForm = false
     @State private var confirmDelete = false
     @State private var deleting = false
+    @State private var showCutPlan = false
 
     var body: some View {
         ScrollView {
@@ -32,7 +33,10 @@ struct ShaperDetailView: View {
                     if !p.materials.isEmpty { materialsSection(p) }
                     if let ins = p.instructions, !ins.isEmpty { instructionsSection(ins) }
                     if p.images.count > 1 { photosSection(p) }
-                    if !p.cutList.isEmpty { cutListSection(p) }
+                    if !p.cutList.isEmpty {
+                        cutListSection(p)
+                        cutPlanSection(p)
+                    }
                 }
                 .contentColumn()
                 .padding(20)
@@ -179,6 +183,21 @@ struct ShaperDetailView: View {
             }
             .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+        }
+    }
+
+    private func cutPlanSection(_ p: ShaperProject) -> some View {
+        VStack(alignment: .leading, spacing: showCutPlan ? 12 : 0) {
+            HStack {
+                Eyebrow("Cut Plan Optimizer")
+                Spacer()
+                Button { showCutPlan.toggle() } label: {
+                    Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors").font(.system(size: 13))
+                }
+            }
+            if showCutPlan {
+                CutPlanOptimizerView(api: api, cutList: p.cutList, projectId: p.id)
+            }
         }
     }
 
