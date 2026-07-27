@@ -24,6 +24,7 @@ struct ShaperProjectFormView: View {
     @State private var materials: [MatRowDraft] = [MatRowDraft()]
     @State private var instructions = ""
     @State private var cutRows: [ShaperCutRowDraft] = []
+    @State private var scanningRowID: UUID?
 
     // Photos
     @State private var existingImages: [WSImage] = []
@@ -73,6 +74,14 @@ struct ShaperProjectFormView: View {
                 }
             }
             .task { if editing { await loadExisting() } }
+            .sheet(isPresented: Binding(
+                get: { scanningRowID != nil },
+                set: { if !$0 { scanningRowID = nil } }
+            )) {
+                if let idx = cutRows.firstIndex(where: { $0.id == scanningRowID }) {
+                    DimensionScannerSheet(length: $cutRows[idx].length, width: $cutRows[idx].width, thickness: $cutRows[idx].thickness)
+                }
+            }
         }
     }
 
@@ -161,8 +170,17 @@ struct ShaperProjectFormView: View {
                 }
                 ForEach($cutRows) { $row in
                     VStack(alignment: .leading, spacing: 8) {
-                        TextField("Part name (e.g. Side Panel)", text: $row.partName)
-                            .font(.system(size: 15, weight: .medium))
+                        HStack {
+                            TextField("Part name (e.g. Side Panel)", text: $row.partName)
+                                .font(.system(size: 15, weight: .medium))
+                            Button {
+                                scanningRowID = row.id
+                            } label: {
+                                Image(systemName: "camera.viewfinder").font(.system(size: 15))
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Theme.accent)
+                        }
                         HStack(spacing: 8) {
                             TextField("Qty", text: $row.qty).keyboardType(.numberPad).frame(width: 50)
                             TextField("Length", text: $row.length).frame(maxWidth: .infinity)

@@ -31,6 +31,7 @@ struct ProjectFormView: View {
     @State private var sketches: [WSImage] = []
     @State private var inspiration: [WSImage] = []
     @State private var cutRows: [CutRowDraft] = []
+    @State private var scanningRowID: UUID?
     @State private var matRows: [MaterialRowDraft] = []
 
     @State private var loading: Bool
@@ -93,6 +94,14 @@ struct ProjectFormView: View {
                 }
             }
             .task { if editing { await loadExisting() } }
+            .sheet(isPresented: Binding(
+                get: { scanningRowID != nil },
+                set: { if !$0 { scanningRowID = nil } }
+            )) {
+                if let idx = cutRows.firstIndex(where: { $0.id == scanningRowID }) {
+                    DimensionScannerSheet(length: $cutRows[idx].length, width: $cutRows[idx].width, thickness: $cutRows[idx].thickness)
+                }
+            }
         }
     }
 
@@ -236,8 +245,17 @@ struct ProjectFormView: View {
 
     private func cutRowEditor(row: Binding<CutRowDraft>) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            TextField("Part name", text: row.partName)
-                .font(.system(size: 15, weight: .medium))
+            HStack {
+                TextField("Part name", text: row.partName)
+                    .font(.system(size: 15, weight: .medium))
+                Button {
+                    scanningRowID = row.wrappedValue.id
+                } label: {
+                    Image(systemName: "camera.viewfinder").font(.system(size: 15))
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(Theme.accent)
+            }
             HStack(spacing: 8) {
                 TextField("Qty", value: row.qty, format: .number)
                     .keyboardType(.numberPad).frame(width: 50)
