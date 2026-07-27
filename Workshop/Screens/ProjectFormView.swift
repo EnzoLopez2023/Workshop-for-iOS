@@ -47,6 +47,7 @@ struct ProjectFormView: View {
     @State private var inspirationPickerItems: [PhotosPickerItem] = []
     @State private var showSketchCamera = false
     @State private var showInspirationCamera = false
+    @State private var showSketchCanvas = false
     @State private var showPDFImporter = false
     @State private var showInspirationURLField = false
     @State private var inspirationURLInput = ""
@@ -346,6 +347,14 @@ struct ProjectFormView: View {
                     Label("PDF", systemImage: "doc.badge.plus")
                 }
             }
+
+            // Draw directly with Apple Pencil (Phase 7.4) — an alternative to
+            // photographing a paper sketch. iPad only, matching the plan.
+            if kind == .sketch, UIDevice.current.userInterfaceIdiom == .pad {
+                Button { showSketchCanvas = true } label: {
+                    Label("Draw", systemImage: "pencil.tip.crop.circle")
+                }
+            }
         }
         .font(.system(size: 14))
         .buttonStyle(.plain)
@@ -358,6 +367,14 @@ struct ProjectFormView: View {
         .fileImporter(isPresented: allowPDF ? $showPDFImporter : .constant(false),
                      allowedContentTypes: [.pdf]) { result in
             Task { await handlePDFImport(result, projectId: projectId) }
+        }
+        .sheet(isPresented: kind == .sketch ? $showSketchCanvas : .constant(false)) {
+            SketchCanvasSheet { data in
+                Task {
+                    await uploadImageData(data, kind: .sketch, projectId: projectId,
+                                         filename: "sketch-\(Int(Date().timeIntervalSince1970)).jpg", mimeType: "image/jpeg")
+                }
+            }
         }
     }
 

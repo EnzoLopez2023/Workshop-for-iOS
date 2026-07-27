@@ -30,6 +30,7 @@
 		815377048FD9582DABA705F4 /* CutListActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */; };
 		81C2261DF283838B5FCE835A /* PDFViewerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */; };
 		823567341311CBD8EA6A6CE1 /* UploadProgressPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */; };
+		8968B287FACF33CE8A15F92E /* SketchCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106781A6BB79C32F349A48FB /* SketchCanvasView.swift */; };
 		8A7CE8C45F6193AF2ACA8305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B88A2F381FC79622473BFD0A /* Assets.xcassets */; };
 		8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */; };
 		8C5974CBDC16865EA6A31597 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3649EBAF123246F0A52AAD5C /* StatsWidget.swift */; };
@@ -86,6 +87,7 @@
 /* Begin PBXFileReference section */
 		0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthImage.swift; sourceTree = "<group>"; };
+		106781A6BB79C32F349A48FB /* SketchCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchCanvasView.swift; sourceTree = "<group>"; };
 		148AA1B27DF3EF0320FE04EB /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		17C773FCB81B7645605D4C47 /* CutListActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutListActivityController.swift; sourceTree = "<group>"; };
 		17F44A4C06C5377AAB836619 /* InProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InProgressWidget.swift; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 				8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */,
 				F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */,
 				AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */,
+				106781A6BB79C32F349A48FB /* SketchCanvasView.swift */,
 				E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */,
 				959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */,
 			);
@@ -425,6 +428,7 @@
 				E3575F0652173805ABE21EAF /* ShoppingView.swift in Sources */,
 				EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */,
 				51BBEACC9AC3FD16E95314DE /* SkeletonView.swift in Sources */,
+				8968B287FACF33CE8A15F92E /* SketchCanvasView.swift in Sources */,
 				164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */,
 				FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */,
 				65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */,
@@ -450,7 +454,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -475,7 +479,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -560,7 +564,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -585,7 +589,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
