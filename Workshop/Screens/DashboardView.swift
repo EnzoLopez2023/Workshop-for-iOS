@@ -346,12 +346,21 @@ struct DashboardView: View {
     private func load() async {
         loading = projects.isEmpty && shaper.isEmpty
         loadError = nil
+        // Reconcile any "check off" tap the shopping-list widget recorded
+        // while backgrounded (see ToggleShoppingItemIntent) — the widget
+        // can't authenticate itself, so the real write happens here instead.
+        if let pendingId = WorkshopWidgetStore.consumePendingShoppingToggle() {
+            do { try await api.setPurchased(id: pendingId, purchased: true) }
+            catch { NSLog("[Workshop] Widget shopping-toggle reconciliation failed for id=%d: %@", pendingId, String(describing: error)) }
+        }
         do {
             async let p = api.listProjects()
             async let s = api.listShaperProjects()
             async let t = api.listTemplates()
             (projects, shaper, templates) = try await (p, s, t)
-            WorkshopWidgetStore.save(WorkshopWidgetSnapshot(projects: projects))
+            var snapshot = WorkshopWidgetSnapshot(projects: projects)
+            snapshot.shoppingItems = WorkshopWidgetStore.load()?.shoppingItems ?? []
+            WorkshopWidgetStore.save(snapshot)
             WidgetCenter.shared.reloadAllTimelines()
             SpotlightIndexer.index(projects: projects)
         } catch {

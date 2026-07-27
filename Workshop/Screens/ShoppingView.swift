@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 import NintekKit
 
 /// Shopping list — parity with `ShoppingList.tsx`: unpurchased materials
@@ -167,8 +168,10 @@ struct ShoppingView: View {
 
     private func load() async {
         loading = items.isEmpty; loadError = nil
-        do { items = try await api.shoppingList() }
-        catch { loadError = error.localizedDescription }
+        do {
+            items = try await api.shoppingList()
+            syncWidgetSnapshot()
+        } catch { loadError = error.localizedDescription }
         loading = false
     }
 
@@ -176,8 +179,20 @@ struct ShoppingView: View {
         guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
         let next = !item.purchased
         items[idx].purchased = next
+        syncWidgetSnapshot()
         do { try await api.setPurchased(id: item.id, purchased: next) }
         catch { await load() }
+    }
+
+    /// Publishes the top unpurchased items for the Home Screen widget's
+    /// checkbox row (Phase 7.2) — merged in, not overwritten, so it doesn't
+    /// clobber the project-stats half of the snapshot Dashboard writes.
+    private func syncWidgetSnapshot() {
+        let preview = items.filter { !$0.purchased }.prefix(5).map {
+            WorkshopWidgetSnapshot.ShoppingPreviewItem(id: $0.id, name: $0.name, qtyLabel: $0.qtyLabel)
+        }
+        WorkshopWidgetStore.mergeShoppingItems(Array(preview))
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 
