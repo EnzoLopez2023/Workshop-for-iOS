@@ -56,6 +56,8 @@
 	<string>Workshop uses the camera to photograph your projects and build progress.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Workshop uses your photo library to attach sketches and inspiration to projects.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

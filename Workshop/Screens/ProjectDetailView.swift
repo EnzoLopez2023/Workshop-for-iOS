@@ -19,6 +19,7 @@ struct ProjectDetailView: View {
     @State private var gallery: GalleryPreview?
     @State private var pdfURL: IdentifiableURL?
     @State private var exportURL: IdentifiableURL?
+    @State private var trackingCuts = CutListActivityController.isTracking
     @State private var showEditForm = false
     @Environment(\.dismiss) private var dismiss
     @State private var confirmDelete = false
@@ -259,6 +260,19 @@ struct ProjectDetailView: View {
                        trailing: AnyView(HStack(spacing: 10) {
                         Text("\(d.cutList.count) part\(d.cutList.count == 1 ? "" : "s")")
                             .font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                        Button {
+                            Task {
+                                if trackingCuts {
+                                    await CutListActivityController.end()
+                                } else {
+                                    await CutListActivityController.start(projectId: d.id, projectTitle: d.title, cutList: d.cutList)
+                                }
+                                trackingCuts.toggle()
+                            }
+                        } label: {
+                            Image(systemName: trackingCuts ? "checklist.checked" : "checklist").font(.system(size: 13))
+                        }
+                        .tint(trackingCuts ? Theme.accent : Theme.subtle)
                         Button {
                             if let url = CSVExport.cutListCSV(d.cutList, projectTitle: d.title) {
                                 exportURL = IdentifiableURL(url: url)
