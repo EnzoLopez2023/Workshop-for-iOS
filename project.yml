@@ -61,6 +61,10 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
+        # Workshop only ever talks HTTPS/TLS (standard exemption) — declaring
+        # this skips the export-compliance question App Store Connect asks on
+        # every TestFlight build otherwise.
+        ITSAppUsesNonExemptEncryption: false
         # Camera + photo library for project sketches, build-log photos (Phase 3);
         # Files/PDF import needs no usage string.
         NSCameraUsageDescription: Workshop uses the camera to photograph your projects and build progress.
@@ -111,7 +115,7 @@ targets:
         # marketing = major.minor.patch (semver), build = monotonic per commit.
         # Starts 0.1.0 → 1.0.0 at TestFlight.
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "34"
+        CURRENT_PROJECT_VERSION: "35"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -151,7 +155,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.widgets
         PRODUCT_NAME: WorkshopWidgets
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "34"
+        CURRENT_PROJECT_VERSION: "35"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
