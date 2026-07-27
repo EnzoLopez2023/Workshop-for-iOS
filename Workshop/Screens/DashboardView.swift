@@ -40,7 +40,9 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     hero
                     if loading {
-                        ProgressView().frame(maxWidth: .infinity).padding(.vertical, 60)
+                        LazyVGrid(columns: grid, spacing: 18) {
+                            ForEach(0..<6, id: \.self) { _ in ProjectCardSkeletonView() }
+                        }
                     } else if let err = loadError {
                         errorState(err)
                     } else {

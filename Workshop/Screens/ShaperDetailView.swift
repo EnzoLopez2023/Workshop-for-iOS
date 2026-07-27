@@ -38,7 +38,7 @@ struct ShaperDetailView: View {
                         cutPlanSection(p)
                     }
                 }
-                .contentColumn()
+                .contentColumn(900)
                 .padding(20)
             } else if loading {
                 ProgressView().frame(maxWidth: .infinity).padding(.top, 80)
@@ -70,6 +70,7 @@ struct ShaperDetailView: View {
             Button("Cancel", role: .cancel) {}
         }
         .task { await load() }
+        .refreshable { await load() }
         .fullScreenCover(item: $gallery) { ImageLightbox(preview: $0) }
         .sheet(isPresented: $showEditForm) {
             ShaperProjectFormView(api: api, shaperId: shaperId) { _ in

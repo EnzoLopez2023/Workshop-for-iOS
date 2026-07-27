@@ -535,7 +535,9 @@ struct ProjectFormView: View {
                 draft.name = row.name; draft.qtyLabel = row.qtyLabel ?? ""
                 matRows.append(draft)
             }
+            ToastCenter.shared.success("Fields pre-filled — review before saving")
         } catch {
+            ToastCenter.shared.error("AI analysis failed")
             analyzeError = "Could not analyze: \(error.localizedDescription)"
         }
         analyzing = false

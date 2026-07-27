@@ -54,6 +54,7 @@ struct RootView: View {
                 SignInView()
             }
         }
+        .overlay(alignment: .top) { ToastOverlay() }
         .id(theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
         .dynamicTypeSize(fontSizeLarge ? .xLarge : .large)

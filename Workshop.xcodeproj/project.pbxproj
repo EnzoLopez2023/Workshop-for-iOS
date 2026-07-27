@@ -17,6 +17,7 @@
 		4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */; };
 		4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */; };
 		50DDD6885D72A4175D61BA53 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF973223D615FA3E4ACEAFA /* Haptics.swift */; };
+		51BBEACC9AC3FD16E95314DE /* SkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */; };
 		59D6FB1A722F4CA756623CA6 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B5721D06BC5553A7723584 /* ProjectDetailView.swift */; };
 		5ACCC513CFDF1DE4C9A976AD /* WorkshopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */; };
 		5C46D338A16821D6CF6092D8 /* AppleAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 588EFFBF642257B4B8549BE2 /* AppleAuth.swift */; };
@@ -37,6 +38,7 @@
 		C1413981CDB405BA1B9A55BB /* WorkshopWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */; };
 		C243127F07EACEB2CCB01544 /* CutPlanOptimizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */; };
 		C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */; };
+		C4593A2069D935BFAE0015BB /* ToastCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B245BD3F4E06008743C8CD /* ToastCenter.swift */; };
 		D1A396DD5CA5532496E0EDF1 /* WidgetSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */; };
 		DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567419A91AFD83464561320 /* AppModel.swift */; };
 		DB764F22BC7AAD02BFE3AB07 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD1366C665EF510EA7A526B /* MoreView.swift */; };
@@ -109,9 +111,11 @@
 		A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopApp.swift; sourceTree = "<group>"; };
 		AC6F48A0761D786BDEF5A74D /* ProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCard.swift; sourceTree = "<group>"; };
 		AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSALAuth.swift; sourceTree = "<group>"; };
+		AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonView.swift; sourceTree = "<group>"; };
 		AFD1366C665EF510EA7A526B /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
 		B88A2F381FC79622473BFD0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSupport.swift; sourceTree = "<group>"; };
+		C4B245BD3F4E06008743C8CD /* ToastCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastCenter.swift; sourceTree = "<group>"; };
 		CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperDetailView.swift; sourceTree = "<group>"; };
 		DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectFormView.swift; sourceTree = "<group>"; };
@@ -168,6 +172,7 @@
 				AC6F48A0761D786BDEF5A74D /* ProjectCard.swift */,
 				8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */,
 				F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */,
+				AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */,
 				E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */,
 				959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */,
 			);
@@ -203,6 +208,7 @@
 				F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */,
 				DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */,
 				148AA1B27DF3EF0320FE04EB /* Theme.swift */,
+				C4B245BD3F4E06008743C8CD /* ToastCenter.swift */,
 				A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */,
 			);
 			path = App;
@@ -402,9 +408,11 @@
 				13E376CE576876ACD81DA0E4 /* ShoppingListPDFExporter.swift in Sources */,
 				E3575F0652173805ABE21EAF /* ShoppingView.swift in Sources */,
 				EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */,
+				51BBEACC9AC3FD16E95314DE /* SkeletonView.swift in Sources */,
 				164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */,
 				FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */,
 				65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */,
+				C4593A2069D935BFAE0015BB /* ToastCenter.swift in Sources */,
 				823567341311CBD8EA6A6CE1 /* UploadProgressPanel.swift in Sources */,
 				5ACCC513CFDF1DE4C9A976AD /* WorkshopApp.swift in Sources */,
 			);
@@ -426,7 +434,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -451,7 +459,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -536,7 +544,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -561,7 +569,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

@@ -67,11 +67,11 @@ struct ProjectDetailView: View {
                         footer
                     }
                     .padding(.horizontal, 20)
-                    .contentColumn()
+                    .contentColumn(900)
                 }
                 .padding(.bottom, 40)
             } else if loading {
-                ProgressView().frame(maxWidth: .infinity).padding(.top, 80)
+                ProjectDetailSkeletonView()
             } else if let err = loadError {
                 errorState(err)
             }
@@ -106,6 +106,7 @@ struct ProjectDetailView: View {
             Button("Cancel", role: .cancel) {}
         }
         .task { await load() }
+        .refreshable { await load() }
         .fullScreenCover(item: $gallery) { ImageLightbox(preview: $0) }
         .sheet(item: $pdfURL) { PDFViewerSheet(url: $0.url) }
         .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
@@ -643,10 +644,13 @@ struct ProjectDetailView: View {
         do {
             _ = try await api.saveAsTemplate(projectId: d.id, name: d.title)
             Haptics.success()
+            ToastCenter.shared.success("Saved as template")
             savedAsTemplate = true
             try? await Task.sleep(nanoseconds: 3_000_000_000)
             savedAsTemplate = false
-        } catch { /* best-effort, matches the web */ }
+        } catch {
+            ToastCenter.shared.error("Could not save template")
+        }
     }
 
     private func deleteProject() async {
@@ -677,17 +681,22 @@ struct ProjectDetailView: View {
         do {
             _ = try await api.addFinishLogEntry(projectId: projectId, input)
             Haptics.success()
+            ToastCenter.shared.success("Finish entry saved")
             await load()
             finishForm = FinishFormState()
             showFinishForm = false
-        } catch { /* keep form open with entered data on failure */ }
+        } catch {
+            ToastCenter.shared.error("Could not save entry")
+        }
         finishSaving = false
     }
 
     private func deleteFinishEntry(_ e: FinishLogEntry) async {
         d?.finishLog.removeAll { $0.id == e.id }
-        do { try await api.deleteFinishLogEntry(id: e.id) }
-        catch { await load() }
+        do {
+            try await api.deleteFinishLogEntry(id: e.id)
+            ToastCenter.shared.success("Entry deleted")
+        } catch { await load() }
     }
 
     // MARK: Build log
@@ -706,16 +715,21 @@ struct ProjectDetailView: View {
             }
             d?.buildLog.insert(entry, at: 0)
             Haptics.success()
+            ToastCenter.shared.success("Build note saved")
             buildNote = ""; buildPhotoData = nil; buildPhotoItem = nil; buildUploadProgress = nil
             showBuildForm = false
-        } catch { /* keep form open on failure */ }
+        } catch {
+            ToastCenter.shared.error("Could not save note")
+        }
         buildSaving = false
     }
 
     private func deleteBuildEntry(_ e: BuildLogEntry) async {
         d?.buildLog.removeAll { $0.id == e.id }
-        do { try await api.deleteBuildLogEntry(id: e.id) }
-        catch { await load() }
+        do {
+            try await api.deleteBuildLogEntry(id: e.id)
+            ToastCenter.shared.success("Note deleted")
+        } catch { await load() }
     }
 
     // MARK: Linked projects
@@ -731,16 +745,21 @@ struct ProjectDetailView: View {
         do {
             try await api.addProjectLink(projectId: projectId, linkedProjectId: linkProjectId, relationship: linkRelationship)
             Haptics.success()
+            ToastCenter.shared.success("Project linked")
             await load()
             self.linkProjectId = nil; showLinkForm = false
-        } catch { /* keep form open on failure */ }
+        } catch {
+            ToastCenter.shared.error("Could not link project")
+        }
         linkSaving = false
     }
 
     private func removeLink(_ link: ProjectLink) async {
         d?.links.removeAll { $0.id == link.id }
-        do { try await api.removeProjectLink(id: link.id) }
-        catch { await load() }
+        do {
+            try await api.removeProjectLink(id: link.id)
+            ToastCenter.shared.success("Link removed")
+        } catch { await load() }
     }
 
     private static let ymdOutput: DateFormatter = {
