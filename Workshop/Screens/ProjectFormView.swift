@@ -54,12 +54,14 @@ struct ProjectFormView: View {
 
     private var editing: Bool { projectId != nil }
 
-    init(api: WorkshopAPI, projectId: Int?, onSaved: @escaping (Int) -> Void) {
+    init(api: WorkshopAPI, projectId: Int?, initialSourceUrl: String? = nil, onSaved: @escaping (Int) -> Void) {
         self.api = api; self.projectId = projectId; self.onSaved = onSaved
         _loading = State(initialValue: projectId != nil)
         if projectId == nil {
             let raw = UserDefaults.standard.string(forKey: SettingsKeys.defaultProjectStatus)
             _status = State(initialValue: ProjectStatus(rawValue: raw ?? "") ?? .idea)
+            // Prefilled from a "Add to Workshop" Safari/Pinterest share (Phase 7.5).
+            if let initialSourceUrl { _sourceUrl = State(initialValue: initialSourceUrl) }
         }
     }
 

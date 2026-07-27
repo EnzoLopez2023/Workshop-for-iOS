@@ -25,9 +25,12 @@ struct DashboardView: View {
     @State private var search = ""
     @State private var path: [DashboardRoute] = []
     @State private var showNewProject = false
+    @State private var newProjectSourceURL: String?
     @State private var showNewShaper = false
     @State private var cloningTemplateId: Int?
     @State private var confirmDeleteTemplateId: Int?
+    @State private var pendingShares: [PendingShareItem] = []
+    @State private var showPendingShares = false
 
     @AppStorage(SettingsKeys.dashboardSort) private var dashboardSortRaw = DashboardSort.updated.rawValue
     @AppStorage(SettingsKeys.showCompletedByDefault) private var showCompletedByDefault = false
@@ -39,6 +42,7 @@ struct DashboardView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     hero
+                    if !pendingShares.isEmpty { sharedItemsBanner.padding(.bottom, 20) }
                     if loading {
                         LazyVGrid(columns: grid, spacing: 18) {
                             ForEach(0..<6, id: \.self) { _ in ProjectCardSkeletonView() }
@@ -71,7 +75,8 @@ struct DashboardView: View {
                 }
             }
             .sheet(isPresented: $showNewProject) {
-                ProjectFormView(api: api, projectId: nil) { newId in
+                ProjectFormView(api: api, projectId: nil, initialSourceUrl: newProjectSourceURL) { newId in
+                    newProjectSourceURL = nil
                     Task { await load() }
                     path.append(.project(newId))
                 }
@@ -82,7 +87,17 @@ struct DashboardView: View {
                     path.append(.shaper(newId))
                 }
             }
+            .sheet(isPresented: $showPendingShares) {
+                PendingSharesView(api: api, items: pendingShares) { url in
+                    newProjectSourceURL = url
+                    showNewProject = true
+                } onHandled: { item in
+                    ShareQueue.remove(item)
+                    pendingShares.removeAll { $0.id == item.id }
+                }
+            }
             .task { await load() }
+            .task { pendingShares = ShareQueue.loadAll() }
             .refreshable { await load() }
             .onChange(of: model.pendingProjectId) { _, id in
                 if let id { path.append(.project(id)); model.pendingProjectId = nil }
@@ -91,6 +106,23 @@ struct DashboardView: View {
     }
 
     // MARK: Sections
+
+    /// Surfaces items the Share Extension queued (Phase 7.5) — "Add to
+    /// Workshop" from Safari/Photos/Pinterest — until the user reviews them.
+    private var sharedItemsBanner: some View {
+        Button { showPendingShares = true } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "square.and.arrow.down.on.square.fill").foregroundStyle(Theme.accent)
+                Text("\(pendingShares.count) item\(pendingShares.count == 1 ? "" : "s") shared with Workshop")
+                    .font(.system(size: 14, weight: .medium)).foregroundStyle(Theme.ink)
+                Spacer()
+                Text("Review").font(.system(size: 13, weight: .semibold)).foregroundStyle(Theme.accent)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 12)
+            .background(Theme.accentSoft, in: RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(.plain)
+    }
 
     private var hero: some View {
         VStack(alignment: .leading, spacing: 14) {
