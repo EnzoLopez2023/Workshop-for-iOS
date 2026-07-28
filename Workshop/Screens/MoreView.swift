@@ -51,6 +51,14 @@ struct MoreView: View {
                 }
 
                 Section {
+                    NavigationLink {
+                        InsightsView(api: api)
+                    } label: {
+                        Label("Insights", systemImage: "chart.bar.xaxis")
+                    }
+                }
+
+                Section {
                     Button {
                         Task { await exportBackup() }
                     } label: {
