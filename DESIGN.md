@@ -171,6 +171,38 @@ Rectangle().fill(Theme.flapShade)
 An explicit `.frame(width:height:)` or `.frame(height:)` before `.clipped()`
 works too. Every call site uses one of these two forms.
 
+## The app icon
+
+The icon is shared with the web app and **the web repo owns it**. Sources live in
+`workshop/app-store/` — `AppIcon.svg` (default), `AppIcon-dark.svg`, `AppIcon-tinted.svg`.
+Do not redraw it here; re-render from those.
+
+`AppIcon.appiconset` carries all three as single 1024×1024 renditions and lets the
+system downscale:
+
+| Rendition | Appearance | Treatment |
+|---|---|---|
+| `AppIcon-1024.png` | default | The mark as drawn |
+| `AppIcon-1024-dark.png` | `luminosity / dark` | Steel gradient pulled down; flap, `W` and lamp untouched |
+| `AppIcon-1024-tinted.png` | `luminosity / tinted` | Mapped to value alone, lamp forced to white so it stays brightest under any user tint |
+
+Three rules, all of which produce a silently wrong icon if broken: **full bleed** (iOS
+applies its own superellipse mask — rounding the artwork too leaves a light fringe),
+**no alpha channel** (App Store submission rejects it), and **opaque dark/tinted
+variants** rather than transparent ones, because the mark is a physical object and
+letting the system background show through the frame breaks it.
+
+`AccentColor` is `#C77800` — `accentDeep`, the same amber the board tints with.
+
+Verify by inspecting the compiled catalog rather than the Home Screen; SpringBoard
+does not re-render icons when `simctl ui … appearance` changes:
+
+```
+xcrun assetutil --info <build>/Workshop.app/Assets.car | grep -A2 AppIcon
+```
+
+Expect `UIAppearanceDark` and `ISAppearanceTintable` renditions alongside the default.
+
 ## Verifying a change
 
 There are no tests and no linter. Build with:
