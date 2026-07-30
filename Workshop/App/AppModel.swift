@@ -21,6 +21,11 @@ final class AppModel: ObservableObject {
     /// Set by a deep link (`workshop://project/<id>`); the projects list consumes
     /// it to push the detail, then clears it.
     @Published var pendingProjectId: Int?
+    #if DEBUG
+    /// Dev-only counterpart to `pendingProjectId`, for opening a Shaper project
+    /// straight from the environment. Never set outside DEBUG.
+    @Published var pendingShaperId: Int?
+    #endif
     /// Set alongside `pendingProjectId` when the link carries `?cutplan=1`
     /// (the Spotlight "Plan Cuts: …" entry); `ProjectDetailView` consumes it to
     /// auto-expand the Cut Plan Optimizer section, then clears it.
@@ -42,6 +47,18 @@ final class AppModel: ObservableObject {
         let env = ProcessInfo.processInfo.environment
         let base = Self.baseURL()
         self.appleAuth = AppleAuthService(baseURL: base)
+
+        // Dev/local: open straight onto a tab or project, so a screen can be
+        // inspected without driving the UI. Sits with the other dev env hooks.
+        #if DEBUG
+        if let tab = env["WORKSHOP_START_TAB"] { self.selectedTab = tab }
+        if let id = env["WORKSHOP_START_PROJECT"].flatMap(Int.init) {
+            self.pendingProjectId = id
+        }
+        if let id = env["WORKSHOP_START_SHAPER"].flatMap(Int.init) {
+            self.pendingShaperId = id
+        }
+        #endif
 
         // Dev/local: a pasted access token via env skips MSAL (used to exercise
         // the API without a signed build). Never set in production.

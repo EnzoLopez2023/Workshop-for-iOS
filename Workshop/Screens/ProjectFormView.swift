@@ -72,8 +72,8 @@ struct ProjectFormView: View {
                     ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let err = loadError {
                     VStack(spacing: 8) {
-                        Text("Couldn’t load project").font(.headline)
-                        Text(err).font(.footnote).foregroundStyle(.secondary)
+                        Text("Couldn’t load project").font(Theme.ui(17, .bold, relativeTo: .headline))
+                        Text(err).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
                         Button("Retry") { Task { await loadExisting() } }
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -84,17 +84,19 @@ struct ProjectFormView: View {
                 UploadProgressPanel(uploads: uploads) { id in uploads.removeAll { $0.id == id } }
                     .padding(16)
             }
-            .creamBackground()
+            .boardBackground()
             .navigationTitle(editing ? "Edit Project" : "New Project")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+                .boardToolbarItem()
                 ToolbarItem(placement: .confirmationAction) {
                     Button(saving ? "Saving…" : "Save") { Task { await save() } }
                         .disabled(saving || title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+                .boardToolbarItem()
             }
             .task { if editing { await loadExisting() } }
             .sheet(isPresented: Binding(
@@ -125,7 +127,7 @@ struct ProjectFormView: View {
                 }
                 .disabled(analyzing || sourceUrl.trimmingCharacters(in: .whitespaces).isEmpty)
                 if let analyzeError {
-                    Text(analyzeError).font(.footnote).foregroundStyle(Theme.fail)
+                    Text(analyzeError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                 }
                 TextField("OptiCutter Cut Plan URL", text: $cutPlanUrl)
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
@@ -155,7 +157,7 @@ struct ProjectFormView: View {
             if let projectId {
                 Section {
                     if sketches.isEmpty {
-                        Text("No sketches yet.").foregroundStyle(.secondary).font(.footnote)
+                        Text("No sketches yet.").foregroundStyle(.secondary).font(Theme.ui(13, .regular, relativeTo: .footnote))
                     } else {
                         imageStrip(sketches, kind: .sketch)
                     }
@@ -165,7 +167,7 @@ struct ProjectFormView: View {
                 }
                 Section {
                     if inspiration.isEmpty {
-                        Text("No inspiration images yet.").foregroundStyle(.secondary).font(.footnote)
+                        Text("No inspiration images yet.").foregroundStyle(.secondary).font(Theme.ui(13, .regular, relativeTo: .footnote))
                     } else {
                         imageStrip(inspiration, kind: .inspiration)
                     }
@@ -188,13 +190,13 @@ struct ProjectFormView: View {
             } else {
                 Section {
                     Text("Save the project first to add sketches, inspiration, and photos.")
-                        .font(.footnote).foregroundStyle(.secondary)
+                        .font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
                 }
             }
 
             Section {
                 if cutRows.isEmpty {
-                    Text("No parts yet.").foregroundStyle(.secondary).font(.footnote)
+                    Text("No parts yet.").foregroundStyle(.secondary).font(Theme.ui(13, .regular, relativeTo: .footnote))
                 }
                 ForEach($cutRows) { $row in
                     cutRowEditor(row: $row)
@@ -215,7 +217,7 @@ struct ProjectFormView: View {
 
             Section {
                 if matRows.isEmpty {
-                    Text("No materials yet.").foregroundStyle(.secondary).font(.footnote)
+                    Text("No materials yet.").foregroundStyle(.secondary).font(Theme.ui(13, .regular, relativeTo: .footnote))
                 }
                 ForEach($matRows) { $row in
                     materialRowEditor(row: $row)
@@ -236,7 +238,7 @@ struct ProjectFormView: View {
 
             if let saveError {
                 Section {
-                    Text(saveError).font(.footnote).foregroundStyle(Theme.fail)
+                    Text(saveError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                 }
             }
         }
@@ -250,7 +252,7 @@ struct ProjectFormView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 TextField("Part name", text: row.partName)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(Theme.ui(15, .medium))
                 Button {
                     scanningRowID = row.wrappedValue.id
                 } label: {
@@ -266,9 +268,9 @@ struct ProjectFormView: View {
                 TextField("Width", text: row.width).frame(maxWidth: .infinity)
                 TextField("Thick.", text: row.thickness).frame(maxWidth: .infinity)
             }
-            .font(.system(size: 13)).textFieldStyle(.roundedBorder)
+            .font(Theme.ui(13, .regular)).textFieldStyle(.roundedBorder)
             TextField("Material", text: row.material)
-                .font(.system(size: 13)).textFieldStyle(.roundedBorder)
+                .font(Theme.ui(13, .regular)).textFieldStyle(.roundedBorder)
         }
         .padding(.vertical, 4)
     }
@@ -280,16 +282,16 @@ struct ProjectFormView: View {
                     row.wrappedValue.purchased.toggle()
                 } label: {
                     Image(systemName: row.wrappedValue.purchased ? "checkmark.square.fill" : "square")
-                        .foregroundStyle(row.wrappedValue.purchased ? Theme.accent : Theme.subtle)
+                        .foregroundStyle(row.wrappedValue.purchased ? Theme.accent : Theme.muted)
                 }
                 .buttonStyle(.plain)
-                TextField("Name", text: row.name).font(.system(size: 15, weight: .medium))
+                TextField("Name", text: row.name).font(Theme.ui(15, .medium))
             }
             HStack(spacing: 8) {
                 TextField("Qty (e.g. 4 pcs, 1 quart)", text: row.qtyLabel)
                 TextField("Cost", value: row.cost, format: .number).keyboardType(.decimalPad).frame(width: 80)
             }
-            .font(.system(size: 13)).textFieldStyle(.roundedBorder)
+            .font(Theme.ui(13, .regular)).textFieldStyle(.roundedBorder)
         }
         .padding(.vertical, 4)
     }
@@ -302,19 +304,21 @@ struct ProjectFormView: View {
                     ZStack(alignment: .topTrailing) {
                         Group {
                             if img.isPDF {
-                                ZStack { Theme.creamSoft; Image(systemName: "doc.text.fill").foregroundStyle(Theme.accent) }
+                                ZStack { Theme.flapShade; Image(systemName: "doc.text.fill").foregroundStyle(Theme.accent) }
                             } else {
                                 AuthImage(url: url, contentMode: .fill)
                             }
                         }
-                        .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 10))
+                        .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 3))
 
                         Button { Task { await removeImage(img, kind: kind) } } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 10, weight: .bold)).foregroundStyle(.white)
                                 .frame(width: 20, height: 20)
-                                .background(.black.opacity(0.65), in: Circle())
+                                .background(.black.opacity(0.72),
+                                            in: RoundedRectangle(cornerRadius: Theme.rFlap))
                         }
+                        .buttonStyle(.plain)
                         .offset(x: 6, y: -6)
                     }
                 }
@@ -358,7 +362,7 @@ struct ProjectFormView: View {
                 }
             }
         }
-        .font(.system(size: 14))
+        .font(Theme.ui(14, .regular))
         .buttonStyle(.plain)
         .foregroundStyle(Theme.accent)
         .sheet(isPresented: kind == .sketch ? $showSketchCamera : $showInspirationCamera) {

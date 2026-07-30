@@ -39,28 +39,28 @@ struct UploadProgressPanel: View {
                 case .done:
                     Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
                 case .error:
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Theme.fail)
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Theme.red)
                 }
-                Text(u.name).font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
+                Text(u.name).font(Theme.ui(13, .medium)).foregroundStyle(Theme.ink)
                     .lineLimit(1).truncationMode(.middle)
                 Spacer()
                 if u.status != .uploading {
                     Button { onDismiss(u.id) } label: {
-                        Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.subtle)
+                        Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.muted)
                     }
                 }
             }
             if u.status == .uploading {
                 ProgressView(value: u.progress).tint(Theme.accent)
-                Text("\(Int(u.progress * 100))%").font(.system(size: 11)).foregroundStyle(Theme.subtle)
+                Text("\(Int(u.progress * 100))%").font(Theme.ui(11, .regular)).foregroundStyle(Theme.muted)
             }
             if u.status == .error, let error = u.error {
-                Text(error).font(.system(size: 12)).foregroundStyle(Theme.fail)
+                Text(error).font(Theme.ui(12, .regular)).foregroundStyle(Theme.red)
             }
         }
         .padding(12)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Theme.line, lineWidth: 1))
-        .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 4)
+        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .shadow(color: .black.opacity(0.24), radius: 7, x: 0, y: 3)
     }
 }

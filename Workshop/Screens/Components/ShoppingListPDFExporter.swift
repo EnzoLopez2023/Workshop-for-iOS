@@ -58,9 +58,9 @@ private struct ShoppingListPrintView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Shopping List").font(.system(size: 20, weight: .bold)).foregroundStyle(.black)
+                Text("Shopping List").font(Theme.ui(20, .bold)).foregroundStyle(.black)
                 Text("\(unpurchased.count) items · \(dateString)")
-                    .font(.system(size: 10)).foregroundStyle(Color(white: 0.5))
+                    .font(Theme.ui(10, .regular)).foregroundStyle(Color(white: 0.5))
             }
             .padding(.leading, 12)
             .overlay(alignment: .leading) {
@@ -70,7 +70,7 @@ private struct ShoppingListPrintView: View {
             ForEach(groups) { group in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(group.title.uppercased())
-                        .font(.system(size: 9, weight: .bold)).tracking(1.2)
+                        .font(Theme.ui(9, .bold)).tracking(1.2)
                         .foregroundStyle(Color(white: 0.5))
                         .padding(.bottom, 4)
                         .overlay(alignment: .bottom) {
@@ -78,21 +78,21 @@ private struct ShoppingListPrintView: View {
                         }
                     ForEach(group.items) { item in
                         HStack(spacing: 8) {
-                            RoundedRectangle(cornerRadius: 3)
+                            RoundedRectangle(cornerRadius: 2)
                                 .strokeBorder(Color(white: 0.55), lineWidth: 1.2)
-                                .background(RoundedRectangle(cornerRadius: 3).fill(item.purchased ? Color(red: 0.627, green: 0.322, blue: 0.176) : .clear))
+                                .background(RoundedRectangle(cornerRadius: 2).fill(item.purchased ? Color(red: 0.627, green: 0.322, blue: 0.176) : .clear))
                                 .frame(width: 12, height: 12)
                             Text(item.name)
-                                .font(.system(size: 11))
+                                .font(Theme.ui(11, .regular))
                                 .foregroundStyle(item.purchased ? Color(white: 0.5) : .black)
                                 .strikethrough(item.purchased)
                             if let q = item.qtyLabel, !q.isEmpty {
-                                Text(q).font(.system(size: 9)).foregroundStyle(Color(white: 0.5))
+                                Text(q).font(Theme.ui(9, .regular)).foregroundStyle(Color(white: 0.5))
                             }
                             Spacer()
                             if item.cost > 0 {
                                 Text(money(item.cost))
-                                    .font(.system(size: 11))
+                                    .font(Theme.ui(11, .regular))
                                     .foregroundStyle(item.purchased ? Color(white: 0.5) : .black)
                                     .strikethrough(item.purchased)
                             }
@@ -103,9 +103,9 @@ private struct ShoppingListPrintView: View {
 
             if total > 0 {
                 HStack {
-                    Text("Estimated Total").font(.system(size: 12, weight: .bold))
+                    Text("Estimated Total").font(Theme.ui(12, .bold))
                     Spacer()
-                    Text(money(total)).font(.system(size: 12, weight: .bold))
+                    Text(money(total)).font(Theme.ui(12, .bold))
                 }
                 .foregroundStyle(.black)
                 .padding(.top, 8)

@@ -61,12 +61,12 @@ private struct LegendPageView: View {
     let colorMap: [String: String]
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("LEGEND").font(.system(size: 14, weight: .bold)).tracking(1.5).foregroundStyle(.secondary)
+            Text("LEGEND").font(Theme.ui(14, .bold)).tracking(1.5).foregroundStyle(.secondary)
             FlowLayout(spacing: 14) {
                 ForEach(colorMap.sorted(by: { $0.key < $1.key }), id: \.key) { name, hex in
                     HStack(spacing: 6) {
-                        RoundedRectangle(cornerRadius: 3).fill(Color(hex: hex)).frame(width: 14, height: 14)
-                        Text(name).font(.system(size: 13)).foregroundStyle(.black)
+                        RoundedRectangle(cornerRadius: 2).fill(Color(hex: hex)).frame(width: 14, height: 14)
+                        Text(name).font(Theme.ui(13, .regular)).foregroundStyle(.black)
                     }
                 }
             }

@@ -38,19 +38,19 @@ struct ShoppingView: View {
                 .contentColumn(700)
                 .padding(20)
             }
-            .creamBackground()
+            .boardBackground()
             .navigationTitle("Shopping List")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
+                    BoardToolbarButton(symbol: "printer", label: "Print List", tone: .amber) {
                         if let url = ShoppingListPDFExporter.export(groups: grouped, allItems: items) {
                             exportURL = IdentifiableURL(url: url)
                         }
-                    } label: {
-                        Image(systemName: "printer")
                     }
                     .disabled(grouped.isEmpty)
                 }
+                .boardToolbarItem()
             }
             .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
             .task { await load() }
@@ -61,19 +61,23 @@ struct ShoppingView: View {
     // MARK: Header
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                Image(systemName: "cart.fill").font(.system(size: 18)).foregroundStyle(Theme.accent)
-                Text("Shopping List").font(Theme.display(24)).foregroundStyle(Theme.ink)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                Image(systemName: "cart.fill")
+                    .font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.onSteel)
+                    .frame(width: 36, height: 36)
+                    .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Shopping List").font(Theme.display(21)).foregroundStyle(Theme.ink)
+                    Text(summaryText)
+                        .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                }
             }
-            Text(summaryText)
-                .font(.system(size: 14)).foregroundStyle(Theme.subtle)
 
             Toggle(isOn: $showPurchased) {
-                Text("Show purchased").font(.system(size: 14)).foregroundStyle(Theme.inkSoft)
+                Text("Show purchased").font(Theme.ui(14, .regular)).foregroundStyle(Theme.ink)
             }
-            .tint(Theme.accent)
-            .padding(.top, 4)
+                .toggleStyle(.flap)
         }
     }
 
@@ -109,15 +113,15 @@ struct ShoppingView: View {
     private func projectGroup(_ group: ProjectGroup) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(group.title.uppercased())
-                .font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Theme.subtle)
+                .font(Theme.ui(11, .bold)).tracking(1.2).foregroundStyle(Theme.muted)
             VStack(spacing: 0) {
                 ForEach(Array(group.items.enumerated()), id: \.element.id) { i, item in
                     if i > 0 { Divider().overlay(Theme.line) }
                     itemRow(item)
                 }
             }
-            .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
@@ -125,19 +129,19 @@ struct ShoppingView: View {
         Button { Task { await togglePurchased(item) } } label: {
             HStack(spacing: 14) {
                 Image(systemName: item.purchased ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(item.purchased ? Theme.accent : Theme.subtle)
+                    .foregroundStyle(item.purchased ? Theme.accent : Theme.muted)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(item.name).font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(item.purchased ? Theme.subtle : Theme.ink)
+                    Text(item.name).font(Theme.ui(15, .medium))
+                        .foregroundStyle(item.purchased ? Theme.muted : Theme.ink)
                         .strikethrough(item.purchased)
                     if let q = item.qtyLabel, !q.isEmpty {
-                        Text(q).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                        Text(q).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                     }
                 }
                 Spacer()
                 if item.cost > 0 {
-                    Text(money(item.cost)).font(.system(size: 14).monospacedDigit())
-                        .foregroundStyle(item.purchased ? Theme.subtle : Theme.ink).strikethrough(item.purchased)
+                    Text(money(item.cost)).font(Theme.board(14, .regular))
+                        .foregroundStyle(item.purchased ? Theme.muted : Theme.ink).strikethrough(item.purchased)
                 }
             }
             .padding(.horizontal, 16).padding(.vertical, 13)
@@ -151,15 +155,15 @@ struct ShoppingView: View {
 
     private var emptyState: some View {
         Text(items.isEmpty ? "No materials across your projects yet." : "Everything has been purchased.")
-            .font(.system(size: 14)).foregroundStyle(Theme.subtle)
+            .font(Theme.ui(14, .regular)).foregroundStyle(Theme.muted)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.vertical, 50)
     }
 
     private func errorState(_ msg: String) -> some View {
         VStack(spacing: 8) {
-            Text("Couldn’t load shopping list").font(.headline).foregroundStyle(Theme.ink)
-            Text(msg).font(.footnote).foregroundStyle(Theme.subtle).multilineTextAlignment(.center)
+            Text("Couldn’t load shopping list").font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
+            Text(msg).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
             Button("Retry") { Task { await load() } }
         }.frame(maxWidth: .infinity).padding(.top, 60)
     }

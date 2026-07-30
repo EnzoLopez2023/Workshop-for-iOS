@@ -44,6 +44,10 @@ targets:
           - "**/*.template"
           - "**/Info.plist"
           - "**/*.entitlements"
+      - path: Fonts
+        excludes:
+          - "**/*.txt"
+          - "**/*.md"
     dependencies:
       - package: NintekKit
       - package: MSAL
@@ -59,6 +63,15 @@ targets:
       properties:
         CFBundleDisplayName: Workshop
         CFBundleIconName: AppIcon
+        # Concourse Board typefaces. An app extension cannot read fonts
+        # registered by its host app, so the widget target bundles them too.
+        UIAppFonts:
+          - MartianMonoBoard-Regular.ttf
+          - MartianMonoBoard-SemiBold.ttf
+          - MartianMonoBoard-Bold.ttf
+          - ArchivoWS-Regular.ttf
+          - ArchivoWS-Medium.ttf
+          - ArchivoWS-Bold.ttf
         # Version comes from the build settings below (single source of truth),
         # not literals — otherwise xcodegen defaults the plist back to 1.0 (1).
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
@@ -136,6 +149,10 @@ targets:
         excludes:
           - "**/Info.plist"
           - "**/*.entitlements"
+      - path: Fonts
+        excludes:
+          - "**/*.txt"
+          - "**/*.md"
     dependencies:
       - package: NintekKit
     info:
@@ -144,6 +161,15 @@ targets:
         CFBundleDisplayName: Workshop
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # Concourse Board typefaces. An app extension cannot read fonts
+        # registered by its host app, so the widget target bundles them too.
+        UIAppFonts:
+          - MartianMonoBoard-Regular.ttf
+          - MartianMonoBoard-SemiBold.ttf
+          - MartianMonoBoard-Bold.ttf
+          - ArchivoWS-Regular.ttf
+          - ArchivoWS-Medium.ttf
+          - ArchivoWS-Bold.ttf
         # Required for WidgetKit extensions — App Store validation (error 90348)
         # rejects the build without it. Must live here because xcodegen
         # regenerates this Info.plist from these properties (so a hand-edited
@@ -175,6 +201,10 @@ targets:
         excludes:
           - "**/Info.plist"
           - "**/*.entitlements"
+      # An extension can't read its host app's UIAppFonts, so it carries the
+      # two faces its confirmation card actually uses — not the whole family.
+      - path: Fonts/MartianMonoBoard-Bold.ttf
+      - path: Fonts/ArchivoWS-Regular.ttf
     dependencies:
       - package: NintekKit
     info:
@@ -183,6 +213,9 @@ targets:
         CFBundleDisplayName: Workshop
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UIAppFonts:
+          - MartianMonoBoard-Bold.ttf
+          - ArchivoWS-Regular.ttf
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController

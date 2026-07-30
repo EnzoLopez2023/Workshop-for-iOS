@@ -42,12 +42,12 @@ struct ToastOverlay: View {
             if let toast = center.current {
                 HStack(spacing: 10) {
                     Image(systemName: toast.style == .success ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                    Text(toast.message).font(.system(size: 14, weight: .medium))
+                    Text(toast.message).font(Theme.ui(14, .medium))
                 }
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16).padding(.vertical, 12)
-                .background(toast.style == .success ? Theme.accent : Theme.fail, in: Capsule())
-                .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+                .background(toast.style == .success ? Theme.accent : Theme.red, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                .shadow(color: .black.opacity(0.28), radius: 6, y: 3)
                 .padding(.top, 8)
                 .transition(.move(edge: .top).combined(with: .opacity))
                 .zIndex(1)

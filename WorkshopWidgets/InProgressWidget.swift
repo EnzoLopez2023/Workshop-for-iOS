@@ -11,10 +11,11 @@ struct InProgressWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SnapshotProvider()) { entry in
             InProgressWidgetView(snapshot: entry.snapshot)
-                .containerBackground(WSWidget.cream, for: .widget)
+                .containerBackground(WSWidget.flap, for: .widget)
         }
         .configurationDisplayName("In-Progress Projects")
         .description("Your active builds, one tap from their detail screen.")
+        .contentMarginsDisabled()
         .supportedFamilies([.systemMedium, .systemLarge])
     }
 }
@@ -23,55 +24,63 @@ private struct InProgressWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let snapshot: WorkshopWidgetSnapshot
 
-    private var maxRows: Int { family == .systemMedium ? 2 : 5 }
+    /// The board always shows a fixed number of slots; unfilled ones stay
+    /// blank, the way a departure board reads between arrivals.
+    private var maxRows: Int { family == .systemMedium ? 2 : 6 }
 
     var body: some View {
         if !snapshot.signedIn {
             SignedOutView()
         } else {
-            VStack(alignment: .leading, spacing: 10) {
-                header
-                if snapshot.inProgress.isEmpty {
-                    emptyState
-                } else {
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(snapshot.inProgress.prefix(maxRows)) { project in
-                            row(project)
+            VStack(spacing: 0) {
+                WSHeader(title: "In Progress", trailing: wsPad(snapshot.inProgressCount))
+                let shown = Array(snapshot.inProgress.prefix(maxRows))
+                VStack(spacing: 0) {
+                    ForEach(Array(shown.enumerated()), id: \.element.id) { i, project in
+                        if i > 0 { Rectangle().fill(WSWidget.line).frame(height: 1) }
+                        row(project).frame(maxHeight: .infinity).background(WSWidget.flap)
+                    }
+                    ForEach(shown.count..<maxRows, id: \.self) { i in
+                        if i > 0 || !shown.isEmpty {
+                            Rectangle().fill(WSWidget.line).frame(height: 1)
                         }
+                        emptySlot(first: shown.isEmpty && i == 0)
                     }
                 }
-                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(WSWidget.flapShade)
         }
     }
 
-    private var header: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "hammer.fill").font(.footnote).foregroundStyle(WSWidget.accent)
-            Text("In Progress").font(.headline).foregroundStyle(WSWidget.accent)
-            Spacer()
-            Text("\(snapshot.inProgressCount)")
-                .font(.caption2.weight(.bold)).foregroundStyle(WSWidget.subtle)
+    /// An unfilled slot. The first one on an empty board says so; the rest
+    /// stay blank shaded board.
+    private func emptySlot(first: Bool) -> some View {
+        HStack {
+            if first { WSCaps("No active builds", size: 9) }
+            Spacer(minLength: 0)
         }
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var emptyState: some View {
-        Text("No active builds right now.")
-            .font(.caption).foregroundStyle(WSWidget.subtle)
-    }
-
+    /// A departure row: title in tracked caps, parts on flaps at the platform
+    /// end — the same grammar as the app's project cards.
     private func row(_ project: WorkshopWidgetSnapshot.InProgressProject) -> some View {
         Link(destination: WSDeepLink.project(project.id)) {
             HStack(spacing: 8) {
-                Circle().fill(WSWidget.accent).frame(width: 8, height: 8)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(project.title).font(.caption.weight(.medium)).foregroundStyle(WSWidget.ink).lineLimit(1)
-                    Text("\(project.partsCount) part\(project.partsCount == 1 ? "" : "s") · \(project.difficulty)")
-                        .font(.system(size: 10)).foregroundStyle(WSWidget.subtle).lineLimit(1)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(project.title.uppercased())
+                        .font(WSWidget.board(11, .bold)).tracking(0.6)
+                        .foregroundStyle(WSWidget.ink).lineLimit(1).minimumScaleFactor(0.7)
+                    Text(project.difficulty)
+                        .font(WSWidget.ui(10)).foregroundStyle(WSWidget.subtle).lineLimit(1)
                 }
-                Spacer(minLength: 0)
+                Spacer(minLength: 4)
+                WSFlapNumber(value: wsPad(project.partsCount), size: 10)
             }
+            .padding(.horizontal, 10).padding(.vertical, 8)
         }
     }
 }
+

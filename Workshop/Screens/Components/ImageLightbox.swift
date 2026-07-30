@@ -32,10 +32,11 @@ struct ImageLightbox: View {
 
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
-                    .font(.headline).foregroundStyle(.white)
+                    .font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(.white)
                     .frame(width: 40, height: 40)
                     .background(.white.opacity(0.15), in: Circle())
             }
+            .buttonStyle(.plain)
             .padding(20)
         }
     }

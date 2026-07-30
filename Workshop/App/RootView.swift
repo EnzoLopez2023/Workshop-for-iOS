@@ -55,6 +55,7 @@ struct RootView: View {
             }
         }
         .overlay(alignment: .top) { ToastOverlay() }
+        .tint(Theme.accentDeep)
         .id(theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
         .dynamicTypeSize(fontSizeLarge ? .xLarge : .large)
@@ -75,7 +76,7 @@ struct RootView: View {
                     .tag(dest.rawValue)
             }
         }
-        .tint(Theme.accent)
+        .tint(Theme.accentDeep)
     }
 
     // MARK: iPad / large-iPhone-landscape — overlay sidebar split view
@@ -98,7 +99,7 @@ struct RootView: View {
                 .id(current)   // reset the detail's nav stack when switching sections
         }
         .navigationSplitViewStyle(.prominentDetail)
-        .tint(Theme.accent)
+        .tint(Theme.accentDeep)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 
@@ -106,15 +107,15 @@ struct RootView: View {
     private var sidebarHeader: some View {
         HStack(spacing: 10) {
             Image(systemName: "hammer.fill")
-                .font(.title3.weight(.bold))
+                .font(Theme.ui(20, .bold, relativeTo: .title3))
                 .foregroundStyle(.white)
                 .frame(width: 38, height: 38)
-                .background(Theme.accent, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            Text("Workshop").font(.title2.weight(.bold)).foregroundStyle(Theme.ink)
+                .background(Theme.accent, in: RoundedRectangle(cornerRadius: 3, style: .continuous))
+            Text("Workshop").font(Theme.ui(22, .bold, relativeTo: .title2)).foregroundStyle(Theme.ink)
             Spacer()
         }
         .padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 10)
-        .background(Theme.cream)
+        .background(Theme.concourse)
     }
 
     /// Footer pinned below the sidebar list — signed-in identity + version.
@@ -122,15 +123,15 @@ struct RootView: View {
         VStack(alignment: .leading, spacing: 2) {
             Divider().overlay(Theme.line)
             if let name = model.userName {
-                Text(name).font(.subheadline.weight(.semibold)).foregroundStyle(Theme.ink).lineLimit(1)
+                Text(name).font(Theme.ui(15, .medium, relativeTo: .subheadline)).foregroundStyle(Theme.ink).lineLimit(1)
                     .padding(.top, 10)
             }
-            Text(AppInfo.version).font(.caption2).foregroundStyle(Theme.subtle)
+            Text(AppInfo.version).font(Theme.ui(11, .regular, relativeTo: .caption2)).foregroundStyle(Theme.muted)
                 .padding(.bottom, 12).padding(.top, model.userName == nil ? 10 : 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
-        .background(Theme.cream)
+        .background(Theme.concourse)
     }
 
     // MARK: Shared

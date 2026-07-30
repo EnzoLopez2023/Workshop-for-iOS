@@ -54,24 +54,26 @@ struct ShaperProjectFormView: View {
                     ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let err = loadError {
                     VStack(spacing: 8) {
-                        Text("Couldn’t load project").font(.headline)
-                        Text(err).font(.footnote).foregroundStyle(.secondary)
+                        Text("Couldn’t load project").font(Theme.ui(17, .bold, relativeTo: .headline))
+                        Text(err).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
                         Button("Retry") { Task { await loadExisting() } }
                     }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     form
                 }
             }
-            .creamBackground()
+            .boardBackground()
             .navigationTitle(editing ? "Edit Shaper Project" : "New Shaper Project")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                .boardToolbarItem()
                 ToolbarItem(placement: .confirmationAction) {
                     Button(saving ? "Saving…" : "Save") { Task { await save() } }
                         .disabled(saving || title.trimmingCharacters(in: .whitespaces).isEmpty
                                  || shaperUrl.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+                .boardToolbarItem()
             }
             .task { if editing { await loadExisting() } }
             .sheet(isPresented: Binding(
@@ -95,7 +97,7 @@ struct ShaperProjectFormView: View {
                 }
                 .disabled(analyzing || shaperUrl.trimmingCharacters(in: .whitespaces).isEmpty)
                 if let analyzeError {
-                    Text(analyzeError).font(.footnote).foregroundStyle(Theme.fail)
+                    Text(analyzeError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                 }
             } header: {
                 Text("Shaper Hub URL")
@@ -117,10 +119,10 @@ struct ShaperProjectFormView: View {
                 }
                 if !queuedPhotos.isEmpty {
                     Text("\(queuedPhotos.count) photo\(queuedPhotos.count == 1 ? "" : "s") queued — will upload on save")
-                        .font(.footnote).foregroundStyle(.secondary)
+                        .font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
                 }
                 if let uploadStatus {
-                    Text(uploadStatus).font(.footnote).foregroundStyle(.secondary)
+                    Text(uploadStatus).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
                 }
                 PhotosPicker(selection: $pickerItems, matching: .images) {
                     Label("Upload Photos", systemImage: "photo.badge.plus")
@@ -135,10 +137,10 @@ struct ShaperProjectFormView: View {
                     AsyncImage(url: url) { image in
                         image.resizable().aspectRatio(contentMode: .fill)
                     } placeholder: {
-                        Theme.creamSoft
+                        Theme.flapShade
                     }
                     .frame(height: 160).frame(maxWidth: .infinity).clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
                 }
             } header: {
                 Text("Photo URL")
@@ -166,13 +168,13 @@ struct ShaperProjectFormView: View {
 
             Section {
                 if cutRows.isEmpty {
-                    Text("No cut-list rows yet.").foregroundStyle(.secondary).font(.footnote)
+                    Text("No cut-list rows yet.").foregroundStyle(.secondary).font(Theme.ui(13, .regular, relativeTo: .footnote))
                 }
                 ForEach($cutRows) { $row in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             TextField("Part name (e.g. Side Panel)", text: $row.partName)
-                                .font(.system(size: 15, weight: .medium))
+                                .font(Theme.ui(15, .medium))
                             Button {
                                 scanningRowID = row.id
                             } label: {
@@ -187,9 +189,9 @@ struct ShaperProjectFormView: View {
                             TextField("Width", text: $row.width).frame(maxWidth: .infinity)
                             TextField("Thick.", text: $row.thickness).frame(maxWidth: .infinity)
                         }
-                        .font(.system(size: 13)).textFieldStyle(.roundedBorder)
+                        .font(Theme.ui(13, .regular)).textFieldStyle(.roundedBorder)
                         TextField("Material", text: $row.material)
-                            .font(.system(size: 13)).textFieldStyle(.roundedBorder)
+                            .font(Theme.ui(13, .regular)).textFieldStyle(.roundedBorder)
                     }
                     .padding(.vertical, 4)
                 }
@@ -210,7 +212,7 @@ struct ShaperProjectFormView: View {
 
             if let saveError {
                 Section {
-                    Text(saveError).font(.footnote).foregroundStyle(Theme.fail)
+                    Text(saveError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                 }
             }
         }
@@ -224,7 +226,7 @@ struct ShaperProjectFormView: View {
                 ForEach(existingImages) { img in
                     if let key = model.userKey {
                         AuthImage(url: api.imageURL(imageId: img.id, userKey: key), contentMode: .fill)
-                            .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 10))
+                            .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 3))
                     }
                 }
             }
