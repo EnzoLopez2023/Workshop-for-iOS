@@ -55,6 +55,7 @@ struct RootView: View {
             }
         }
         .overlay(alignment: .top) { ToastOverlay() }
+        .tint(Theme.accentDeep)
         .id(theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
         .dynamicTypeSize(fontSizeLarge ? .xLarge : .large)
@@ -75,7 +76,7 @@ struct RootView: View {
                     .tag(dest.rawValue)
             }
         }
-        .tint(Theme.accent)
+        .tint(Theme.accentDeep)
     }
 
     // MARK: iPad / large-iPhone-landscape — overlay sidebar split view
@@ -98,7 +99,7 @@ struct RootView: View {
                 .id(current)   // reset the detail's nav stack when switching sections
         }
         .navigationSplitViewStyle(.prominentDetail)
-        .tint(Theme.accent)
+        .tint(Theme.accentDeep)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 

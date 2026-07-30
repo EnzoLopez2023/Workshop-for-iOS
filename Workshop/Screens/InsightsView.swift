@@ -36,6 +36,7 @@ struct InsightsView: View {
             }
             .boardBackground()
             .navigationTitle("Insights")
+            .navigationBarTitleDisplayMode(.inline)
             .task { await load() }
             .refreshable { await load() }
         }

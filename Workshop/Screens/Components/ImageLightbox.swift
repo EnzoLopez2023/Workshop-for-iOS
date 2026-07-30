@@ -36,6 +36,7 @@ struct ImageLightbox: View {
                     .frame(width: 40, height: 40)
                     .background(.white.opacity(0.15), in: Circle())
             }
+            .buttonStyle(.plain)
             .padding(20)
         }
     }

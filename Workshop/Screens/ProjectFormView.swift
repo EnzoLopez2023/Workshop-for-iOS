@@ -91,10 +91,12 @@ struct ProjectFormView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+                .boardToolbarItem()
                 ToolbarItem(placement: .confirmationAction) {
                     Button(saving ? "Saving…" : "Save") { Task { await save() } }
                         .disabled(saving || title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+                .boardToolbarItem()
             }
             .task { if editing { await loadExisting() } }
             .sheet(isPresented: Binding(
@@ -313,8 +315,10 @@ struct ProjectFormView: View {
                             Image(systemName: "xmark")
                                 .font(.system(size: 10, weight: .bold)).foregroundStyle(.white)
                                 .frame(width: 20, height: 20)
-                                .background(.black.opacity(0.65), in: Circle())
+                                .background(.black.opacity(0.72),
+                                            in: RoundedRectangle(cornerRadius: Theme.rFlap))
                         }
+                        .buttonStyle(.plain)
                         .offset(x: 6, y: -6)
                     }
                 }

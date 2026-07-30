@@ -8,7 +8,7 @@ enum DashboardRoute: Hashable {
     case shaper(Int)
 }
 
-/// The home screen — full parity with the web `Dashboard.tsx`: hero, stats strip,
+/// The home screen — full parity with the web `Dashboard.tsx`: the shop board,
 /// search + status filter, project grid, Shaper Hub section, templates, and DIY
 /// links. Templates' clone/delete and the "Add project" actions are writes,
 /// deferred to Phase 3. Details push via NavigationLink.
@@ -62,10 +62,16 @@ struct DashboardView: View {
             }
             .boardBackground()
             .navigationTitle("Dashboard")
+            // The shop board *is* this screen's header — a large system title
+            // above it would be a second, emptier one.
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showNewProject = true } label: { Image(systemName: "plus") }
+                    BoardToolbarButton(symbol: "plus", label: "New Project", tone: .amber) {
+                        showNewProject = true
+                    }
                 }
+                .boardToolbarItem()
             }
             .navigationDestination(for: DashboardRoute.self) { route in
                 switch route {
@@ -98,13 +104,26 @@ struct DashboardView: View {
             .task { await load() }
             .task { pendingShares = ShareQueue.loadAll() }
             .refreshable { await load() }
-            .onChange(of: model.pendingProjectId) { _, id in
-                if let id { path.append(.project(id)); model.pendingProjectId = nil }
-            }
+            .onAppear { consumePendingProject() }
+            .onChange(of: model.pendingProjectId) { _, _ in consumePendingProject() }
         }
     }
 
     // MARK: Sections
+
+    /// `onChange` alone drops a deep link that arrives during a cold launch,
+    /// because the id is already set before this view is first evaluated.
+    private func consumePendingProject() {
+        #if DEBUG
+        if let sid = model.pendingShaperId {
+            model.pendingShaperId = nil
+            path.append(.shaper(sid))
+        }
+        #endif
+        guard let id = model.pendingProjectId else { return }
+        model.pendingProjectId = nil
+        path.append(.project(id))
+    }
 
     /// Surfaces items the Share Extension queued (Phase 7.5) — "Add to
     /// Workshop" from Safari/Photos/Pinterest — until the user reviews them.
@@ -144,13 +163,13 @@ struct DashboardView: View {
             .background(Theme.steelFace)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 148), spacing: 1)], spacing: 1) {
-                DashCell(label: "In Progress", value: "\(inProgressCount)",
-                         sub: "active builds", cells: 2, tone: .amber)
-                DashCell(label: "In Queue", value: "\(queuedCount)",
-                         sub: "ideas & plans", cells: 2)
-                DashCell(label: "Total Parts", value: "\(totalParts)",
-                         sub: "across active projects", cells: 3)
-                DashCell(label: "Est. Value", value: "$\(estValue)",
+                DashCell(label: "In Progress", value: pad(inProgressCount, 2),
+                         sub: "active builds", tone: .amber)
+                DashCell(label: "In Queue", value: pad(queuedCount, 2),
+                         sub: "ideas & plans")
+                DashCell(label: "Total Parts", value: pad(totalParts, 3),
+                         sub: "across active projects")
+                DashCell(label: "Est. Value", value: "$" + estValue.formatted(.number.grouping(.automatic)),
                          sub: "in materials", tone: .green)
             }
             .background(Theme.line)
@@ -160,6 +179,12 @@ struct DashboardView: View {
             RoundedRectangle(cornerRadius: Theme.rPanel)
                 .strokeBorder(Theme.line, lineWidth: 1)
         )
+    }
+
+    /// Board figures are zero-padded to a fixed width, so a cell never shows a
+    /// blank flap where a digit belongs and the row never changes width.
+    private func pad(_ value: Int, _ width: Int) -> String {
+        String(format: "%0\(width)d", value)
     }
 
     private var inProgressCount: Int { projects.filter { $0.status == .inProgress }.count }
@@ -213,12 +238,12 @@ struct DashboardView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-                .overlay(
-                    RoundedRectangle(cornerRadius: Theme.rPanel)
-                        .strokeBorder(Theme.line, lineWidth: 1)
-                )
             }
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.rPanel)
+                    .strokeBorder(Theme.line, lineWidth: 1)
+            )
         }
     }
 
@@ -449,13 +474,12 @@ private struct DashCell: View {
     let label: String
     let value: String
     let sub: String
-    var cells: Int?
     var tone: SplitFlap.Tone = .letter
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             BoardCaps(label)
-            SplitFlap(value, cells: cells, label: "\(label): \(value)", size: 21, tone: tone)
+            SplitFlap(value, label: "\(label): \(value)", size: 21, tone: tone)
             Text(sub)
                 .font(Theme.ui(10))
                 .foregroundStyle(Theme.muted)

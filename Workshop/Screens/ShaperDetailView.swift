@@ -56,13 +56,15 @@ struct ShaperDetailView: View {
         .toolbar {
             if p != nil {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showEditForm = true } label: { Image(systemName: "pencil") }
+                    BoardToolbarButton(symbol: "pencil", label: "Edit", tone: .amber) { showEditForm = true }
                 }
+                .boardToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .destructive) { confirmDelete = true } label: {
-                        Image(systemName: "trash")
+                    BoardToolbarButton(symbol: "trash", label: "Delete", tone: .danger) {
+                        confirmDelete = true
                     }
                 }
+                .boardToolbarItem()
             }
         }
         .confirmationDialog("Delete this project?", isPresented: $confirmDelete, titleVisibility: .visible) {

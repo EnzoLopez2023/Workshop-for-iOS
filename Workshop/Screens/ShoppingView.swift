@@ -40,17 +40,17 @@ struct ShoppingView: View {
             }
             .boardBackground()
             .navigationTitle("Shopping List")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
+                    BoardToolbarButton(symbol: "printer", label: "Print List", tone: .amber) {
                         if let url = ShoppingListPDFExporter.export(groups: grouped, allItems: items) {
                             exportURL = IdentifiableURL(url: url)
                         }
-                    } label: {
-                        Image(systemName: "printer")
                     }
                     .disabled(grouped.isEmpty)
                 }
+                .boardToolbarItem()
             }
             .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
             .task { await load() }
@@ -61,19 +61,23 @@ struct ShoppingView: View {
     // MARK: Header
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                Image(systemName: "cart.fill").font(.system(size: 18)).foregroundStyle(Theme.accent)
-                Text("Shopping List").font(Theme.display(24)).foregroundStyle(Theme.ink)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                Image(systemName: "cart.fill")
+                    .font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.onSteel)
+                    .frame(width: 36, height: 36)
+                    .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Shopping List").font(Theme.display(21)).foregroundStyle(Theme.ink)
+                    Text(summaryText)
+                        .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                }
             }
-            Text(summaryText)
-                .font(Theme.ui(14, .regular)).foregroundStyle(Theme.muted)
 
             Toggle(isOn: $showPurchased) {
                 Text("Show purchased").font(Theme.ui(14, .regular)).foregroundStyle(Theme.ink)
             }
-            .tint(Theme.accent)
-            .padding(.top, 4)
+                .toggleStyle(.flap)
         }
     }
 

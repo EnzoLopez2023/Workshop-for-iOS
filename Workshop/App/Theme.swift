@@ -164,7 +164,7 @@ enum Theme {
             item.normal.titleTextAttributes = [.font: tabFont, .foregroundColor: mutedColor, .kern: 0.6]
             item.normal.iconColor = mutedColor
             item.selected.titleTextAttributes = [.font: tabFont, .foregroundColor: palette.ink.uiColor, .kern: 0.6]
-            item.selected.iconColor = palette.accent.uiColor
+            item.selected.iconColor = palette.accentDeep.uiColor
         }
         UITabBar.appearance().standardAppearance = tab
         UITabBar.appearance().scrollEdgeAppearance = tab
@@ -172,6 +172,54 @@ enum Theme {
 }
 
 // MARK: - Shared components
+
+/// A toolbar control as a flap on the steel band: square, flat, and either the
+/// amber lamp (the screen's one primary action) or a recessed steel plate.
+struct BoardToolbarButton: View {
+    let symbol: String
+    let label: String
+    var tone: Tone = .steel
+    let action: () -> Void
+
+    enum Tone { case amber, steel, danger }
+
+    private var fill: Color {
+        switch tone {
+        case .amber:  Theme.accentFill
+        case .steel:  Theme.steelLight
+        case .danger: Theme.redFill
+        }
+    }
+
+    private var glyph: Color {
+        tone == .amber ? Theme.steelDark : Theme.onSteel
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(glyph)
+                .frame(width: 30, height: 30)
+                .background(fill, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+}
+
+extension ToolbarContent {
+    /// iOS 26 gives toolbar items a glass capsule. The board has no capsules and
+    /// its buttons carry their own flap background, so the shared one is hidden
+    /// where the OS offers the choice.
+    @ToolbarContentBuilder func boardToolbarItem() -> some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            self.sharedBackgroundVisibility(.hidden)
+        } else {
+            self
+        }
+    }
+}
 
 extension View {
     /// A flap card — flat bone face, hairline frame, no lift. Real flaps sit in
@@ -343,4 +391,50 @@ enum Appearance: String, CaseIterable, Identifiable {
     var scheme: ColorScheme? {
         switch self { case .light: .light; case .dark: .dark; case .system: nil }
     }
+}
+
+/// A toggle rendered as a two-cell flap module: the switch *is* a flap that
+/// turns over between OFF and ON, split line and all. The system capsule has no
+/// place on a board — and a switch is exactly the thing a real Solari unit does.
+struct FlapToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            Spacer(minLength: 12)
+            Button {
+                configuration.isOn.toggle()
+            } label: {
+                ZStack {
+                    RoundedRectangle(cornerRadius: Theme.rFlap)
+                        .fill(Theme.flapFaceGradient)
+                    // The split line every flap on this board carries.
+                    Rectangle()
+                        .fill(Color.black.opacity(0.55))
+                        .frame(height: 1)
+                    Text(configuration.isOn ? "ON" : "OFF")
+                        .font(Theme.board(11, .bold))
+                        .tracking(1.2)
+                        .foregroundStyle(configuration.isOn ? Theme.accentFill : Theme.flapLetter.opacity(0.55))
+                        .contentTransition(.identity)
+                        .id(configuration.isOn)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .top).combined(with: .opacity),
+                            removal: .move(edge: .bottom).combined(with: .opacity)))
+                }
+                .frame(width: 52, height: 30)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rFlap))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rFlap)
+                        .stroke(Color.black.opacity(0.35), lineWidth: 1)
+                )
+                .animation(.easeIn(duration: 0.11), value: configuration.isOn)
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(configuration.isOn ? [.isButton, .isSelected] : .isButton)
+        }
+    }
+}
+
+extension ToggleStyle where Self == FlapToggleStyle {
+    static var flap: FlapToggleStyle { FlapToggleStyle() }
 }

@@ -55,7 +55,7 @@ struct ProjectDetailView: View {
                 VStack(spacing: 0) {
                     hero(d)
                     VStack(alignment: .leading, spacing: 0) {
-                        metaCard(d).padding(.top, heroImage(d) != nil ? -70 : 16)
+                        metaCard(d).padding(.top, heroImage(d) != nil ? -70 : 20)
                         if !d.woodTypes.isEmpty || !d.toolsNeeded.isEmpty { chips(d).padding(.top, 28) }
                         sketchesSection(d)
                         inspirationSection(d)
@@ -83,8 +83,9 @@ struct ProjectDetailView: View {
         .toolbar {
             if d != nil {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showEditForm = true } label: { Image(systemName: "pencil") }
+                    BoardToolbarButton(symbol: "pencil", label: "Edit", tone: .amber) { showEditForm = true }
                 }
+                .boardToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button {
@@ -97,9 +98,15 @@ struct ProjectDetailView: View {
                             Label("Delete", systemImage: "trash")
                         }
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(Theme.onSteel)
+                            .frame(width: 30, height: 30)
+                            .background(Theme.steelLight,
+                                        in: RoundedRectangle(cornerRadius: Theme.rFlap))
                     }
                 }
+                .boardToolbarItem()
             }
         }
         .confirmationDialog("Delete this project?", isPresented: $confirmDelete, titleVisibility: .visible) {
@@ -128,9 +135,9 @@ struct ProjectDetailView: View {
                     LinearGradient(colors: [.clear, Theme.concourse.opacity(0.85)],
                                    startPoint: .top, endPoint: .bottom)
                 )
-        } else {
-            Theme.flapShade.frame(height: 60)
         }
+        // No placeholder slab when there is no hero image — an empty band of a
+        // second surface colour reads as a loading failure, not as design.
     }
 
     private func metaCard(_ d: WSProjectDetail) -> some View {
@@ -816,8 +823,8 @@ private struct SectionBox<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
-                if let icon { Image(systemName: icon).font(.system(size: 14)).foregroundStyle(Theme.muted) }
-                Text(title).font(Theme.ui(18, .bold)).foregroundStyle(Theme.ink)
+                if let icon { Image(systemName: icon).font(.system(size: 12)).foregroundStyle(Theme.muted) }
+                BoardCaps(title, size: 13)
                 Spacer()
                 if let trailing { trailing }
             }
@@ -831,13 +838,15 @@ private struct SectionBox<Content: View>: View {
 private struct Stat: View {
     let icon: String, label: String, value: String
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(spacing: 4) {
-                Image(systemName: icon).font(.system(size: 11))
-                Text(label).font(Theme.ui(10, .medium)).tracking(0.4)
-            }
-            .foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.7)
-            Text(value).font(Theme.ui(17, .bold)).foregroundStyle(Theme.ink)
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label.uppercased())
+                .font(Theme.board(9.5, .semibold, relativeTo: .caption2))
+                .tracking(1.0)
+                .foregroundStyle(Theme.muted)
+                .lineLimit(1).minimumScaleFactor(0.7)
+            Text(value)
+                .font(Theme.board(15, .bold, relativeTo: .headline))
+                .foregroundStyle(Theme.ink)
                 .lineLimit(1).minimumScaleFactor(0.6)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

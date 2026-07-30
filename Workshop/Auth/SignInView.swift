@@ -1,7 +1,8 @@
 import SwiftUI
 import AuthenticationServices
 
-/// Sign-in gate. Mirrors the web landing's warm editorial look and offers
+/// Sign-in gate. Carries the Concourse Board world — a steel plate above live
+/// flaps — and offers
 /// "Sign in with Microsoft" (Entra) and "Sign in with Apple" — both resolve to
 /// the same backend per-user data model. See AppleAuth.swift. There is no demo
 /// mode in native.
@@ -12,8 +13,8 @@ struct SignInView: View {
     var body: some View {
         ZStack {
             Theme.concourse.ignoresSafeArea()
-            VStack(spacing: 22) {
-                Spacer()
+            VStack(spacing: 18) {
+                Spacer(minLength: 0)
 
                 // The board announces itself the way a concourse board does —
                 // a steel plate above the flaps, not a logo above a tagline.
@@ -37,13 +38,23 @@ struct SignInView: View {
                     .background(Theme.steelFace)
 
                     VStack(spacing: 10) {
-                        SplitFlap("IN PROGRESS", size: 17, tone: .amber)
-                        SplitFlap("PLANNING", size: 17)
-                        SplitFlap("COMPLETE", size: 17, tone: .green)
+                        SplitFlap("IN PROGRESS", size: 19, tone: .amber)
+                        SplitFlap("PLANNING", size: 19)
+                        SplitFlap("COMPLETE", size: 19, tone: .green)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 22)
                     .background(Theme.flapShade)
+
+                    Text("Every project, from first cut to final coat.")
+                        .font(Theme.ui(13))
+                        .foregroundStyle(Theme.onSteel.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 11)
+                        .background(Theme.steelFace)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
                 .overlay(
@@ -52,13 +63,6 @@ struct SignInView: View {
                 )
                 .padding(.horizontal, 28)
 
-                Text("Every project, from first cut to final coat.")
-                    .font(Theme.ui(15))
-                    .foregroundStyle(Theme.muted)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 36)
-
                 if let err = model.authError {
                     Text(err)
                         .font(Theme.ui(13))
@@ -66,22 +70,26 @@ struct SignInView: View {
                         .multilineTextAlignment(.center).padding(.horizontal, 32)
                 }
 
-                Spacer()
+                Spacer(minLength: 24)
+                Spacer(minLength: 0)
                 VStack(spacing: 12) {
                     Button {
                         Task { await signIn() }
                     } label: {
                         HStack(spacing: 8) {
-                            if signingIn { ProgressView().tint(Theme.onSteel) }
+                            if signingIn { ProgressView().tint(Theme.steelDark) }
                             Text(signingIn ? "SIGNING IN…" : "SIGN IN WITH MICROSOFT")
                                 .font(Theme.board(12, .bold, relativeTo: .callout))
                                 .tracking(1.1)
                         }
-                        .foregroundStyle(Theme.onSteel)
+                        .foregroundStyle(Theme.steelDark)
                         .frame(maxWidth: .infinity).padding(.vertical, 15)
-                        .background(Theme.steelFace)
+                        .background(Theme.accentFill)
                         .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
                     }
+                    // Without an explicit style the system dims the whole label
+                    // in dark mode, which mutes the one amber action on screen.
+                    .buttonStyle(.plain)
                     .disabled(signingIn)
 
                     SignInWithAppleButton(.signIn) { request in

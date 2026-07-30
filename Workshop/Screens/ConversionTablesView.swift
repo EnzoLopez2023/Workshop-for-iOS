@@ -31,6 +31,7 @@ struct ConversionTablesView: View {
             }
             .boardBackground()
             .navigationTitle("Tables")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
@@ -89,8 +90,8 @@ struct ConversionTablesView: View {
     private func unitButton(_ label: String, _ u: ConvUnit) -> some View {
         let active = unit == u
         return Button { unit = u } label: {
-            Text(label).font(Theme.ui(14, .medium)).lineLimit(1)
-                .foregroundStyle(active ? Theme.concourse : Theme.ink)
+            Text(label.uppercased()).font(Theme.board(12, .semibold)).tracking(0.9).lineLimit(1).minimumScaleFactor(0.7)
+                .foregroundStyle(active ? Theme.onSteel : Theme.ink)
                 .padding(.horizontal, 16).padding(.vertical, 8)
                 .background(active ? Theme.steel : Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
         }.buttonStyle(.plain)
@@ -112,8 +113,9 @@ struct ConversionTablesView: View {
                 ForEach(ConvTab.allCases) { t in
                     let active = tab == t
                     Button { tab = t } label: {
-                        Text(t.label).font(Theme.ui(13, .medium))
-                            .foregroundStyle(active ? Theme.concourse : Theme.ink)
+                        Text(t.label.uppercased()).font(Theme.board(10, .semibold)).tracking(0.6)
+                            .lineLimit(1).minimumScaleFactor(0.7)
+                            .foregroundStyle(active ? Theme.onSteel : Theme.ink)
                             .padding(.horizontal, 16).padding(.vertical, 8)
                             .background(active ? Theme.steel : Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
                     }.buttonStyle(.plain)
@@ -205,7 +207,7 @@ struct ConversionTablesView: View {
     private func tableHeader(_ titles: [String]) -> some View {
         HStack {
             ForEach(titles, id: \.self) { t in
-                Text(t.uppercased()).font(Theme.ui(10, .bold)).tracking(0.6).foregroundStyle(Theme.muted)
+                Text(t.uppercased()).font(Theme.board(9.5, .semibold)).tracking(1.0).foregroundStyle(Theme.muted)
                 if t != titles.last { Spacer() }
             }
         }

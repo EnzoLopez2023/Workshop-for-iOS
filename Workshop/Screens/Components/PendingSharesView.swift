@@ -30,6 +30,7 @@ struct PendingSharesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
+                .boardToolbarItem()
             }
             .task { projects = (try? await api.listProjects()) ?? [] }
         }

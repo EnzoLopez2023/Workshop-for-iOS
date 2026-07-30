@@ -24,18 +24,16 @@ struct MoreView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Appearance") {
+                Section(header: BoardCaps("Appearance")) {
                     Picker("Theme", selection: appearanceBinding) {
                         ForEach(Appearance.allCases) { a in Text(a.label).tag(a) }
                     }
-                    Picker("Accent", selection: Binding(
-                        get: { theme.selection },
-                        set: { theme.selection = $0 }
-                    )) {
-                        ForEach(Palette.all) { p in Text(p.name).tag(p.id) }
-                    }
+                    lampPicker
                     Toggle("Large Text", isOn: $fontSizeLarge)
+                        .toggleStyle(.flap)
                 }
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
 
                 Section {
                     Picker("Default Status", selection: defaultStatusBinding) {
@@ -47,9 +45,12 @@ struct MoreView: View {
                         ForEach(DashboardSort.allCases) { s in Text(s.label).tag(s) }
                     }
                     Toggle("Show Completed by Default", isOn: $showCompletedByDefault)
+                        .toggleStyle(.flap)
                 } header: {
-                    Text("Projects")
+                    BoardCaps("Projects")
                 }
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
 
                 Section {
                     NavigationLink {
@@ -58,6 +59,8 @@ struct MoreView: View {
                         Label("Insights", systemImage: "chart.bar.xaxis")
                     }
                 }
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
 
                 Section {
                     Button {
@@ -70,12 +73,15 @@ struct MoreView: View {
                         Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                     }
                 } header: {
-                    Text("Data")
+                    BoardCaps("Data")
                 } footer: {
                     Text("Downloads all your projects and their metadata as a JSON file.")
                 }
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
 
-                Section("DEBUG") {
+                #if DEBUG
+                Section(header: BoardCaps("DEBUG")) {
                     Button("Test finish reminder scheduling") {
                         let df = DateFormatter(); df.dateFormat = "yyyy-MM-dd"
                         let json = """
@@ -99,19 +105,85 @@ struct MoreView: View {
                         }
                     }
                 }
-                Section("Account") {
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
+                #endif
+
+                Section(header: BoardCaps("Account")) {
                     if let name = model.userName {
                         LabeledContent("Signed in as", value: name)
                     }
                     Button("Sign Out", role: .destructive) { model.signOut() }
                 }
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
                 Section {
                     LabeledContent("Version", value: AppInfo.version)
                 }
+                .listRowBackground(Theme.flap)
+                .listRowSeparatorTint(Theme.line)
             }
+            // The system inset-grouped list draws pure-white rows on a 20pt
+            // radius; the board has neither. Flap faces on the concourse, with
+            // the frame drawn by the row separators.
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Theme.concourse)
+            .environment(\.defaultMinListRowHeight, 46)
             .navigationTitle("More")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
         }
+    }
+
+    /// The signal lamps, shown lit rather than named. Picking an accent by
+    /// reading the word "Amber" is worse than picking it by seeing amber, and
+    /// the lamp is the one place this app spends colour.
+    private var lampPicker: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Signal Lamp")
+                Spacer()
+                Text((Palette.all.first { $0.id == theme.selection }?.name ?? "").uppercased())
+                    .font(Theme.board(9.5, .semibold, relativeTo: .caption2))
+                    .tracking(1.1)
+                    .foregroundStyle(Theme.muted)
+            }
+            HStack(spacing: 8) {
+                ForEach(Palette.all) { p in
+                    let on = p.id == theme.selection
+                    Button { theme.selection = p.id } label: {
+                        // A lamp behind glass, not a paint chip: the dark flap
+                        // face stays, the colour is the light coming through it.
+                        ZStack {
+                            RoundedRectangle(cornerRadius: Theme.rFlap)
+                                .fill(Theme.flapFaceGradient)
+                            RoundedRectangle(cornerRadius: 1)
+                                .fill(p.accentFill.color)
+                                .frame(height: 10)
+                                .padding(.horizontal, 9)
+                                .shadow(color: p.accentFill.color.opacity(on ? 0.85 : 0),
+                                        radius: 5)
+                                .opacity(on ? 1 : 0.4)
+                            Rectangle()
+                                .fill(Color.black.opacity(0.55))
+                                .frame(height: 1)
+                        }
+                        .frame(height: 30)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.rFlap))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.rFlap)
+                                .strokeBorder(on ? Theme.ink : Color.black.opacity(0.35),
+                                              lineWidth: on ? 2 : 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(p.name)
+                    .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     private var appearanceBinding: Binding<Appearance> {
