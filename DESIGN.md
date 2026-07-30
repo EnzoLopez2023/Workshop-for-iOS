@@ -128,6 +128,25 @@ Widgets cannot be placed on the Home Screen from `simctl` (no tap command, no
 app target and rendering them at real pixel sizes; that harness was reverted
 after the pass.
 
+## The iPad / Mac sidebar
+
+The sidebar is the steel frame the board hangs on — the same face as the
+toolbar, so the two meet as one continuous edge instead of a light column
+butting into a dark bar. Destinations are board caps; the active one is lit
+with an amber lamp bar on its leading edge and a lifted `steelLight` plate.
+The header reuses the sign-in plate's lockup verbatim (amber `hammer.fill` +
+`THE WORKSHOP`), so the app announces itself the same way everywhere.
+
+A system `.sidebar` `List` cannot carry this — its background, row type and
+selection capsule are all platform chrome, and `.tint()` only recolours the
+capsule. It is a plain stack of buttons instead. The split view, its collapse
+toggle (which lives in the *detail* column's toolbar) and the swipe gesture
+all stay native.
+
+**A `Rectangle` with only a width set has unbounded height** and will stretch
+its row to the full column. The lamp bar rides in an `.overlay(alignment:
+.leading)`, which never affects layout.
+
 ## Photos
 
 `AuthImage` uses `.fill`, which means it reports a size **larger** than the
@@ -168,7 +187,12 @@ To inspect a screen against real data without driving auth, the app reads these
 environment overrides (`WORKSHOP_START_*` are `#if DEBUG` only):
 
 `WORKSHOP_API_BASE`, `WORKSHOP_DEV_TOKEN`, `WORKSHOP_DEV_USER_KEY`,
-`WORKSHOP_START_TAB`, `WORKSHOP_START_PROJECT`, `WORKSHOP_START_SHAPER`
+`WORKSHOP_START_TAB`, `WORKSHOP_START_PROJECT`, `WORKSHOP_START_SHAPER`,
+`WORKSHOP_SIDEBAR=open`
+
+`WORKSHOP_SIDEBAR=open` exists because the sidebar starts collapsed on iPad and
+its toggle can only be tapped by hand — `simctl` has no tap command, so the
+sidebar is otherwise invisible to an automated pass.
 
 **Always set `WORKSHOP_DEV_USER_KEY`.** `WORKSHOP_DEV_TOKEN` alone leaves
 `userKey` nil, which silently suppresses every `?oid=`-scoped image URL — so

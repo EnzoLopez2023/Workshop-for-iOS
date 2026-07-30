@@ -37,8 +37,14 @@ struct RootView: View {
     // Apple Silicon — not a separate Catalyst target) a permanently-collapsed
     // sidebar reads as broken rather than intentional, since Mac users expect
     // persistent sidebar navigation; default it open there instead.
-    @State private var columnVisibility: NavigationSplitViewVisibility =
-        ProcessInfo.processInfo.isiOSAppOnMac ? .all : .detailOnly
+    @State private var columnVisibility: NavigationSplitViewVisibility = {
+        // Dev/local: the sidebar is otherwise unreachable in an automated pass,
+        // since the toggle can only be tapped by hand.
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["WORKSHOP_SIDEBAR"] == "open" { return .all }
+        #endif
+        return ProcessInfo.processInfo.isiOSAppOnMac ? .all : .detailOnly
+    }()
 
     @StateObject private var intentRouter = IntentRouter.shared
 
@@ -83,17 +89,11 @@ struct RootView: View {
 
     private var iPadLayout: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            List(selection: selection) {
-                ForEach(AppDestination.allCases) { dest in
-                    Label(dest.title, systemImage: dest.icon).tag(dest)
-                }
-            }
-            .listStyle(.sidebar)
-            .navigationTitle("")
-            // ~20% narrower than the ~320pt default.
-            .navigationSplitViewColumnWidth(min: 216, ideal: 260, max: 272)
-            .safeAreaInset(edge: .top, spacing: 0) { sidebarHeader }
-            .safeAreaInset(edge: .bottom, spacing: 0) { sidebarFooter }
+            sidebarRail
+                .navigationTitle("")
+                .toolbar(.hidden, for: .navigationBar)
+                // ~20% narrower than the ~320pt default.
+                .navigationSplitViewColumnWidth(min: 216, ideal: 260, max: 272)
         } detail: {
             destination(current)
                 .id(current)   // reset the detail's nav stack when switching sections
@@ -103,35 +103,104 @@ struct RootView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 
-    /// Brand header pinned above the sidebar list — app icon + wordmark.
-    private var sidebarHeader: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "hammer.fill")
-                .font(Theme.ui(20, .bold, relativeTo: .title3))
-                .foregroundStyle(.white)
-                .frame(width: 38, height: 38)
-                .background(Theme.accent, in: RoundedRectangle(cornerRadius: 3, style: .continuous))
-            Text("Workshop").font(Theme.ui(22, .bold, relativeTo: .title2)).foregroundStyle(Theme.ink)
-            Spacer()
+    /// The sidebar is the steel frame the board hangs on — the same face as the
+    /// toolbar, so the two meet as one continuous edge instead of a light column
+    /// butting into a dark bar. A system `.sidebar` list can't carry this: its
+    /// background, type and selection capsule are all platform chrome.
+    private var sidebarRail: some View {
+        VStack(spacing: 0) {
+            sidebarHeader
+            VStack(spacing: 2) {
+                ForEach(AppDestination.allCases) { dest in
+                    Button { model.selectedTab = dest.rawValue } label: { railRow(dest) }
+                        .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.top, 10)
+            Spacer(minLength: 0)
+            sidebarFooter
         }
-        .padding(.horizontal, 16).padding(.top, 14).padding(.bottom, 10)
-        .background(Theme.concourse)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Theme.steel.ignoresSafeArea())
     }
 
-    /// Footer pinned below the sidebar list — signed-in identity + version.
+    /// A destination on the rail. The active one is lit: an amber lamp bar on
+    /// the leading edge and a lifted steel plate behind it.
+    private func railRow(_ dest: AppDestination) -> some View {
+        let active = current == dest
+        return HStack(spacing: 10) {
+            Image(systemName: dest.icon)
+                .font(.system(size: 13))
+                .frame(width: 18)
+            Text(dest.title.uppercased())
+                .font(Theme.board(12, .semibold, relativeTo: .subheadline))
+                .tracking(1.2)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            Spacer(minLength: 0)
+        }
+        .foregroundStyle(active ? Theme.onSteel : Theme.onSteel.opacity(0.62))
+        .padding(.vertical, 11)
+        .padding(.leading, 13)
+        .padding(.trailing, 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(active ? Theme.steelLight.opacity(0.75) : Color.clear)
+        // The lamp bar rides in an overlay: a Rectangle with only a width set
+        // has unbounded height and would stretch the row to the column.
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(active ? Theme.accentFill : Color.clear)
+                .frame(width: 3)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+        .contentShape(Rectangle())
+        .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
+    }
+
+    /// Brand header pinned above the rail — the same steel lockup the sign-in
+    /// plate uses, so the app announces itself the same way everywhere.
+    private var sidebarHeader: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "hammer.fill")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.accentFill)
+            Text("THE WORKSHOP")
+                .font(Theme.board(13, .bold, relativeTo: .headline))
+                .tracking(1.6)
+                .foregroundStyle(Theme.onSteel)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.top, 16)
+        .padding(.bottom, 14)
+        .background(Theme.steelFace)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(Color.black.opacity(0.22)).frame(height: 1)
+        }
+    }
+
+    /// Footer pinned below the rail — signed-in identity + version.
     private var sidebarFooter: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Divider().overlay(Theme.line)
+        VStack(alignment: .leading, spacing: 3) {
+            Rectangle().fill(Color.black.opacity(0.22)).frame(height: 1)
+                .padding(.horizontal, -16)
             if let name = model.userName {
-                Text(name).font(Theme.ui(15, .medium, relativeTo: .subheadline)).foregroundStyle(Theme.ink).lineLimit(1)
-                    .padding(.top, 10)
+                Text(name)
+                    .font(Theme.ui(14, .medium, relativeTo: .subheadline))
+                    .foregroundStyle(Theme.onSteel.opacity(0.9))
+                    .lineLimit(1)
+                    .padding(.top, 12)
             }
-            Text(AppInfo.version).font(Theme.ui(11, .regular, relativeTo: .caption2)).foregroundStyle(Theme.muted)
-                .padding(.bottom, 12).padding(.top, model.userName == nil ? 10 : 0)
+            Text(AppInfo.version.uppercased())
+                .font(Theme.board(9.5, .semibold, relativeTo: .caption2))
+                .tracking(1.1)
+                .foregroundStyle(Theme.onSteel.opacity(0.5))
+                .padding(.bottom, 14)
+                .padding(.top, model.userName == nil ? 12 : 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
-        .background(Theme.concourse)
     }
 
     // MARK: Shared
@@ -148,7 +217,4 @@ struct RootView: View {
     }
 
     private var current: AppDestination { AppDestination(rawValue: model.selectedTab) ?? .dashboard }
-    private var selection: Binding<AppDestination?> {
-        Binding(get: { current }, set: { if let v = $0 { model.selectedTab = v.rawValue } })
-    }
 }
