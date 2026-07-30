@@ -18,6 +18,7 @@
 		14BB0ADBE9656507E986CD65 /* CutListActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C773FCB81B7645605D4C47 /* CutListActivityController.swift */; };
 		158BEB63436FD55F1B45BDE6 /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */; };
+		20D15BDCF51BCE81D6FA337E /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
 		2595BA7B19D04C0AB9D96715 /* ArchivoWS-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */; };
 		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
 		38960C94B65E68A270FFE719 /* PendingSharesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */; };
@@ -74,6 +75,7 @@
 		F197221AA69329CF28317BB9 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */; };
 		F20DFCBF63D1A41DB3749948 /* CutPlanSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555C827DB4292D29C550072C /* CutPlanSheetView.swift */; };
 		F37BA266D4D618C319AFFF9B /* NintekKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7877A30098F9A178C3E5F7A9 /* NintekKit */; };
+		F9233CA688217FEF8A9D0B1A /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		FA516B0575697E740BF045DC /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */; };
 		FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */; };
 		FDE87185C27B7821304A7CCA /* ProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */; };
@@ -364,6 +366,7 @@
 			buildConfigurationList = F43FE616D89B442322937545 /* Build configuration list for PBXNativeTarget "WorkshopShareExtension" */;
 			buildPhases = (
 				7523C86FE2F1053C7633F2E5 /* Sources */,
+				4F54412E5C6F4428E5455157 /* Resources */,
 				7A93335482A46EBA9B060497 /* Frameworks */,
 			);
 			buildRules = (
@@ -481,6 +484,15 @@
 				AF63547B79702EA97D9656B8 /* MartianMonoBoard-Bold.ttf in Resources */,
 				5D0452A0879B81CF56A12A80 /* MartianMonoBoard-Regular.ttf in Resources */,
 				C5C0875211F4EF265A28564F /* MartianMonoBoard-SemiBold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F54412E5C6F4428E5455157 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20D15BDCF51BCE81D6FA337E /* ArchivoWS-Regular.ttf in Resources */,
+				F9233CA688217FEF8A9D0B1A /* MartianMonoBoard-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

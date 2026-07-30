@@ -90,6 +90,44 @@ Two iOS 26 behaviours must be actively opted out of:
    dimmed to ~43% in dark mode. Any button that paints its own surface needs
    `.buttonStyle(.plain)`.
 
+## Widgets and the share extension
+
+The widgets carry the same world, mirrored in `WorkshopWidgets/WidgetSupport.swift`
+because an app extension cannot reach the app's `Theme`/`Palette`. `WSWidget`
+holds the same hexes, `wsAdaptive(light:dark:)` stands in for `WSColor`, and
+`WSCaps` / `WSFlap` / `WSFlapNumber` / `WSHeader` are the widget-budget versions
+of the app's primitives. Flaps are **static** here — a widget gets no animation
+budget, and the board has to read as a board at rest anyway.
+
+Rules that came out of building them:
+
+- **The board bleeds to the edges.** `.contentMarginsDisabled()` plus
+  `containerBackground(WSWidget.flap)`, so the steel header band touches the
+  widget's own rounded corners. Without it the board floats inside ~22pt of
+  system padding and reads as a card, not a board.
+- **A board always shows a fixed number of slots.** Unfilled rows stay blank
+  shaded board with their hairline separators intact, the way a departure board
+  reads between arrivals. Never collapse the list and leave bright flap face
+  below it — that reads as a truncated card. Filled rows sit on `flap`, the
+  container is `flapShade`.
+- **Rows divide the height evenly** (`.frame(maxHeight: .infinity)`), so no size
+  class ends up with dead space.
+- **One amber per widget.** The header's trailing figure or the single headline
+  stat. Green and red stay reserved for status; money is neutral flap type, not
+  green.
+- **Each extension bundles its own fonts.** `UIAppFonts` does not cross the
+  app/extension boundary. The widgets carry all six faces (~532KB); the share
+  extension carries only the two it uses (~170KB).
+
+The share extension answers with a board confirmation card rather than a system
+alert — steel band, hammer lamp, `SAVED` / `NOT SAVED`, auto-dismissing. It is
+the only place the world appears outside the app, so it has to be unmistakable.
+
+Widgets cannot be placed on the Home Screen from `simctl` (no tap command, no
+`idb`). They were verified by temporarily compiling the widget views into the
+app target and rendering them at real pixel sizes; that harness was reverted
+after the pass.
+
 ## Verifying a change
 
 There are no tests and no linter. Build with:

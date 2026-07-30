@@ -11,10 +11,11 @@ struct StatsWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SnapshotProvider()) { entry in
             StatsWidgetView(snapshot: entry.snapshot)
-                .containerBackground(WSWidget.cream, for: .widget)
+                .containerBackground(WSWidget.flap, for: .widget)
         }
         .configurationDisplayName("Project Stats")
         .description("Your active builds, queue, parts, and materials value.")
+        .contentMarginsDisabled()
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
@@ -37,82 +38,88 @@ private struct StatsWidgetView: View {
 
     private var small: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 6) {
-                Image(systemName: "hammer.fill")
-                    .font(.caption2).foregroundStyle(WSWidget.accent)
-                Text("WORKSHOP")
-                    .font(.system(size: 10, weight: .bold)).tracking(1)
-                    .foregroundStyle(WSWidget.subtle)
-            }
-            Spacer(minLength: 4)
-            Text("\(snapshot.inProgressCount)")
-                .font(.system(size: 40, weight: .bold))
-                .foregroundStyle(WSWidget.ink)
-                .minimumScaleFactor(0.6).lineLimit(1)
-            Text("ACTIVE BUILDS")
-                .font(.system(size: 10, weight: .bold)).tracking(0.5)
-                .foregroundStyle(WSWidget.subtle)
+            WSCaps("Shop Board")
             Spacer(minLength: 6)
-            queuePill
+            WSFlapNumber(value: wsPad(snapshot.inProgressCount),
+                         size: 24, tone: WSWidget.accentFill)
+            Spacer(minLength: 5)
+            WSCaps("Active builds", size: 9)
+            Spacer(minLength: 8)
+            queueRail
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .background(WSWidget.flap)
         .widgetURL(WSDeepLink.dashboard)
     }
 
-    private var queuePill: some View {
-        HStack(spacing: 5) {
-            Image(systemName: "square.stack.3d.up.fill").font(.caption2)
-            Text("\(snapshot.inQueueCount) in queue")
-                .font(.caption2.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.7)
+    /// The queue reads as a second board row, not a tinted pill.
+    private var queueRail: some View {
+        HStack(spacing: 6) {
+            WSCaps("In queue", size: 8.5)
+            Spacer(minLength: 4)
+            WSFlapNumber(value: wsPad(snapshot.inQueueCount), size: 11)
         }
-        .foregroundStyle(WSWidget.accent)
-        .padding(.horizontal, 8).padding(.vertical, 5)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(WSWidget.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 3, style: .continuous))
+        .padding(.horizontal, 7).padding(.vertical, 6)
+        .frame(maxWidth: .infinity)
+        .background(WSWidget.flapShade)
+        .overlay(RoundedRectangle(cornerRadius: WSWidget.rPanel)
+            .strokeBorder(WSWidget.line, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: WSWidget.rPanel))
     }
 
     // MARK: Medium — four tiles
 
     private var medium: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 6) {
-                Image(systemName: "hammer.fill")
-                    .font(.caption2).foregroundStyle(WSWidget.accent)
-                Text("Workshop").font(.subheadline.weight(.bold)).foregroundStyle(WSWidget.accent)
-                Spacer()
-                Text("Updated \(snapshot.updatedAt, style: .time)")
-                    .font(.system(size: 10)).foregroundStyle(WSWidget.subtle)
-            }
-            HStack(spacing: 8) {
+        VStack(spacing: 0) {
+            WSHeader(title: "Shop Board",
+                     trailing: snapshot.updatedAt.formatted(date: .omitted, time: .shortened))
+            HStack(spacing: 0) {
                 Link(destination: WSDeepLink.dashboard) {
-                    tile("hammer.fill", "\(snapshot.inProgressCount)", "In Progress", WSWidget.accent)
+                    cell(wsPad(snapshot.inProgressCount), "In Progress", WSWidget.accentFill)
                 }
+                divider
                 Link(destination: WSDeepLink.dashboard) {
-                    tile("square.stack.3d.up.fill", "\(snapshot.inQueueCount)", "In Queue", WSWidget.amber)
+                    cell(wsPad(snapshot.inQueueCount), "In Queue", WSWidget.flapLetter)
                 }
+                divider
                 Link(destination: WSDeepLink.dashboard) {
-                    tile("square.grid.3x3.fill", "\(snapshot.totalParts)", "Parts", WSWidget.inkSoft)
+                    cell(wsPad(snapshot.totalParts, 3), "Parts", WSWidget.flapLetter)
                 }
+                divider
                 Link(destination: WSDeepLink.dashboard) {
-                    tile("dollarsign.circle.fill", WSWidget.currency(snapshot.totalValue), "Value", WSWidget.emerald)
+                    cell(WSWidget.currency(snapshot.totalValue), "Value", WSWidget.flapLetter)
                 }
             }
+            .frame(maxHeight: .infinity)
+            .background(WSWidget.flap)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
-    private func tile(_ icon: String, _ value: String, _ label: String, _ color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Image(systemName: icon).font(.system(size: 13, weight: .semibold)).foregroundStyle(color)
-            Spacer(minLength: 0)
-            Text(value).font(.system(size: 20, weight: .bold)).foregroundStyle(WSWidget.ink)
-                .lineLimit(1).minimumScaleFactor(0.5)
-            Text(label.uppercased()).font(.system(size: 9, weight: .bold)).tracking(0.4)
-                .foregroundStyle(WSWidget.subtle).lineLimit(1)
+    private var divider: some View {
+        Rectangle().fill(WSWidget.line).frame(width: 1)
+    }
+
+    /// One cell of the board: the figure on flaps, sitting on a shaded footer
+    /// rail that carries the label — so the cell fills its full height the way
+    /// a real board column does. Sized for the widest string this row can
+    /// produce, a compact currency like "$1.2k" at five modules.
+    private func cell(_ value: String, _ label: String, _ tone: Color) -> some View {
+        VStack(spacing: 0) {
+            Spacer(minLength: 4)
+            WSFlapNumber(value: value, size: 13, tone: tone)
+                .padding(.horizontal, 6)
+            Spacer(minLength: 4)
+            WSCaps(label, size: 8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 5)
+                .background(WSWidget.flapShade)
+                .overlay(alignment: .top) {
+                    Rectangle().fill(WSWidget.line).frame(height: 1)
+                }
         }
-        .padding(9)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(WSWidget.paper, in: RoundedRectangle(cornerRadius: 3, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(WSWidget.line, lineWidth: 1))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+

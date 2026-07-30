@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 import UniformTypeIdentifiers
 import NintekKit
 
@@ -33,12 +34,12 @@ final class ShareViewController: UIViewController {
                 if ShareQueue.enqueueImage(data) {
                     showConfirmation("Photo saved — open Workshop to add it to a project.")
                 } else {
-                    showConfirmation("Couldn't save this photo.")
+                    showConfirmation("Couldn't save this photo.", ok: false)
                 }
                 return
             }
         }
-        showConfirmation("Workshop can only save links and photos.")
+        showConfirmation("Workshop can only save links and photos.", ok: false)
     }
 
     private func loadURL(from provider: NSItemProvider) async -> URL? {
@@ -57,15 +58,100 @@ final class ShareViewController: UIViewController {
         }
     }
 
-    private func showConfirmation(_ message: String) {
-        let alert = UIAlertController(title: "Workshop", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Done", style: .default) { [weak self] _ in
-            self?.complete()
-        })
-        present(alert, animated: true)
+    /// A board confirmation rather than a system alert: the share sheet is the
+    /// one place a user meets Workshop outside the app, so it wears the same
+    /// steel and flaps. It dismisses itself — a share is a one-way action and
+    /// making someone tap "Done" to acknowledge their own tap is friction.
+    private func showConfirmation(_ message: String, ok: Bool = true) {
+        let card = UIHostingController(rootView: ShareConfirmationCard(message: message, ok: ok))
+        card.view.backgroundColor = .clear
+        card.modalPresentationStyle = .overFullScreen
+        card.modalTransitionStyle = .crossDissolve
+        present(card, animated: true)
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.7))
+            self.complete()
+        }
     }
 
     private func complete() {
         extensionContext?.completeRequest(returningItems: nil)
+    }
+}
+
+
+// MARK: - Confirmation card
+
+/// The Concourse Board world, reduced to the two tokens a one-shot confirmation
+/// needs. The extension can't reach the app's `Palette`, so these are the amber
+/// defaults from DESIGN.md.
+private enum ShareTheme {
+    static let flap    = adaptive(0xF7F9F6, 0x171B1D)
+    static let ink     = adaptive(0x14181A, 0xEFF2ED)
+    static let muted   = adaptive(0x59686A, 0x8B9794)
+    static let line    = adaptive(0xC0CAC6, 0x2C3335)
+    static let amber   = Color(red: 1, green: 0.706, blue: 0)
+    static let red     = adaptive(0xB3271F, 0xD3392F)
+
+    static func adaptive(_ l: UInt, _ d: UInt) -> Color {
+        Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? ui(d) : ui(l) })
+    }
+    private static func ui(_ hex: UInt) -> UIColor {
+        UIColor(red: CGFloat((hex >> 16) & 0xFF) / 255,
+                green: CGFloat((hex >> 8) & 0xFF) / 255,
+                blue: CGFloat(hex & 0xFF) / 255, alpha: 1)
+    }
+}
+
+private struct ShareConfirmationCard: View {
+    let message: String
+    let ok: Bool
+
+    var body: some View {
+        VStack {
+            Spacer()
+            VStack(spacing: 0) {
+                // The steel band, carried across every surface of this world.
+                HStack(spacing: 7) {
+                    Image(systemName: "hammer.fill")
+                        .font(.system(size: 9))
+                        .foregroundStyle(ok ? ShareTheme.amber : ShareTheme.red)
+                    Text("THE WORKSHOP")
+                        .font(.custom("MartianMonoBoard-Bold", size: 11))
+                        .tracking(1.5)
+                        .foregroundStyle(Color(red: 0.929, green: 0.945, blue: 0.933))
+                    Spacer(minLength: 0)
+                    Text(ok ? "SAVED" : "NOT SAVED")
+                        .font(.custom("MartianMonoBoard-Bold", size: 9))
+                        .tracking(1.2)
+                        .foregroundStyle(ok ? ShareTheme.amber : ShareTheme.red)
+                }
+                .padding(.horizontal, 13)
+                .padding(.vertical, 11)
+                .background(
+                    LinearGradient(colors: [Color(red: 0.227, green: 0.263, blue: 0.290),
+                                            Color(red: 0.137, green: 0.165, blue: 0.184)],
+                                   startPoint: .top, endPoint: .bottom)
+                )
+
+                Text(message)
+                    .font(.custom("ArchivoWS-Regular", size: 14))
+                    .foregroundStyle(ShareTheme.ink)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 15)
+                    .background(ShareTheme.flap)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(ShareTheme.line, lineWidth: 1))
+            .padding(.horizontal, 20)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.black.opacity(0.35))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(message)
     }
 }

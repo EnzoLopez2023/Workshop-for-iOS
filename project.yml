@@ -201,6 +201,10 @@ targets:
         excludes:
           - "**/Info.plist"
           - "**/*.entitlements"
+      # An extension can't read its host app's UIAppFonts, so it carries the
+      # two faces its confirmation card actually uses — not the whole family.
+      - path: Fonts/MartianMonoBoard-Bold.ttf
+      - path: Fonts/ArchivoWS-Regular.ttf
     dependencies:
       - package: NintekKit
     info:
@@ -209,6 +213,9 @@ targets:
         CFBundleDisplayName: Workshop
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UIAppFonts:
+          - MartianMonoBoard-Bold.ttf
+          - ArchivoWS-Regular.ttf
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
