@@ -128,6 +128,30 @@ Widgets cannot be placed on the Home Screen from `simctl` (no tap command, no
 app target and rendering them at real pixel sizes; that harness was reverted
 after the pass.
 
+## Photos
+
+`AuthImage` uses `.fill`, which means it reports a size **larger** than the
+proposal on one axis. Never hand it an aspect ratio directly:
+
+```swift
+// WRONG — the photo draws outside its layout box and spills across the grid.
+AuthImage(url: url, contentMode: .fill)
+    .aspectRatio(16.0 / 10.0, contentMode: .fill)
+    .clipped()
+```
+
+Bound the box first, then fill it:
+
+```swift
+Rectangle().fill(Theme.flapShade)
+    .aspectRatio(16.0 / 10.0, contentMode: .fit)   // the box
+    .overlay { AuthImage(url: url, contentMode: .fill) }
+    .clipped()
+```
+
+An explicit `.frame(width:height:)` or `.frame(height:)` before `.clipped()`
+works too. Every call site uses one of these two forms.
+
 ## Verifying a change
 
 There are no tests and no linter. Build with:
@@ -143,8 +167,17 @@ fail with "cannot find X in scope".
 To inspect a screen against real data without driving auth, the app reads these
 environment overrides (`WORKSHOP_START_*` are `#if DEBUG` only):
 
-`WORKSHOP_API_BASE`, `WORKSHOP_DEV_TOKEN`, `WORKSHOP_START_TAB`,
-`WORKSHOP_START_PROJECT`, `WORKSHOP_START_SHAPER`
+`WORKSHOP_API_BASE`, `WORKSHOP_DEV_TOKEN`, `WORKSHOP_DEV_USER_KEY`,
+`WORKSHOP_START_TAB`, `WORKSHOP_START_PROJECT`, `WORKSHOP_START_SHAPER`
+
+**Always set `WORKSHOP_DEV_USER_KEY`.** `WORKSHOP_DEV_TOKEN` alone leaves
+`userKey` nil, which silently suppresses every `?oid=`-scoped image URL — so
+the whole app renders photo-free and image layout bugs pass a local sweep
+untouched. That is exactly how a card-image overflow shipped once already.
+
+**Check the regular size class too.** iPad and "Designed for iPad" on a Mac use
+`NavigationSplitView` and much wider grids; an adaptive column count that looks
+right on a phone can lay out more columns than there are cells.
 
 Pass them through `simctl` as `SIMCTL_CHILD_*`. **Always check both renditions** —
 every defect found late in this port was a dark-mode contrast failure.

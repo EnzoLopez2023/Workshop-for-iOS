@@ -12,10 +12,15 @@ struct ProjectCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            // The Rectangle establishes the box and AuthImage fills it as an
+            // overlay. Applying `.aspectRatio(contentMode: .fill)` to the image
+            // directly lets it report a size larger than the proposal, so
+            // `.clipped()` clips to the overflowed frame and the photo spills
+            // across the grid.
             if heroURL != nil {
-                AuthImage(url: heroURL, contentMode: .fill)
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(16.0 / 10.0, contentMode: .fill)
+                Rectangle().fill(Theme.flapShade)
+                    .aspectRatio(16.0 / 10.0, contentMode: .fit)
+                    .overlay { AuthImage(url: heroURL, contentMode: .fill) }
                     .clipped()
                     .overlay(alignment: .bottom) {
                         Rectangle().fill(Theme.line).frame(height: 1)
@@ -25,6 +30,7 @@ struct ProjectCard: View {
             HStack(alignment: .top, spacing: 12) {
                 BoardCaps(project.title, size: 13.5)
                     .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
                 StatusBadge(status: project.status)
             }

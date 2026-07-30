@@ -15,6 +15,7 @@ enum DashboardRoute: Hashable {
 struct DashboardView: View {
     let api: WorkshopAPI
     @EnvironmentObject private var model: AppModel
+    @Environment(\.horizontalSizeClass) private var hSize
 
     @State private var projects: [WSProject] = []
     @State private var shaper: [ShaperProject] = []
@@ -36,6 +37,13 @@ struct DashboardView: View {
     @AppStorage(SettingsKeys.showCompletedByDefault) private var showCompletedByDefault = false
 
     private let grid = [GridItem(.adaptive(minimum: 240), spacing: 18)]
+
+    /// The shop board is exactly four cells wide when there is room for them.
+    /// An adaptive grid would lay out eight columns on an iPad and leave the
+    /// last four as a dead slab of line colour.
+    private var shopBoardColumns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 1), count: hSize == .regular ? 4 : 2)
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -162,7 +170,7 @@ struct DashboardView: View {
             .padding(.vertical, 9)
             .background(Theme.steelFace)
 
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 148), spacing: 1)], spacing: 1) {
+            LazyVGrid(columns: shopBoardColumns, spacing: 1) {
                 DashCell(label: "In Progress", value: pad(inProgressCount, 2),
                          sub: "active builds", tone: .amber)
                 DashCell(label: "In Queue", value: pad(queuedCount, 2),
@@ -170,7 +178,7 @@ struct DashboardView: View {
                 DashCell(label: "Total Parts", value: pad(totalParts, 3),
                          sub: "across active projects")
                 DashCell(label: "Est. Value", value: "$" + estValue.formatted(.number.grouping(.automatic)),
-                         sub: "in materials", tone: .green)
+                         sub: "in materials")
             }
             .background(Theme.line)
         }

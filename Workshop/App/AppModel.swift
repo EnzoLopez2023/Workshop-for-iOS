@@ -40,8 +40,19 @@ final class AppModel: ObservableObject {
     /// used to build auth-exempt `?oid=` image URLs. nil when signed out.
     var userKey: String? {
         if let session = AppleSessionStore.load() { return session.userKey }
+        #if DEBUG
+        if let dev = devUserKey { return dev }
+        #endif
         return msalAuth?.oid
     }
+
+    #if DEBUG
+    /// Dev/local only. `WORKSHOP_DEV_TOKEN` leaves `userKey` nil, which silently
+    /// suppresses every `?oid=`-scoped image URL — so a local pass renders no
+    /// photos at all and image layout bugs ship unseen. Set this alongside the
+    /// dev token to exercise the real image paths.
+    private var devUserKey: String?
+    #endif
 
     init() {
         let env = ProcessInfo.processInfo.environment
@@ -63,6 +74,9 @@ final class AppModel: ObservableObject {
         // Dev/local: a pasted access token via env skips MSAL (used to exercise
         // the API without a signed build). Never set in production.
         if let devToken = env["WORKSHOP_DEV_TOKEN"] {
+            #if DEBUG
+            self.devUserKey = env["WORKSHOP_DEV_USER_KEY"]
+            #endif
             self.msalAuth = nil
             self.api = WorkshopAPI(baseURL: base, tokenProvider: StaticTokenProvider(devToken))
             self.isSignedIn = true
