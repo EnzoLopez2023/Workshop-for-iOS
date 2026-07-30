@@ -83,9 +83,9 @@ struct DimensionScannerSheet: View {
                     }
                     if let lastScanned {
                         Text("Filled \(target.rawValue): \(lastScanned)")
-                            .font(.footnote.weight(.medium))
+                            .font(Theme.ui(13, .medium, relativeTo: .footnote))
                             .padding(.horizontal, 14).padding(.vertical, 8)
-                            .background(.thinMaterial, in: Capsule())
+                            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: Theme.rFlap))
                             .padding(.bottom, 24)
                     }
                 }

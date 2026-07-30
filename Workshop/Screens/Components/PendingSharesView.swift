@@ -40,8 +40,8 @@ struct PendingSharesView: View {
         case .url:
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Shared Link").font(.system(size: 14, weight: .semibold))
-                    Text(item.urlString ?? "").font(.system(size: 12)).foregroundStyle(Theme.subtle).lineLimit(2)
+                    Text("Shared Link").font(Theme.ui(14, .medium))
+                    Text(item.urlString ?? "").font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted).lineLimit(2)
                 }
                 Spacer()
                 Button("Create Project") {
@@ -49,7 +49,7 @@ struct PendingSharesView: View {
                     dismiss()
                     onCreateProject(item.urlString ?? "")
                 }
-                .font(.system(size: 13, weight: .medium))
+                .font(Theme.ui(13, .medium))
             }
             .swipeActions { discardButton(item) }
         case .image:
@@ -57,16 +57,16 @@ struct PendingSharesView: View {
                 HStack(spacing: 10) {
                     if let data = ShareQueue.imageData(for: item), let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage).resizable().aspectRatio(contentMode: .fill)
-                            .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 8))
+                            .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 3))
                     }
-                    Text("Shared Photo").font(.system(size: 14, weight: .semibold))
+                    Text("Shared Photo").font(Theme.ui(14, .medium))
                     Spacer()
                 }
                 if attachingItem?.id == item.id {
                     ProgressView().frame(maxWidth: .infinity)
                 } else if projects.isEmpty {
                     Text("Create a project first, then add this from its Sketches or Inspiration section.")
-                        .font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                        .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                 } else {
                     Menu {
                         ForEach(projects) { project in
@@ -74,11 +74,11 @@ struct PendingSharesView: View {
                         }
                     } label: {
                         Label("Add to Project…", systemImage: "photo.badge.plus")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(Theme.ui(13, .medium))
                     }
                 }
                 if attachError != nil, attachingItem?.id == item.id {
-                    Text(attachError!).font(.system(size: 11)).foregroundStyle(Theme.fail)
+                    Text(attachError!).font(Theme.ui(11, .regular)).foregroundStyle(Theme.red)
                 }
             }
             .padding(.vertical, 4)

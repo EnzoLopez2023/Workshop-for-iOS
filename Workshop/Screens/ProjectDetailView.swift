@@ -77,7 +77,7 @@ struct ProjectDetailView: View {
                 errorState(err)
             }
         }
-        .creamBackground()
+        .boardBackground()
         .navigationTitle(d?.title ?? "Project")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -125,11 +125,11 @@ struct ProjectDetailView: View {
             AuthImage(url: url, contentMode: .fill)
                 .frame(height: 300).frame(maxWidth: .infinity).clipped()
                 .overlay(
-                    LinearGradient(colors: [.clear, Theme.cream.opacity(0.85)],
+                    LinearGradient(colors: [.clear, Theme.concourse.opacity(0.85)],
                                    startPoint: .top, endPoint: .bottom)
                 )
         } else {
-            Theme.creamSoft.frame(height: 60)
+            Theme.flapShade.frame(height: 60)
         }
     }
 
@@ -140,7 +140,7 @@ struct ProjectDetailView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if let desc = d.description, !desc.isEmpty {
-                Text(desc).font(.system(size: 15)).foregroundStyle(Theme.subtle)
+                Text(desc).font(Theme.ui(15, .regular)).foregroundStyle(Theme.muted)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -165,15 +165,14 @@ struct ProjectDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Theme.line, lineWidth: 1))
-        .shadow(color: Color(red: 0.23, green: 0.14, blue: 0.06).opacity(0.16), radius: 18, x: 0, y: 10)
+        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
     }
 
     private func linkLabel(_ text: String, _ symbol: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: symbol).font(.system(size: 12))
-            Text(text).font(.system(size: 14, weight: .medium))
+            Text(text).font(Theme.ui(14, .medium))
         }
         .foregroundStyle(Theme.accent)
     }
@@ -199,11 +198,11 @@ struct ProjectDetailView: View {
                             Button { if let u = imageURL(img.id) { pdfURL = IdentifiableURL(url: u) } } label: {
                                 VStack(spacing: 10) {
                                     Image(systemName: "doc.text.fill").font(.system(size: 32)).foregroundStyle(Theme.accent)
-                                    Text("Open PDF").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
+                                    Text("Open PDF").font(Theme.ui(13, .medium)).foregroundStyle(Theme.ink)
                                 }
                                 .frame(maxWidth: .infinity).aspectRatio(1, contentMode: .fit)
-                                .background(Theme.creamSoft, in: RoundedRectangle(cornerRadius: 12))
-                                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                                .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
+                                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
                             }.buttonStyle(.plain)
                         } else if let url = imageURL(img.id) {
                             Button { gallery = GalleryPreview(urls: previewURLs, index: previewURLs.firstIndex(of: url) ?? 0) } label: {
@@ -245,7 +244,7 @@ struct ProjectDetailView: View {
         Color.clear
             .aspectRatio(1, contentMode: .fit)
             .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: 3))
     }
 
     private func imageGrid<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
@@ -259,7 +258,7 @@ struct ProjectDetailView: View {
             SectionBox(title: "Cut List",
                        trailing: AnyView(HStack(spacing: 10) {
                         Text("\(d.cutList.count) part\(d.cutList.count == 1 ? "" : "s")")
-                            .font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                            .font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
                         Button {
                             Task {
                                 if trackingCuts {
@@ -272,7 +271,7 @@ struct ProjectDetailView: View {
                         } label: {
                             Image(systemName: trackingCuts ? "checklist.checked" : "checklist").font(.system(size: 13))
                         }
-                        .tint(trackingCuts ? Theme.accent : Theme.subtle)
+                        .tint(trackingCuts ? Theme.accent : Theme.muted)
                         Button {
                             if let url = CSVExport.cutListCSV(d.cutList, projectTitle: d.title) {
                                 exportURL = IdentifiableURL(url: url)
@@ -286,14 +285,14 @@ struct ProjectDetailView: View {
                         if i > 0 { Divider().overlay(Theme.line) }
                         VStack(alignment: .leading, spacing: 4) {
                             HStack(alignment: .firstTextBaseline) {
-                                Text(c.partName).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.ink)
+                                Text(c.partName).font(Theme.ui(15, .medium)).foregroundStyle(Theme.ink)
                                 Spacer(minLength: 8)
-                                Text("×\(c.qty)").font(.system(size: 14, weight: .medium).monospacedDigit()).foregroundStyle(Theme.subtle)
+                                Text("×\(c.qty)").font(Theme.board(14, .semibold)).foregroundStyle(Theme.muted)
                             }
                             HStack(spacing: 6) {
-                                Text(formatDims(c)).font(.system(size: 13).monospacedDigit()).foregroundStyle(Theme.subtle)
+                                Text(formatDims(c)).font(Theme.board(13, .regular)).foregroundStyle(Theme.muted)
                                 if let m = c.material, !m.isEmpty {
-                                    Text("· \(m)").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.accent)
+                                    Text("· \(m)").font(Theme.ui(13, .medium)).foregroundStyle(Theme.accent)
                                 }
                             }
                         }
@@ -301,9 +300,9 @@ struct ProjectDetailView: View {
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
                 }
-                .background(Theme.paper)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                .background(Theme.flap)
+                .clipShape(RoundedRectangle(cornerRadius: 3))
+                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
             }
         }
     }
@@ -313,10 +312,10 @@ struct ProjectDetailView: View {
     private func cutPlanSection(_ d: WSProjectDetail) -> some View {
         VStack(alignment: .leading, spacing: showCutPlan ? 16 : 0) {
             HStack {
-                Text("Cut Plan Optimizer").font(.system(size: 18, weight: .bold)).foregroundStyle(Theme.ink)
+                Text("Cut Plan Optimizer").font(Theme.ui(18, .bold)).foregroundStyle(Theme.ink)
                 Spacer()
                 Button { showCutPlan.toggle() } label: {
-                    Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors").font(.system(size: 13))
+                    Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors").font(Theme.ui(13, .regular))
                 }
             }
             if showCutPlan {
@@ -332,7 +331,7 @@ struct ProjectDetailView: View {
         if !d.materials.isEmpty {
             SectionBox(title: "Materials & Hardware",
                        trailing: AnyView(HStack(spacing: 10) {
-                        Text("Total: \(money(d.totalCost))").font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                        Text("Total: \(money(d.totalCost))").font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
                         Button {
                             if let url = CSVExport.materialsCSV(d.materials, projectTitle: d.title) {
                                 exportURL = IdentifiableURL(url: url)
@@ -347,18 +346,18 @@ struct ProjectDetailView: View {
                         Button { Task { await togglePurchased(m) } } label: {
                             HStack(spacing: 14) {
                                 Image(systemName: m.purchased ? "checkmark.square.fill" : "square")
-                                    .foregroundStyle(m.purchased ? Theme.accent : Theme.subtle)
+                                    .foregroundStyle(m.purchased ? Theme.accent : Theme.muted)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(m.name).font(.system(size: 15, weight: .medium))
-                                        .foregroundStyle(m.purchased ? Theme.subtle : Theme.ink)
+                                    Text(m.name).font(Theme.ui(15, .medium))
+                                        .foregroundStyle(m.purchased ? Theme.muted : Theme.ink)
                                         .strikethrough(m.purchased)
                                     if let q = m.qtyLabel, !q.isEmpty {
-                                        Text(q).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                                        Text(q).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                                     }
                                 }
                                 Spacer()
-                                Text(money(m.cost)).font(.system(size: 14).monospacedDigit())
-                                    .foregroundStyle(m.purchased ? Theme.subtle : Theme.ink).strikethrough(m.purchased)
+                                Text(money(m.cost)).font(Theme.board(14, .regular))
+                                    .foregroundStyle(m.purchased ? Theme.muted : Theme.ink).strikethrough(m.purchased)
                             }
                             .padding(.horizontal, 16).padding(.vertical, 13)
                             .contentShape(Rectangle())
@@ -367,8 +366,8 @@ struct ProjectDetailView: View {
                         .sensoryFeedback(.selection, trigger: m.purchased)
                     }
                 }
-                .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
             }
         }
     }
@@ -397,20 +396,20 @@ struct ProjectDetailView: View {
                                 Circle().fill(finishColor(ft)).frame(width: 10, height: 10)
                             }
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(e.productName).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.ink)
-                                Text(finishMeta(e)).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                                Text(e.productName).font(Theme.ui(15, .medium)).foregroundStyle(Theme.ink)
+                                Text(finishMeta(e)).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                             }
                             Spacer()
-                            Text(shortDate(e.appliedAt)).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                            Text(shortDate(e.appliedAt)).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                             Button { Task { await deleteFinishEntry(e) } } label: {
-                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
                             }
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
                     }
                 }
-                .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
             }
         }
     }
@@ -438,8 +437,8 @@ struct ProjectDetailView: View {
         }
         .textFieldStyle(.roundedBorder)
         .padding(16)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
     }
 
     // MARK: Build log
@@ -459,30 +458,30 @@ struct ProjectDetailView: View {
                 VStack(spacing: 12) {
                     ForEach(d.buildLog) { e in
                         HStack(alignment: .top, spacing: 14) {
-                            RoundedRectangle(cornerRadius: 2).fill(Theme.inkSoft).frame(width: 3)
+                            RoundedRectangle(cornerRadius: 2).fill(Theme.steel).frame(width: 3)
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(shortDate(e.createdAt)).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                                Text(shortDate(e.createdAt)).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                                 if !e.note.isEmpty {
-                                    Text(e.note).font(.system(size: 14)).foregroundStyle(Theme.ink)
+                                    Text(e.note).font(Theme.ui(14, .regular)).foregroundStyle(Theme.ink)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                                 if e.hasPhoto, let url = buildLogURL(e.id) {
                                     Button { gallery = GalleryPreview(urls: [url], index: 0) } label: {
                                         AuthImage(url: url, contentMode: .fill)
                                             .frame(maxWidth: 260).frame(height: 180).clipped()
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .clipShape(RoundedRectangle(cornerRadius: 3))
                                     }.buttonStyle(.plain)
                                 }
                             }
                             Spacer(minLength: 0)
                             Button { Task { await deleteBuildEntry(e) } } label: {
-                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
                             }
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
-                        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+                        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
                     }
                 }
             }
@@ -504,10 +503,10 @@ struct ProjectDetailView: View {
                 }
                 if buildPhotoData != nil {
                     Button("Remove") { buildPhotoData = nil; buildPhotoItem = nil }
-                        .font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                        .font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
                 }
             }
-            .font(.system(size: 14))
+            .font(Theme.ui(14, .regular))
             if let pct = buildUploadProgress {
                 ProgressView(value: pct).tint(Theme.accent)
             }
@@ -519,8 +518,8 @@ struct ProjectDetailView: View {
             .disabled(buildSaving || (buildNote.trimmingCharacters(in: .whitespaces).isEmpty && buildPhotoData == nil))
         }
         .padding(16)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
     }
 
     // MARK: Linked projects
@@ -541,22 +540,22 @@ struct ProjectDetailView: View {
                     ForEach(Array(d.links.enumerated()), id: \.element.id) { i, link in
                         if i > 0 { Divider().overlay(Theme.line) }
                         HStack(spacing: 12) {
-                            Image(systemName: "link").font(.system(size: 12)).foregroundStyle(Theme.subtle)
-                            Text(link.linkedTitle).font(.system(size: 15, weight: .medium)).foregroundStyle(Theme.ink)
+                            Image(systemName: "link").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                            Text(link.linkedTitle).font(Theme.ui(15, .medium)).foregroundStyle(Theme.ink)
                             Spacer()
-                            Text(link.relationship).font(.system(size: 11)).foregroundStyle(Theme.subtle)
+                            Text(link.relationship).font(Theme.ui(11, .regular)).foregroundStyle(Theme.muted)
                                 .padding(.horizontal, 8).padding(.vertical, 3)
-                                .background(Theme.creamSoft, in: Capsule())
+                                .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
                             StatusBadge(status: link.linkedStatus)
                             Button { Task { await removeLink(link) } } label: {
-                                Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.subtle)
+                                Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.muted)
                             }
                         }
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
                 }
-                .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
             }
         }
     }
@@ -582,33 +581,33 @@ struct ProjectDetailView: View {
             .disabled(linkSaving || linkProjectId == nil)
         }
         .padding(16)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
     }
 
     private func toggleButton(_ shown: Bool, _ label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(shown ? "Cancel" : label, systemImage: shown ? "chevron.up" : "plus")
-                .font(.system(size: 13))
+                .font(Theme.ui(13, .regular))
         }
     }
 
     private var footer: some View {
         Text("Measure twice · Cut once")
-            .font(.system(size: 13)).italic().foregroundStyle(Theme.subtle)
+            .font(Theme.ui(13)).foregroundStyle(Theme.muted)
             .frame(maxWidth: .infinity).padding(.top, 40)
     }
 
     private func errorState(_ msg: String) -> some View {
         VStack(spacing: 8) {
-            Text("Couldn’t load project").font(.headline).foregroundStyle(Theme.ink)
-            Text(msg).font(.footnote).foregroundStyle(Theme.subtle).multilineTextAlignment(.center)
+            Text("Couldn’t load project").font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
+            Text(msg).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
             Button("Retry") { Task { await load() } }
         }.frame(maxWidth: .infinity).padding(.top, 80)
     }
 
     private func emptyNote(_ t: String) -> some View {
-        Text(t).font(.system(size: 14)).foregroundStyle(Theme.subtle)
+        Text(t).font(Theme.ui(14, .regular)).foregroundStyle(Theme.muted)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -817,8 +816,8 @@ private struct SectionBox<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
-                if let icon { Image(systemName: icon).font(.system(size: 14)).foregroundStyle(Theme.subtle) }
-                Text(title).font(.system(size: 18, weight: .bold)).foregroundStyle(Theme.ink)
+                if let icon { Image(systemName: icon).font(.system(size: 14)).foregroundStyle(Theme.muted) }
+                Text(title).font(Theme.ui(18, .bold)).foregroundStyle(Theme.ink)
                 Spacer()
                 if let trailing { trailing }
             }
@@ -835,10 +834,10 @@ private struct Stat: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
                 Image(systemName: icon).font(.system(size: 11))
-                Text(label).font(.system(size: 10, weight: .semibold)).tracking(0.4)
+                Text(label).font(Theme.ui(10, .medium)).tracking(0.4)
             }
-            .foregroundStyle(Theme.subtle).lineLimit(1).minimumScaleFactor(0.7)
-            Text(value).font(.system(size: 17, weight: .bold)).foregroundStyle(Theme.ink)
+            .foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.7)
+            Text(value).font(Theme.ui(17, .bold)).foregroundStyle(Theme.ink)
                 .lineLimit(1).minimumScaleFactor(0.6)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

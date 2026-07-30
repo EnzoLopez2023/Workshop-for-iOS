@@ -58,6 +58,15 @@
 	<string>Workshop uses your photo library to attach sketches and inspiration to projects.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>MartianMonoBoard-Regular.ttf</string>
+		<string>MartianMonoBoard-SemiBold.ttf</string>
+		<string>MartianMonoBoard-Bold.ttf</string>
+		<string>ArchivoWS-Regular.ttf</string>
+		<string>ArchivoWS-Medium.ttf</string>
+		<string>ArchivoWS-Bold.ttf</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

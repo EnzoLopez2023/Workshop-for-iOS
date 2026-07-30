@@ -11,24 +11,58 @@ struct SignInView: View {
 
     var body: some View {
         ZStack {
-            Theme.cream.ignoresSafeArea()
-            VStack(spacing: 24) {
+            Theme.concourse.ignoresSafeArea()
+            VStack(spacing: 22) {
                 Spacer()
-                Image(systemName: "hammer.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(Theme.accent)
-                VStack(spacing: 8) {
-                    Eyebrow("Workshop Journal")
-                    (Text("Every project. ").foregroundStyle(Theme.ink)
-                     + Text("From first cut to final coat.").foregroundStyle(Theme.accent))
-                        .font(Theme.display(30))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 32)
+
+                // The board announces itself the way a concourse board does —
+                // a steel plate above the flaps, not a logo above a tagline.
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "hammer.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Theme.accentFill)
+                        Text("THE WORKSHOP")
+                            .font(Theme.board(12, .bold, relativeTo: .caption))
+                            .tracking(1.6)
+                            .foregroundStyle(Theme.onSteel)
+                        Spacer(minLength: 0)
+                        Text("LIVE")
+                            .font(Theme.board(9.5, .bold, relativeTo: .caption2))
+                            .tracking(1.2)
+                            .foregroundStyle(Theme.accentFill)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(Theme.steelFace)
+
+                    VStack(spacing: 10) {
+                        SplitFlap("IN PROGRESS", size: 17, tone: .amber)
+                        SplitFlap("PLANNING", size: 17)
+                        SplitFlap("COMPLETE", size: 17, tone: .green)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Theme.flapShade)
                 }
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rPanel)
+                        .strokeBorder(Theme.line, lineWidth: 1)
+                )
+                .padding(.horizontal, 28)
+
+                Text("Every project, from first cut to final coat.")
+                    .font(Theme.ui(15))
+                    .foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 36)
 
                 if let err = model.authError {
-                    Text(err).font(.footnote).foregroundStyle(Theme.fail)
+                    Text(err)
+                        .font(Theme.ui(13))
+                        .foregroundStyle(Theme.red)
                         .multilineTextAlignment(.center).padding(.horizontal, 32)
                 }
 
@@ -37,15 +71,16 @@ struct SignInView: View {
                     Button {
                         Task { await signIn() }
                     } label: {
-                        HStack {
-                            if signingIn { ProgressView().tint(.white) }
-                            Text(signingIn ? "Signing in…" : "Sign in with Microsoft")
-                            Image(systemName: "arrow.right")
+                        HStack(spacing: 8) {
+                            if signingIn { ProgressView().tint(Theme.onSteel) }
+                            Text(signingIn ? "SIGNING IN…" : "SIGN IN WITH MICROSOFT")
+                                .font(Theme.board(12, .bold, relativeTo: .callout))
+                                .tracking(1.1)
                         }
-                        .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.onSteel)
                         .frame(maxWidth: .infinity).padding(.vertical, 15)
-                        .background(Theme.accentDeep, in: RoundedRectangle(cornerRadius: 12))
+                        .background(Theme.steelFace)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
                     }
                     .disabled(signingIn)
 
@@ -57,7 +92,7 @@ struct SignInView: View {
                     .signInWithAppleButtonStyle(.black)
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
                     .disabled(signingIn)
                 }
                 .padding(.horizontal, 28)

@@ -22,7 +22,7 @@ struct InsightsView: View {
                     errorState(err)
                 } else if projects.isEmpty {
                     Text("No projects yet — insights will show up once you have some.")
-                        .font(.system(size: 14)).foregroundStyle(Theme.subtle)
+                        .font(Theme.ui(14, .regular)).foregroundStyle(Theme.muted)
                         .frame(maxWidth: .infinity).padding(.top, 80)
                 } else {
                     VStack(alignment: .leading, spacing: 36) {
@@ -34,7 +34,7 @@ struct InsightsView: View {
                     .padding(20)
                 }
             }
-            .creamBackground()
+            .boardBackground()
             .navigationTitle("Insights")
             .task { await load() }
             .refreshable { await load() }
@@ -46,9 +46,9 @@ struct InsightsView: View {
     private var spendOverTimeSection: some View {
         let points = cumulativeSpend()
         return VStack(alignment: .leading, spacing: 12) {
-            Eyebrow("Spend Over Time")
+            Rail("Spend Over Time")
             if points.isEmpty {
-                Text("No materials cost logged yet.").font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                Text("No materials cost logged yet.").font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
             } else {
                 Chart(points, id: \.date) { point in
                     LineMark(x: .value("Date", point.date), y: .value("Cumulative Cost", point.cumulative))
@@ -75,14 +75,14 @@ struct InsightsView: View {
             .sorted { ($0.totalCost ?? 0) > ($1.totalCost ?? 0) }
             .prefix(8)
         return VStack(alignment: .leading, spacing: 12) {
-            Eyebrow("Materials Cost by Project")
+            Rail("Materials Cost by Project")
             if rows.isEmpty {
-                Text("No materials cost logged yet.").font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                Text("No materials cost logged yet.").font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
             } else {
                 Chart(rows) { p in
                     BarMark(x: .value("Cost", p.totalCost ?? 0), y: .value("Project", p.title))
                         .foregroundStyle(Theme.accent)
-                        .annotation(position: .trailing) { Text(money(p.totalCost ?? 0)).font(.system(size: 11)).foregroundStyle(Theme.subtle) }
+                        .annotation(position: .trailing) { Text(money(p.totalCost ?? 0)).font(Theme.ui(11, .regular)).foregroundStyle(Theme.muted) }
                 }
                 .frame(height: CGFloat(rows.count) * 34 + 20)
             }
@@ -94,10 +94,10 @@ struct InsightsView: View {
     private var buildActivitySection: some View {
         let months = buildActivityByMonth()
         return VStack(alignment: .leading, spacing: 12) {
-            Eyebrow("Build Log Activity")
+            Rail("Build Log Activity")
             if months.isEmpty {
                 Text("No build-log entries yet — every note and photo you add in the shop shows up here.")
-                    .font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                    .font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
             } else {
                 Chart(months, id: \.month) { row in
                     BarMark(x: .value("Month", row.month, unit: .month), y: .value("Entries", row.count))
@@ -106,15 +106,15 @@ struct InsightsView: View {
                 .chartXAxis { AxisMarks(values: .stride(by: .month)) { AxisValueLabel(format: .dateTime.month(.abbreviated)) } }
                 .frame(height: 180)
                 Text("\(buildLogEntries.count) build-log entr\(buildLogEntries.count == 1 ? "y" : "ies") across \(projects.filter { ($0.partsCount ?? 0) > 0 }.count) projects with a cut list.")
-                    .font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                    .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
             }
         }
     }
 
     private func errorState(_ msg: String) -> some View {
         VStack(spacing: 8) {
-            Text("Couldn't load insights").font(.headline).foregroundStyle(Theme.ink)
-            Text(msg).font(.footnote).foregroundStyle(Theme.subtle)
+            Text("Couldn't load insights").font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
+            Text(msg).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.muted)
             Button("Retry") { Task { await load() } }
         }.frame(maxWidth: .infinity).padding(.top, 80)
     }

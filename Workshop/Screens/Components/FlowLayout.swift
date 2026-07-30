@@ -33,11 +33,11 @@ struct Chip: View {
     let text: String
     var body: some View {
         Text(text)
-            .font(.system(size: 13, weight: .medium))
+            .font(Theme.ui(13, .medium))
             .foregroundStyle(Theme.ink)
             .padding(.horizontal, 12).padding(.vertical, 6)
-            .background(Theme.creamSoft, in: Capsule())
-            .overlay(Capsule().strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+            .overlay(RoundedRectangle(cornerRadius: Theme.rFlap).strokeBorder(Theme.line, lineWidth: 1))
     }
 }
 
@@ -48,7 +48,7 @@ struct ChipGroup: View {
     var body: some View {
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
-                Text(label).font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Theme.subtle)
+                Text(label).font(Theme.ui(11, .bold)).tracking(1.2).foregroundStyle(Theme.muted)
                 FlowLayout(spacing: 8) {
                     ForEach(items, id: \.self) { Chip(text: $0) }
                 }

@@ -8,15 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		00CD6A4EFF1B5A1C1F5075DD /* ImageLightbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FEF1D687304FC3EFF440B2C /* ImageLightbox.swift */; };
+		0871997D7506FB7E5A9D1817 /* ArchivoWS-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */; };
+		08EFE2ED9CCEF71B8FBCEB22 /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
 		0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13623EDDF4C567E31761B93 /* CameraPicker.swift */; };
 		0D9F89CA7C7EEA7068E43E8D /* CSVExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95D18C2D2B29AE22ABFE739 /* CSVExport.swift */; };
 		0E3C09081BF8ECC93A8F3F33 /* DimensionScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FD7CAEE3EC59AB102C2447 /* DimensionScannerView.swift */; };
 		13DCDEE78255515A7FCE2A5B /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C3230F2228F4DBCC175B8B36 /* MSAL */; };
 		13E376CE576876ACD81DA0E4 /* ShoppingListPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */; };
 		14BB0ADBE9656507E986CD65 /* CutListActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C773FCB81B7645605D4C47 /* CutListActivityController.swift */; };
+		158BEB63436FD55F1B45BDE6 /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */; };
+		2595BA7B19D04C0AB9D96715 /* ArchivoWS-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */; };
 		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
 		38960C94B65E68A270FFE719 /* PendingSharesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */; };
+		3F8D5BCBE44E0DE2CA469062 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
 		4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */; };
 		4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */; };
 		50DDD6885D72A4175D61BA53 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF973223D615FA3E4ACEAFA /* Haptics.swift */; };
@@ -25,10 +30,14 @@
 		59D6FB1A722F4CA756623CA6 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B5721D06BC5553A7723584 /* ProjectDetailView.swift */; };
 		5ACCC513CFDF1DE4C9A976AD /* WorkshopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */; };
 		5C46D338A16821D6CF6092D8 /* AppleAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 588EFFBF642257B4B8549BE2 /* AppleAuth.swift */; };
+		5D0452A0879B81CF56A12A80 /* MartianMonoBoard-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */; };
 		6099E621FB1EFB57E421C0DB /* MSALAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */; };
 		6149A88CB571B0728B25C62A /* WorkshopWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148AA1B27DF3EF0320FE04EB /* Theme.swift */; };
+		688CF527C82F30D46B4248BC /* MartianMonoBoard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */; };
 		6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */; };
+		6C674978DB0E50B8AC55EB88 /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
+		6E6EFF984D3DD36A18CB187B /* CutPlanBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */; };
 		815377048FD9582DABA705F4 /* CutListActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */; };
 		81C2261DF283838B5FCE835A /* PDFViewerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */; };
 		823567341311CBD8EA6A6CE1 /* UploadProgressPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */; };
@@ -39,15 +48,20 @@
 		8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */; };
 		8C11F01C336EF4FF38B76C78 /* FinishReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */; };
 		8C5974CBDC16865EA6A31597 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3649EBAF123246F0A52AAD5C /* StatsWidget.swift */; };
+		8D4AD3667275111EAF75773E /* MartianMonoBoard-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */; };
 		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
 		980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */; };
+		9B002885CBE9E3B660708DAF /* SplitFlap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F75F91A9390BB731A7B898 /* SplitFlap.swift */; };
 		A83E97EDD6663A3D9BAF2FD3 /* InProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F44A4C06C5377AAB836619 /* InProgressWidget.swift */; };
 		A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2032375E9627FFA9498F242F /* RootView.swift */; };
+		AF63547B79702EA97D9656B8 /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		B0EC7F6C7B62889595AF2861 /* SettingsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */; };
 		C1413981CDB405BA1B9A55BB /* WorkshopWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */; };
 		C243127F07EACEB2CCB01544 /* CutPlanOptimizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */; };
 		C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */; };
 		C4593A2069D935BFAE0015BB /* ToastCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B245BD3F4E06008743C8CD /* ToastCenter.swift */; };
+		C5C0875211F4EF265A28564F /* MartianMonoBoard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */; };
+		CC5D73AEF358946C442B5C20 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
 		D1A396DD5CA5532496E0EDF1 /* WidgetSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */; };
 		DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567419A91AFD83464561320 /* AppModel.swift */; };
 		DB764F22BC7AAD02BFE3AB07 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD1366C665EF510EA7A526B /* MoreView.swift */; };
@@ -102,10 +116,12 @@
 		0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthImage.swift; sourceTree = "<group>"; };
 		106781A6BB79C32F349A48FB /* SketchCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchCanvasView.swift; sourceTree = "<group>"; };
+		109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanBoard.swift; sourceTree = "<group>"; };
 		148AA1B27DF3EF0320FE04EB /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		17C773FCB81B7645605D4C47 /* CutListActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutListActivityController.swift; sourceTree = "<group>"; };
 		17F44A4C06C5377AAB836619 /* InProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InProgressWidget.swift; sourceTree = "<group>"; };
 		1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanPDFExporter.swift; sourceTree = "<group>"; };
+		1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Medium.ttf"; sourceTree = "<group>"; };
 		1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		2032375E9627FFA9498F242F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
@@ -113,10 +129,13 @@
 		3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionTablesView.swift; sourceTree = "<group>"; };
 		3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationAnchor.swift; sourceTree = "<group>"; };
 		3B86FF4B801E181077A6D19C /* ShoppingListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListWidget.swift; sourceTree = "<group>"; };
+		3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Bold.ttf"; sourceTree = "<group>"; };
+		43F75F91A9390BB731A7B898 /* SplitFlap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFlap.swift; sourceTree = "<group>"; };
 		4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingSharesView.swift; sourceTree = "<group>"; };
 		555C827DB4292D29C550072C /* CutPlanSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanSheetView.swift; sourceTree = "<group>"; };
 		5567419A91AFD83464561320 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		588EFFBF642257B4B8549BE2 /* AppleAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuth.swift; sourceTree = "<group>"; };
+		589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-SemiBold.ttf"; sourceTree = "<group>"; };
 		5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanOptimizerView.swift; sourceTree = "<group>"; };
 		64F4CB70E3C122071AD83DA2 /* NintekKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NintekKit; path = ../NintekKit; sourceTree = SOURCE_ROOT; };
 		68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewerSheet.swift; sourceTree = "<group>"; };
@@ -133,6 +152,7 @@
 		90A3EE9656F690ED9F24E4FC /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		93A9F8CE901174A0D021B607 /* WorkshopShareExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadProgressPanel.swift; sourceTree = "<group>"; };
+		99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Regular.ttf"; sourceTree = "<group>"; };
 		9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopWidgetBundle.swift; sourceTree = "<group>"; };
 		A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopApp.swift; sourceTree = "<group>"; };
@@ -144,12 +164,14 @@
 		B5FD7CAEE3EC59AB102C2447 /* DimensionScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionScannerView.swift; sourceTree = "<group>"; };
 		B88A2F381FC79622473BFD0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSupport.swift; sourceTree = "<group>"; };
+		C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Bold.ttf"; sourceTree = "<group>"; };
 		C4B245BD3F4E06008743C8CD /* ToastCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastCenter.swift; sourceTree = "<group>"; };
 		CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperDetailView.swift; sourceTree = "<group>"; };
 		DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectFormView.swift; sourceTree = "<group>"; };
 		E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
 		EAF973223D615FA3E4ACEAFA /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Regular.ttf"; sourceTree = "<group>"; };
 		F13623EDDF4C567E31761B93 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListPDFExporter.swift; sourceTree = "<group>"; };
 		F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKeys.swift; sourceTree = "<group>"; };
@@ -185,6 +207,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01F4FCC888A0A331EEC11083 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */,
+				1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */,
+				EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */,
+				C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */,
+				99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */,
+				589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		3548FEECF2FEFE8F0FAD1BFF /* WorkshopShareExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -196,6 +231,7 @@
 		3AC753152814A0D5C0CDB1B1 = {
 			isa = PBXGroup;
 			children = (
+				01F4FCC888A0A331EEC11083 /* Fonts */,
 				D7414950DCE8EE8D5F614E7C /* Packages */,
 				839868694421DF70652EA9D8 /* Workshop */,
 				3548FEECF2FEFE8F0FAD1BFF /* WorkshopShareExtension */,
@@ -209,6 +245,7 @@
 			children = (
 				F13623EDDF4C567E31761B93 /* CameraPicker.swift */,
 				F95D18C2D2B29AE22ABFE739 /* CSVExport.swift */,
+				109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */,
 				5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */,
 				1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */,
 				555C827DB4292D29C550072C /* CutPlanSheetView.swift */,
@@ -222,6 +259,7 @@
 				F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */,
 				AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */,
 				106781A6BB79C32F349A48FB /* SketchCanvasView.swift */,
+				43F75F91A9390BB731A7B898 /* SplitFlap.swift */,
 				E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */,
 				959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */,
 			);
@@ -345,6 +383,7 @@
 			buildConfigurationList = 7A01EC6E6E045FC8017D669C /* Build configuration list for PBXNativeTarget "WorkshopWidgetsExtension" */;
 			buildPhases = (
 				224A2068D6412314B3C562ED /* Sources */,
+				06D3207D7D4C90390BE9DA27 /* Resources */,
 				764945F7C509FCAF7D6F6B82 /* Frameworks */,
 			);
 			buildRules = (
@@ -432,11 +471,30 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		06D3207D7D4C90390BE9DA27 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F8D5BCBE44E0DE2CA469062 /* ArchivoWS-Bold.ttf in Resources */,
+				2595BA7B19D04C0AB9D96715 /* ArchivoWS-Medium.ttf in Resources */,
+				6C674978DB0E50B8AC55EB88 /* ArchivoWS-Regular.ttf in Resources */,
+				AF63547B79702EA97D9656B8 /* MartianMonoBoard-Bold.ttf in Resources */,
+				5D0452A0879B81CF56A12A80 /* MartianMonoBoard-Regular.ttf in Resources */,
+				C5C0875211F4EF265A28564F /* MartianMonoBoard-SemiBold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C5E466DEB77C3B8DEAD9E05A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC5D73AEF358946C442B5C20 /* ArchivoWS-Bold.ttf in Resources */,
+				0871997D7506FB7E5A9D1817 /* ArchivoWS-Medium.ttf in Resources */,
+				08EFE2ED9CCEF71B8FBCEB22 /* ArchivoWS-Regular.ttf in Resources */,
 				8A7CE8C45F6193AF2ACA8305 /* Assets.xcassets in Resources */,
+				158BEB63436FD55F1B45BDE6 /* MartianMonoBoard-Bold.ttf in Resources */,
+				8D4AD3667275111EAF75773E /* MartianMonoBoard-Regular.ttf in Resources */,
+				688CF527C82F30D46B4248BC /* MartianMonoBoard-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,6 +534,7 @@
 				0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */,
 				6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */,
 				14BB0ADBE9656507E986CD65 /* CutListActivityController.swift in Sources */,
+				6E6EFF984D3DD36A18CB187B /* CutPlanBoard.swift in Sources */,
 				C243127F07EACEB2CCB01544 /* CutPlanOptimizerView.swift in Sources */,
 				8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */,
 				F20DFCBF63D1A41DB3749948 /* CutPlanSheetView.swift in Sources */,
@@ -505,6 +564,7 @@
 				EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */,
 				51BBEACC9AC3FD16E95314DE /* SkeletonView.swift in Sources */,
 				8968B287FACF33CE8A15F92E /* SketchCanvasView.swift in Sources */,
+				9B002885CBE9E3B660708DAF /* SplitFlap.swift in Sources */,
 				164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */,
 				FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */,
 				65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */,

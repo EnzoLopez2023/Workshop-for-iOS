@@ -29,7 +29,7 @@ struct ConversionTablesView: View {
                 .contentColumn(700)
                 .padding(20)
             }
-            .creamBackground()
+            .boardBackground()
             .navigationTitle("Tables")
         }
     }
@@ -39,13 +39,13 @@ struct ConversionTablesView: View {
     private var header: some View {
         HStack(spacing: 12) {
             Image(systemName: "ruler.fill")
-                .font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.cream)
+                .font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.onSteel)
                 .frame(width: 36, height: 36)
-                .background(Theme.inkSoft, in: RoundedRectangle(cornerRadius: 9))
+                .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
             VStack(alignment: .leading, spacing: 2) {
                 Text("Unit Conversions").font(Theme.display(21)).foregroundStyle(Theme.ink)
                 Text("MM ↔ Inches reference tables and on-the-fly calculator")
-                    .font(.system(size: 12)).foregroundStyle(Theme.subtle)
+                    .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
             }
         }
     }
@@ -59,13 +59,13 @@ struct ConversionTablesView: View {
 
     private var quickConverter: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("QUICK CONVERTER").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Theme.subtle)
+            Text("QUICK CONVERTER").font(Theme.ui(11, .bold)).tracking(1.2).foregroundStyle(Theme.muted)
             HStack(spacing: 12) {
                 TextField("Enter a value…", text: $inputText)
                     .keyboardType(.decimalPad)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(Theme.ui(17, .medium))
                     .padding(.horizontal, 14).padding(.vertical, 10)
-                    .background(Theme.creamSoft, in: RoundedRectangle(cornerRadius: 10))
+                    .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
                     .frame(maxWidth: 160)
                 HStack(spacing: 6) {
                     unitButton("mm", .mm)
@@ -82,23 +82,23 @@ struct ConversionTablesView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Theme.line, lineWidth: 1))
+        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
     }
 
     private func unitButton(_ label: String, _ u: ConvUnit) -> some View {
         let active = unit == u
         return Button { unit = u } label: {
-            Text(label).font(.system(size: 14, weight: .semibold)).lineLimit(1)
-                .foregroundStyle(active ? Theme.cream : Theme.ink)
+            Text(label).font(Theme.ui(14, .medium)).lineLimit(1)
+                .foregroundStyle(active ? Theme.concourse : Theme.ink)
                 .padding(.horizontal, 16).padding(.vertical, 8)
-                .background(active ? Theme.inkSoft : Theme.creamSoft, in: Capsule())
+                .background(active ? Theme.steel : Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
         }.buttonStyle(.plain)
     }
 
     private func resultPill(_ label: String, _ value: String, accent: Bool) -> some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(label.uppercased()).font(.system(size: 10, weight: .bold)).tracking(0.8).foregroundStyle(Theme.subtle)
+            Text(label.uppercased()).font(Theme.ui(10, .bold)).tracking(0.8).foregroundStyle(Theme.muted)
             Text(value).font(accent ? Theme.display(20) : .system(size: 20, weight: .bold))
                 .foregroundStyle(accent ? Theme.accent : Theme.ink)
         }
@@ -112,10 +112,10 @@ struct ConversionTablesView: View {
                 ForEach(ConvTab.allCases) { t in
                     let active = tab == t
                     Button { tab = t } label: {
-                        Text(t.label).font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(active ? Theme.cream : Theme.ink)
+                        Text(t.label).font(Theme.ui(13, .medium))
+                            .foregroundStyle(active ? Theme.concourse : Theme.ink)
                             .padding(.horizontal, 16).padding(.vertical, 8)
-                            .background(active ? Theme.inkSoft : Theme.creamSoft, in: Capsule())
+                            .background(active ? Theme.steel : Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
                     }.buttonStyle(.plain)
                 }
             }
@@ -134,16 +134,16 @@ struct ConversionTablesView: View {
                     HStack {
                         cell("\(row.mm) mm", weight: .regular, color: Theme.ink)
                         Spacer()
-                        cell(String(format: "%.5f\"", row.dec), weight: .regular, color: Theme.subtle)
+                        cell(String(format: "%.5f\"", row.dec), weight: .regular, color: Theme.muted)
                         Spacer()
                         cell(row.frac, weight: .semibold, color: Theme.ink)
                     }
                     .padding(.horizontal, 14).padding(.vertical, 9)
-                    .background(row.mm.isMultiple(of: 2) ? Theme.creamSoft : Color.clear)
+                    .background(row.mm.isMultiple(of: 2) ? Theme.flapShade : Color.clear)
                 }
             }
-            .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
@@ -162,11 +162,11 @@ struct ConversionTablesView: View {
                         cell(String(format: "%.1f mm", row.mm), weight: .semibold, color: Theme.ink)
                     }
                     .padding(.horizontal, 14).padding(.vertical, 9)
-                    .background(row.inches.isMultiple(of: 2) ? Theme.creamSoft : Color.clear)
+                    .background(row.inches.isMultiple(of: 2) ? Theme.flapShade : Color.clear)
                 }
             }
-            .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
@@ -179,24 +179,24 @@ struct ConversionTablesView: View {
                 ForEach(Array(Self.fracGroups.enumerated()), id: \.offset) { wholeIdx, group in
                     if wholeIdx > 0 { rowDivider }
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("\(wholeIdx + 1)\"").font(.system(size: 12, weight: .bold)).foregroundStyle(Theme.subtle)
+                        Text("\(wholeIdx + 1)\"").font(Theme.ui(12, .bold)).foregroundStyle(Theme.muted)
                         FlowLayout(spacing: 8) {
                             ForEach(group, id: \.label) { cell in
                                 HStack(spacing: 4) {
-                                    Text(cell.label).font(.system(size: 13, weight: .semibold)).foregroundStyle(Theme.ink)
-                                    Text("\(cell.mm, specifier: "%.3g") mm").font(.system(size: 11)).foregroundStyle(Theme.subtle)
+                                    Text(cell.label).font(Theme.ui(13, .medium)).foregroundStyle(Theme.ink)
+                                    Text("\(cell.mm, specifier: "%.3g") mm").font(Theme.ui(11, .regular)).foregroundStyle(Theme.muted)
                                 }
                                 .padding(.horizontal, 10).padding(.vertical, 6)
-                                .background(Theme.creamSoft, in: RoundedRectangle(cornerRadius: 8))
+                                .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
                             }
                         }
                     }
                     .padding(.horizontal, 14).padding(.vertical, 12)
-                    .background(wholeIdx.isMultiple(of: 2) ? Theme.creamSoft.opacity(0.4) : Color.clear)
+                    .background(wholeIdx.isMultiple(of: 2) ? Theme.flapShade.opacity(0.4) : Color.clear)
                 }
             }
-            .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
@@ -205,19 +205,19 @@ struct ConversionTablesView: View {
     private func tableHeader(_ titles: [String]) -> some View {
         HStack {
             ForEach(titles, id: \.self) { t in
-                Text(t.uppercased()).font(.system(size: 10, weight: .bold)).tracking(0.6).foregroundStyle(Theme.subtle)
+                Text(t.uppercased()).font(Theme.ui(10, .bold)).tracking(0.6).foregroundStyle(Theme.muted)
                 if t != titles.last { Spacer() }
             }
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
-        .background(Theme.creamSoft)
+        .background(Theme.flapShade)
     }
     private var rowDivider: some View { Divider().overlay(Theme.line) }
     private func cell(_ t: String, weight: Font.Weight, color: Color) -> some View {
-        Text(t).font(.system(size: 14, weight: weight)).foregroundStyle(color)
+        Text(t).font(Theme.board(13, weight == .regular ? .regular : .semibold)).foregroundStyle(color)
     }
     private func note(_ t: String) -> some View {
-        Text(t).font(.system(size: 12)).foregroundStyle(Theme.subtle)
+        Text(t).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
     }
 
     // MARK: Precomputed tables (ported verbatim from ConversionTables.tsx)

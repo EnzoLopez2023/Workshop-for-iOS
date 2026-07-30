@@ -27,7 +27,7 @@ struct ShaperDetailView: View {
                     hero(p)
                     titleRow(p)
                     if let desc = p.description, !desc.isEmpty { section("About This Project") {
-                        Text(desc).font(.system(size: 15)).foregroundStyle(Theme.ink)
+                        Text(desc).font(Theme.ui(15, .regular)).foregroundStyle(Theme.ink)
                             .fixedSize(horizontal: false, vertical: true)
                     } }
                     if !p.materials.isEmpty { materialsSection(p) }
@@ -44,13 +44,13 @@ struct ShaperDetailView: View {
                 ProgressView().frame(maxWidth: .infinity).padding(.top, 80)
             } else if let err = loadError {
                 VStack(spacing: 8) {
-                    Text("Couldn’t load project").font(.headline).foregroundStyle(Theme.ink)
-                    Text(err).font(.footnote).foregroundStyle(Theme.subtle)
+                    Text("Couldn’t load project").font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
+                    Text(err).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.muted)
                     Button("Retry") { Task { await load() } }
                 }.frame(maxWidth: .infinity).padding(.top, 80)
             }
         }
-        .creamBackground()
+        .boardBackground()
         .navigationTitle(p?.title ?? "Shaper")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -83,19 +83,19 @@ struct ShaperDetailView: View {
 
     @ViewBuilder private func hero(_ p: ShaperProject) -> some View {
         if let url = heroURL(p) {
-            Rectangle().fill(Theme.creamSoft)
+            Rectangle().fill(Theme.flapShade)
                 .aspectRatio(16.0 / 10.0, contentMode: .fit)
                 .overlay { AuthImage(url: url, contentMode: .fill, placeholderSymbol: "cpu") }
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .clipShape(RoundedRectangle(cornerRadius: 3))
         }
     }
 
     private func titleRow(_ p: ShaperProject) -> some View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: "cpu")
-                .font(.system(size: 18, weight: .medium)).foregroundStyle(Theme.cream)
+                .font(.system(size: 18, weight: .medium)).foregroundStyle(Theme.onSteel)
                 .frame(width: 38, height: 38)
-                .background(Theme.inkSoft, in: RoundedRectangle(cornerRadius: 9))
+                .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
             VStack(alignment: .leading, spacing: 6) {
                 Text(p.title).font(Theme.display(24)).foregroundStyle(Theme.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -103,8 +103,8 @@ struct ShaperDetailView: View {
                     Link(destination: u) {
                         HStack(spacing: 5) {
                             Image(systemName: "arrow.up.forward.square").font(.system(size: 12))
-                            Text("View on Shaper Hub").font(.system(size: 13))
-                        }.foregroundStyle(Theme.subtle)
+                            Text("View on Shaper Hub").font(Theme.ui(13, .regular))
+                        }.foregroundStyle(Theme.muted)
                     }
                 }
             }
@@ -118,28 +118,28 @@ struct ShaperDetailView: View {
                 ForEach(Array(p.materials.enumerated()), id: \.offset) { i, m in
                     if i > 0 { Divider().overlay(Theme.line) }
                     HStack {
-                        Text(m.name).font(.system(size: 15)).foregroundStyle(Theme.ink)
+                        Text(m.name).font(Theme.ui(15, .regular)).foregroundStyle(Theme.ink)
                         Spacer()
                         if !m.qty.isEmpty {
-                            Text(m.qty).font(.system(size: 13)).foregroundStyle(Theme.subtle)
+                            Text(m.qty).font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
                         }
                     }
                     .padding(.horizontal, 16).padding(.vertical, 12)
                 }
             }
-            .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
     private func instructionsSection(_ text: String) -> some View {
         section("Instructions") {
-            Text(text).font(.system(size: 14)).foregroundStyle(Theme.ink)
+            Text(text).font(Theme.ui(14, .regular)).foregroundStyle(Theme.ink)
                 .lineSpacing(4).fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(18)
-                .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+                .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
+                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
@@ -157,7 +157,7 @@ struct ShaperDetailView: View {
                             Color.clear
                                 .aspectRatio(4.0 / 3.0, contentMode: .fit)
                                 .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .clipShape(RoundedRectangle(cornerRadius: 3))
                         }.buttonStyle(.plain)
                     }
                 }
@@ -172,14 +172,14 @@ struct ShaperDetailView: View {
                     if i > 0 { Divider().overlay(Theme.line) }
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(alignment: .firstTextBaseline) {
-                            Text(c.partName).font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.ink)
+                            Text(c.partName).font(Theme.ui(15, .medium)).foregroundStyle(Theme.ink)
                             Spacer(minLength: 8)
-                            Text("×\(c.qty)").font(.system(size: 14, weight: .medium).monospacedDigit()).foregroundStyle(Theme.subtle)
+                            Text("×\(c.qty)").font(Theme.board(14, .semibold)).foregroundStyle(Theme.muted)
                         }
                         HStack(spacing: 6) {
-                            Text(dims(c)).font(.system(size: 13).monospacedDigit()).foregroundStyle(Theme.subtle)
+                            Text(dims(c)).font(Theme.board(13, .regular)).foregroundStyle(Theme.muted)
                             if let m = c.material, !m.isEmpty {
-                                Text("· \(m)").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.accent)
+                                Text("· \(m)").font(Theme.ui(13, .medium)).foregroundStyle(Theme.accent)
                             }
                         }
                     }
@@ -187,18 +187,18 @@ struct ShaperDetailView: View {
                     .padding(.horizontal, 16).padding(.vertical, 12)
                 }
             }
-            .background(Theme.paper).clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Theme.line, lineWidth: 1))
+            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
+            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
         }
     }
 
     private func cutPlanSection(_ p: ShaperProject) -> some View {
         VStack(alignment: .leading, spacing: showCutPlan ? 12 : 0) {
-            HStack {
-                Eyebrow("Cut Plan Optimizer")
-                Spacer()
+            Rail("Cut Plan Optimizer") {
                 Button { showCutPlan.toggle() } label: {
-                    Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors").font(.system(size: 13))
+                    Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors")
+                        .font(Theme.board(10, .semibold, relativeTo: .caption2))
+                        .foregroundStyle(Theme.onSteel)
                 }
             }
             if showCutPlan {
@@ -209,7 +209,7 @@ struct ShaperDetailView: View {
 
     private func section<Content: View>(_ title: String, @ViewBuilder _ content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Eyebrow(title)
+            Rail(title)
             content()
         }
         .frame(maxWidth: .infinity, alignment: .leading)

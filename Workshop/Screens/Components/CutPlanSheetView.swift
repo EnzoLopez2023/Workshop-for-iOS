@@ -25,8 +25,8 @@ struct CutPlanSheetView: View {
             Canvas { context, size in draw(context: context, size: size) }
                 .aspectRatio(layout.sheetLength / max(layout.sheetWidth, 1), contentMode: .fit)
                 .frame(maxHeight: 420)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
-                .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Theme.line, lineWidth: 1.5))
+                .clipShape(RoundedRectangle(cornerRadius: 3))
+                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1.5))
         }
     }
 
@@ -36,12 +36,12 @@ struct CutPlanSheetView: View {
             ForEach(Array(parts.enumerated()), id: \.offset) { i, part in
                 if i > 0 { Text("·").opacity(0.4) }
                 Text(part)
-                    .font(.system(size: 13, weight: i == 0 ? .semibold : .regular))
-                    .foregroundStyle(i == 0 ? Theme.ink : Theme.subtle)
+                    .font(Theme.board(11, i == 0 ? .semibold : .regular))
+                    .foregroundStyle(i == 0 ? Theme.ink : Theme.muted)
             }
         }
-        .font(.system(size: 13))
-        .foregroundStyle(Theme.subtle)
+        .font(Theme.ui(13, .regular))
+        .foregroundStyle(Theme.muted)
     }
 
     private var headerParts: [String] {
@@ -59,11 +59,11 @@ struct CutPlanSheetView: View {
         let scale = size.width / layout.sheetLength
 
         // Sheet background.
-        context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(Color(hex: "#E8E2DC")))
+        context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(Color(hex: CutPlanBoard.sheet)))
 
         for p in layout.placed {
             let rect = CGRect(x: p.x * scale, y: p.y * scale, width: p.length * scale, height: p.width * scale)
-            let fill = Color(hex: colorMap[p.partName] ?? cutPlanPalette[0])
+            let fill = Color(hex: colorMap[p.partName] ?? CutPlanBoard.palette[0])
             let path = Path(roundedRect: rect, cornerRadius: 0.15 * scale)
             context.fill(path, with: .color(fill))
             context.stroke(path, with: .color(.black.opacity(0.22)), lineWidth: 1)
@@ -89,17 +89,17 @@ struct CutPlanSheetView: View {
                     layer.rotate(by: .degrees(-90))
                     layer.translateBy(x: -cx, y: -cy)
                 }
-                layer.draw(Text(label).font(.system(size: partFontSz, weight: .semibold)).foregroundStyle(Color(hex: "#1C0F07")),
+                layer.draw(Text(label).font(Theme.board(partFontSz, .semibold)).foregroundStyle(Color(hex: CutPlanBoard.ink)),
                           at: CGPoint(x: cx, y: cy - vOff), anchor: .center)
                 if showDims {
-                    layer.draw(Text(dimLabel).font(.system(size: dimFontSz)).foregroundStyle(Color(hex: "#1C0F07").opacity(0.55)),
+                    layer.draw(Text(dimLabel).font(Theme.board(dimFontSz)).foregroundStyle(Color(hex: CutPlanBoard.ink).opacity(0.55)),
                               at: CGPoint(x: cx, y: cy + vOff), anchor: .center)
                 }
             }
         }
 
         // Outer sheet border.
-        context.stroke(Path(CGRect(origin: .zero, size: size)), with: .color(Color(hex: "#1C0F07")), lineWidth: 2)
+        context.stroke(Path(CGRect(origin: .zero, size: size)), with: .color(Color(hex: CutPlanBoard.ink)), lineWidth: 2)
     }
 }
 

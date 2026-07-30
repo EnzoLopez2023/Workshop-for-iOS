@@ -68,7 +68,7 @@ private struct StatsWidgetView: View {
         .foregroundStyle(WSWidget.accent)
         .padding(.horizontal, 8).padding(.vertical, 5)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(WSWidget.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .background(WSWidget.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 3, style: .continuous))
     }
 
     // MARK: Medium — four tiles
@@ -112,7 +112,7 @@ private struct StatsWidgetView: View {
         }
         .padding(9)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(WSWidget.paper, in: RoundedRectangle(cornerRadius: 11, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 11, style: .continuous).strokeBorder(WSWidget.line, lineWidth: 1))
+        .background(WSWidget.paper, in: RoundedRectangle(cornerRadius: 3, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 3, style: .continuous).strokeBorder(WSWidget.line, lineWidth: 1))
     }
 }

@@ -67,7 +67,7 @@ struct MoreView: View {
                     }
                     .disabled(exporting)
                     if let exportError {
-                        Text(exportError).font(.footnote).foregroundStyle(Theme.fail)
+                        Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                     }
                 } header: {
                     Text("Data")

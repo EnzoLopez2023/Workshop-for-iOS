@@ -1,71 +1,76 @@
 import SwiftUI
 import NintekKit
 
-/// Project grid card — hero image (or monogram), status badge, title, 2-line
-/// description, and a footer of wood types · estimated hours. Mirrors
-/// `src/components/ProjectCard.tsx`. `heroURL` is prebuilt by the parent
-/// (`api.imageURL(imageId:userKey:)`), so this view stays free of auth concerns.
+/// A departure card: status flap top-right, destination in tracked caps, and
+/// the three figures that decide whether you can start it today. Mirrors
+/// `src/components/ProjectCard.tsx` and the `.depart-*` rules. `heroURL` is
+/// prebuilt by the parent (`api.imageURL(imageId:userKey:)`), so this view
+/// stays free of auth concerns.
 struct ProjectCard: View {
     let project: WSProject
     let heroURL: URL?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .topLeading) {
-                Rectangle().fill(Theme.creamSoft)
-                    .aspectRatio(16.0 / 11.0, contentMode: .fit)
-                    .overlay {
-                        if heroURL != nil {
-                            AuthImage(url: heroURL, contentMode: .fill)
-                        } else {
-                            Text(project.title.prefix(1))
-                                .font(.system(size: 34, weight: .semibold, design: .serif))
-                                .italic()
-                                .foregroundStyle(Theme.subtle)
-                        }
-                    }
+        VStack(alignment: .leading, spacing: 10) {
+            if heroURL != nil {
+                AuthImage(url: heroURL, contentMode: .fill)
+                    .frame(maxWidth: .infinity)
+                    .aspectRatio(16.0 / 10.0, contentMode: .fill)
                     .clipped()
-
-                StatusBadge(status: project.status, withBackdrop: true)
-                    .padding(12)
+                    .overlay(alignment: .bottom) {
+                        Rectangle().fill(Theme.line).frame(height: 1)
+                    }
             }
 
-            VStack(alignment: .leading, spacing: 10) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(project.title)
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(Theme.ink)
-                        .lineLimit(2)
-                    if let desc = project.description, !desc.isEmpty {
-                        Text(desc)
-                            .font(.system(size: 14))
-                            .foregroundStyle(Theme.subtle)
-                            .lineLimit(2)
-                    }
-                }
-
-                Divider().overlay(Theme.line)
-
-                HStack {
-                    Text(project.woodTypes.isEmpty ? "—" : project.woodTypes.joined(separator: " · "))
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Theme.accent)
-                        .lineLimit(1)
-                    Spacer()
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock").font(.system(size: 12))
-                        Text("\(project.estimatedHours)h").font(.system(size: 13))
-                    }
-                    .foregroundStyle(Theme.subtle)
-                }
+            HStack(alignment: .top, spacing: 12) {
+                BoardCaps(project.title, size: 13.5)
+                    .lineLimit(2)
+                Spacer(minLength: 0)
+                StatusBadge(status: project.status)
             }
-            .padding(.horizontal, 18)
-            .padding(.top, 16)
-            .padding(.bottom, 18)
+            .padding(.horizontal, 14)
+            .padding(.top, heroURL == nil ? 14 : 4)
+
+            if let desc = project.description, !desc.isEmpty {
+                Text(desc)
+                    .font(Theme.ui(13))
+                    .foregroundStyle(Theme.muted)
+                    .lineLimit(2)
+                    .padding(.horizontal, 14)
+            }
+
+            Spacer(minLength: 0)
+
+            // The three figures, in their own cells, divided like a board's data
+            // strip. The 1pt gaps let the line colour show through as dividers.
+            HStack(spacing: 1) {
+                cell("Stock", project.woodTypes.isEmpty ? "—" : project.woodTypes.joined(separator: " · "))
+                cell("Parts", String(format: "%02d", project.partsCount ?? 0), fixed: true)
+                cell("Hours", project.estimatedHours > 0 ? "\(project.estimatedHours)" : "—", fixed: true)
+            }
+            .background(Theme.line)
+            .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }
         }
-        .background(Theme.paper)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Theme.line, lineWidth: 1))
-        .shadow(color: Color(red: 0.23, green: 0.14, blue: 0.06).opacity(0.10), radius: 9, x: 0, y: 5)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.flap)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+        .overlay(RoundedRectangle(cornerRadius: Theme.rPanel).strokeBorder(Theme.line, lineWidth: 1))
+    }
+
+    private func cell(_ label: String, _ value: String, fixed: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(label.uppercased())
+                .font(Theme.board(8.5, .semibold, relativeTo: .caption2))
+                .tracking(1.1)
+                .foregroundStyle(Theme.muted)
+            Readout(value, size: 11.5)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: fixed ? nil : .infinity, alignment: .leading)
+        .frame(minWidth: 46, alignment: .leading)
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
+        .padding(.bottom, 9)
+        .background(Theme.flapShade)
     }
 }
