@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 import NintekKit
 
 /// Settings tab — parity with the web's `Settings.tsx`: appearance (theme,
@@ -74,6 +75,30 @@ struct MoreView: View {
                     Text("Downloads all your projects and their metadata as a JSON file.")
                 }
 
+                Section("DEBUG") {
+                    Button("Test finish reminder scheduling") {
+                        let df = DateFormatter(); df.dateFormat = "yyyy-MM-dd"
+                        let json = """
+                        {"id": 999999, "product_name": "Debug Test Finish", "coats": 2, "applied_at": "\(df.string(from: Date()))"}
+                        """.data(using: .utf8)!
+                        let decoder = JSONDecoder()
+                        decoder.keyDecodingStrategy = .convertFromSnakeCase
+                        guard let entry = try? decoder.decode(FinishLogEntry.self, from: json) else {
+                            NSLog("[Workshop][DEBUG] failed to decode test entry")
+                            return
+                        }
+                        FinishReminderScheduler.requestAuthorizationIfNeeded()
+                        FinishReminderScheduler.schedule(entry, projectTitle: "Debug Project")
+                        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+                            let mine = requests.filter { $0.identifier == "finish-reminder-999999" }
+                            NSLog("[Workshop][DEBUG] pending total=%d mine=%d", requests.count, mine.count)
+                            if let req = mine.first, let trigger = req.trigger as? UNCalendarNotificationTrigger,
+                               let fireDate = trigger.nextTriggerDate() {
+                                NSLog("[Workshop][DEBUG] scheduled fire date: %@", fireDate.description)
+                            }
+                        }
+                    }
+                }
                 Section("Account") {
                     if let name = model.userName {
                         LabeledContent("Signed in as", value: name)

@@ -37,6 +37,7 @@
 		8968B287FACF33CE8A15F92E /* SketchCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106781A6BB79C32F349A48FB /* SketchCanvasView.swift */; };
 		8A7CE8C45F6193AF2ACA8305 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B88A2F381FC79622473BFD0A /* Assets.xcassets */; };
 		8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2FBCC5857E103BDD24CC9F /* CutPlanPDFExporter.swift */; };
+		8C11F01C336EF4FF38B76C78 /* FinishReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */; };
 		8C5974CBDC16865EA6A31597 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3649EBAF123246F0A52AAD5C /* StatsWidget.swift */; };
 		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
 		980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */; };
@@ -123,6 +124,7 @@
 		71CB6D05E4D70AA1984A94C2 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		73282C72252EF835CE9FDDC6 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
 		74B5721D06BC5553A7723584 /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
+		78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishReminderScheduler.swift; sourceTree = "<group>"; };
 		7FEF1D687304FC3EFF440B2C /* ImageLightbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLightbox.swift; sourceTree = "<group>"; };
 		870B71A12FCBD7C5C2E9CE16 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFormView.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */,
 				0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */,
 				17C773FCB81B7645605D4C47 /* CutListActivityController.swift */,
+				78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */,
 				EAF973223D615FA3E4ACEAFA /* Haptics.swift */,
 				8A64568318FE3FA57CA06E76 /* Palette.swift */,
 				3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */,
@@ -478,6 +481,7 @@
 				F20DFCBF63D1A41DB3749948 /* CutPlanSheetView.swift in Sources */,
 				FA516B0575697E740BF045DC /* DashboardView.swift in Sources */,
 				0E3C09081BF8ECC93A8F3F33 /* DimensionScannerView.swift in Sources */,
+				8C11F01C336EF4FF38B76C78 /* FinishReminderScheduler.swift in Sources */,
 				4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */,
 				50DDD6885D72A4175D61BA53 /* Haptics.swift in Sources */,
 				00CD6A4EFF1B5A1C1F5075DD /* ImageLightbox.swift in Sources */,

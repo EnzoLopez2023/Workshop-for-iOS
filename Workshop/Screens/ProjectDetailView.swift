@@ -632,12 +632,25 @@ struct ProjectDetailView: View {
 
     private func load() async {
         loading = d == nil; loadError = nil
-        do { d = try await api.project(id: projectId) }
+        do {
+            d = try await api.project(id: projectId)
+            rescheduleFinishReminders()
+        }
         catch { loadError = error.localizedDescription }
         loading = false
         if model.pendingShowCutPlan {
             showCutPlan = true
             model.pendingShowCutPlan = false
+        }
+    }
+
+    /// Re-syncs every finish-log entry's "time for another coat" reminder
+    /// (Phase 7.7) — cheap and idempotent (stable per-entry identifier), so
+    /// it's simplest to just do this on every load rather than diff changes.
+    private func rescheduleFinishReminders() {
+        guard let d else { return }
+        for entry in d.finishLog {
+            FinishReminderScheduler.schedule(entry, projectTitle: d.title)
         }
     }
 
@@ -696,6 +709,7 @@ struct ProjectDetailView: View {
             _ = try await api.addFinishLogEntry(projectId: projectId, input)
             Haptics.success()
             ToastCenter.shared.success("Finish entry saved")
+            FinishReminderScheduler.requestAuthorizationIfNeeded()
             await load()
             finishForm = FinishFormState()
             showFinishForm = false
@@ -707,6 +721,7 @@ struct ProjectDetailView: View {
 
     private func deleteFinishEntry(_ e: FinishLogEntry) async {
         d?.finishLog.removeAll { $0.id == e.id }
+        FinishReminderScheduler.cancel(e)
         do {
             try await api.deleteFinishLogEntry(id: e.id)
             ToastCenter.shared.success("Entry deleted")
