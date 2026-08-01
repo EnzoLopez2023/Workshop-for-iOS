@@ -17,6 +17,10 @@ enum FinishReminderScheduler {
     /// Schedules (or re-schedules, since the identifier is stable per entry)
     /// a reminder for one finish-log entry — a no-op for single-coat entries
     /// or applied dates too far in the past for the window to still make sense.
+    ///
+    /// `add(_:withCompletionHandler:)` reports no error when notifications are
+    /// denied — it just silently drops the request rather than persisting it —
+    /// so this is the only place a scheduling failure is actually observable.
     static func schedule(_ entry: FinishLogEntry, projectTitle: String) {
         let identifier = "finish-reminder-\(entry.id)"
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
@@ -32,7 +36,11 @@ enum FinishReminderScheduler {
 
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
         let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger))
+        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)) { error in
+            if let error {
+                NSLog("[Workshop] FinishReminderScheduler: failed to schedule %@ — %@", identifier, error.localizedDescription)
+            }
+        }
     }
 
     static func cancel(_ entry: FinishLogEntry) {
