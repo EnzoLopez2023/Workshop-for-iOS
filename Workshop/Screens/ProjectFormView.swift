@@ -33,6 +33,7 @@ struct ProjectFormView: View {
     @State private var cutRows: [CutRowDraft] = []
     @State private var scanningRowID: UUID?
     @State private var matRows: [MaterialRowDraft] = []
+    @State private var cutListDropTargeted = false
 
     @State private var loading: Bool
     @State private var loadError: String?
@@ -212,7 +213,12 @@ struct ProjectFormView: View {
             } header: {
                 Text("Cut List")
             } footer: {
-                Text("Every piece you'll need to mill.")
+                cutListFooter
+            }
+            .listRowBackground(cutListDropTargeted ? Theme.tint(Theme.accentFill) : nil)
+            .onDrop(of: [UTType.image.identifier, UTType.pdf.identifier], isTargeted: $cutListDropTargeted) { providers in
+                guard UIDevice.current.userInterfaceIdiom == .pad, let projectId else { return false }
+                return handleCutListDrop(providers, projectId: projectId)
             }
 
             Section {
@@ -244,6 +250,17 @@ struct ProjectFormView: View {
         }
         .environment(\.editMode, .constant(.active))
         .scrollContentBackground(.hidden)
+    }
+
+    /// iPad only — cross-app drag-and-drop needs Split View/Slide Over, which
+    /// iPhone doesn't have, so the hint would just be confusing there.
+    @ViewBuilder private var cutListFooter: some View {
+        if UIDevice.current.userInterfaceIdiom == .pad, projectId != nil {
+            Text(cutListDropTargeted ? "Release to attach as a plan" : "Every piece you'll need to mill. Drag a photo or PDF here to attach it as a plan.")
+                .foregroundStyle(cutListDropTargeted ? Theme.accent : Theme.muted)
+        } else {
+            Text("Every piece you'll need to mill.")
+        }
     }
 
     // MARK: Row editors
@@ -456,6 +473,56 @@ struct ProjectFormView: View {
         guard let data = try? Data(contentsOf: url) else { return }
         await uploadImageData(data, kind: .sketch, projectId: projectId,
                              filename: url.lastPathComponent, mimeType: "application/pdf")
+    }
+
+    /// iPad drag-and-drop onto the Cut List section (Phase 7.8) — a photo from
+    /// Photos or a PDF from Files, attached the same way the Sketches section's
+    /// own upload buttons do. Only ever one provider in practice (iOS drops one
+    /// item onto a single drop target at a time).
+    private func handleCutListDrop(_ providers: [NSItemProvider], projectId: Int) -> Bool {
+        guard let provider = providers.first else { return false }
+        if provider.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) {
+            Task {
+                guard let data = await Self.loadPDFData(provider) else { return }
+                await uploadImageData(data, kind: .sketch, projectId: projectId,
+                                     filename: "dropped-\(Int(Date().timeIntervalSince1970)).pdf", mimeType: "application/pdf")
+            }
+            return true
+        }
+        if provider.canLoadObject(ofClass: UIImage.self) {
+            Task {
+                guard let uiImage = await Self.loadDroppedImage(provider),
+                      let jpeg = uiImage.jpegData(compressionQuality: 0.85) else { return }
+                await uploadImageData(jpeg, kind: .sketch, projectId: projectId,
+                                     filename: "dropped-\(Int(Date().timeIntervalSince1970)).jpg", mimeType: "image/jpeg")
+            }
+            return true
+        }
+        return false
+    }
+
+    private static func loadPDFData(_ provider: NSItemProvider) async -> Data? {
+        await withCheckedContinuation { cont in
+            provider.loadItem(forTypeIdentifier: UTType.pdf.identifier, options: nil) { item, _ in
+                if let url = item as? URL {
+                    let accessing = url.startAccessingSecurityScopedResource()
+                    defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+                    cont.resume(returning: try? Data(contentsOf: url))
+                } else if let data = item as? Data {
+                    cont.resume(returning: data)
+                } else {
+                    cont.resume(returning: nil)
+                }
+            }
+        }
+    }
+
+    private static func loadDroppedImage(_ provider: NSItemProvider) async -> UIImage? {
+        await withCheckedContinuation { cont in
+            provider.loadObject(ofClass: UIImage.self) { object, _ in
+                cont.resume(returning: object as? UIImage)
+            }
+        }
     }
 
     private func uploadImageData(_ data: Data, kind: ImageKind, projectId: Int, filename: String, mimeType: String) async {
