@@ -14,6 +14,7 @@ struct ShoppingView: View {
     @State private var loadError: String?
     @State private var showPurchased = false
     @State private var exportURL: IdentifiableURL?
+    @State private var trackingShopping = ShoppingActivityController.isTracking
 
     var body: some View {
         NavigationStack {
@@ -42,6 +43,24 @@ struct ShoppingView: View {
             .navigationTitle("Shopping List")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    // Lock Screen / Dynamic Island checklist for a shopping
+                    // trip (Phase 7.9+) — mirrors ProjectDetailView's "Track
+                    // Cuts" toggle exactly, one Live Activity at a time.
+                    BoardToolbarButton(symbol: trackingShopping ? "checklist.checked" : "checklist",
+                                       label: "Track Shopping", tone: trackingShopping ? .amber : .steel) {
+                        Task {
+                            if trackingShopping {
+                                await ShoppingActivityController.end()
+                            } else {
+                                await ShoppingActivityController.start(items: items.filter { !$0.purchased })
+                            }
+                            trackingShopping.toggle()
+                        }
+                    }
+                    .disabled(items.allSatisfy { $0.purchased })
+                }
+                .boardToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
                     BoardToolbarButton(symbol: "printer", label: "Print List", tone: .amber) {
                         if let url = ShoppingListPDFExporter.export(groups: grouped, allItems: items) {

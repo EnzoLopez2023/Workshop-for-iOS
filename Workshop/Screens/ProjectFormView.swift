@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import StoreKit
 import UniformTypeIdentifiers
 import NintekKit
 
@@ -18,12 +19,17 @@ struct ProjectFormView: View {
 
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
 
     @State private var title = ""
     @State private var sourceUrl = ""
     @State private var cutPlanUrl = ""
     @State private var description = ""
     @State private var status: ProjectStatus = .idea
+    /// Captured on load so `save()` can detect a fresh transition *into*
+    /// Completed — a milestone worth an App Store review prompt, not every
+    /// re-save of a project that was already marked done.
+    @State private var initialStatus: ProjectStatus = .idea
     @State private var difficulty: Difficulty = .intermediate
     @State private var estimatedHours = 0
     @State private var woodInput = ""
@@ -591,6 +597,7 @@ struct ProjectFormView: View {
             sourceUrl = d.sourceUrl ?? ""
             cutPlanUrl = d.cutPlanUrl ?? ""
             status = d.status == .unknown ? .idea : d.status
+            initialStatus = status
             difficulty = d.difficulty == .unknown ? .intermediate : d.difficulty
             estimatedHours = d.estimatedHours
             woodInput = d.woodTypes.joined(separator: ", ")
@@ -691,6 +698,10 @@ struct ProjectFormView: View {
             }
 
             Haptics.success()
+            if status == .completed, initialStatus != .completed, ReviewPrompt.shouldAsk() {
+                ReviewPrompt.recordAsked()
+                requestReview()
+            }
             onSaved(savedId)
             dismiss()
         } catch {

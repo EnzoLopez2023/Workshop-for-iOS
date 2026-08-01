@@ -1,5 +1,15 @@
 import SwiftUI
 import PhotosUI
+// JournalingSuggestions.framework ships only in the iOS device SDK — there is
+// no Simulator variant at all, unlike VisionKit's DataScannerViewController
+// (which builds everywhere and is merely non-functional in Simulator).
+// Without this guard, every simulator build of this target — which is how
+// this whole project is normally built and run — would fail outright.
+// @preconcurrency because JournalingSuggestion isn't Sendable-audited, and it
+// crosses from the (MainActor) picker closure into a plain async call.
+#if canImport(JournalingSuggestions)
+@preconcurrency import JournalingSuggestions
+#endif
 import NintekKit
 
 /// Project detail — parity with `ProjectDetail.tsx`: hero banner + overlapping
@@ -514,6 +524,19 @@ struct ProjectDetailView: View {
                         if let item, let data = try? await item.loadTransferable(type: Data.self) { buildPhotoData = data }
                     }
                 }
+                // A shop session is exactly the kind of "moment" the on-device
+                // suggestions engine already tracks (photos taken in a burst,
+                // at one location) — this is the read-only, user-initiated
+                // direction of the API: picking a suggested moment to pull
+                // its photo in, not donating Workshop's own data out to
+                // Journal (JournalingSuggestions has no such API).
+                #if canImport(JournalingSuggestions)
+                if #available(iOS 17.2, *) {
+                    JournalingSuggestionsPicker("From Journal") { suggestion in
+                        await attachJournalingSuggestionPhoto(suggestion)
+                    }
+                }
+                #endif
                 if buildPhotoData != nil {
                     Button("Remove") { buildPhotoData = nil; buildPhotoItem = nil }
                         .font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
@@ -741,6 +764,22 @@ struct ProjectDetailView: View {
     }
 
     // MARK: Build log
+
+    /// Pulls the first photo out of a picked Journaling Suggestion moment and
+    /// drops it into the same `buildPhotoData` the PhotosPicker attach button
+    /// fills — `addBuildEntry()` doesn't need to know which source it came
+    /// from.
+    #if canImport(JournalingSuggestions)
+    @available(iOS 17.2, *)
+    private func attachJournalingSuggestionPhoto(_ suggestion: JournalingSuggestion) async {
+        let photos = await suggestion.content(forType: JournalingSuggestion.Photo.self)
+        guard let url = photos.first?.photo else { return }
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+        guard let data = try? Data(contentsOf: url) else { return }
+        buildPhotoData = data
+    }
+    #endif
 
     private func addBuildEntry() async {
         guard let projectId = d?.id else { return }

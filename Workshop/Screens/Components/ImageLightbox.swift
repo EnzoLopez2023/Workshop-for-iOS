@@ -1,4 +1,5 @@
 import SwiftUI
+import VisionKit
 
 /// A set of images to preview fullscreen, starting at `index`. Identifiable so it
 /// can drive `.fullScreenCover(item:)`.
@@ -42,25 +43,102 @@ struct ImageLightbox: View {
     }
 }
 
-/// A single pinch/double-tap zoomable image inside the lightbox.
+/// A single pinch/double-tap zoomable image inside the lightbox. Loads
+/// through the same `ImageCache` `AuthImage` uses (so a photo already shown
+/// elsewhere in the app doesn't re-fetch), but renders via a real
+/// `UIImageView` rather than `AuthImage`'s SwiftUI `Image` — Live Text
+/// (`ImageAnalysisInteraction`) needs to attach to the exact view showing the
+/// pixels to align its text-selection boxes correctly (Phase 7.9+). The
+/// fullscreen lightbox is the one place in the app a photo is large enough,
+/// and held still enough, for reading a handwritten dimension or note off it
+/// to be worth the interaction — not worth wiring into every thumbnail strip.
 private struct ZoomableImage: View {
     let url: URL
     @State private var scale: CGFloat = 1
     @State private var lastScale: CGFloat = 1
+    @State private var uiImage: UIImage?
+    @State private var failed = false
 
     var body: some View {
-        AuthImage(url: url, contentMode: .fit)
-            .scaleEffect(scale)
-            .gesture(
-                MagnificationGesture()
-                    .onChanged { value in scale = min(max(lastScale * value, 1), 5) }
-                    .onEnded { _ in lastScale = scale }
-            )
-            .onTapGesture(count: 2) {
-                withAnimation(.spring(duration: 0.25)) {
-                    scale = scale > 1 ? 1 : 2.5
-                    lastScale = scale
-                }
+        Group {
+            if let uiImage {
+                LiveTextImageView(image: uiImage)
+            } else if failed {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.largeTitle)
+                    .foregroundStyle(.white.opacity(0.6))
+            } else {
+                ProgressView().tint(.white)
             }
+        }
+        .scaleEffect(scale)
+        .gesture(
+            MagnificationGesture()
+                .onChanged { value in scale = min(max(lastScale * value, 1), 5) }
+                .onEnded { _ in lastScale = scale }
+        )
+        .onTapGesture(count: 2) {
+            withAnimation(.spring(duration: 0.25)) {
+                scale = scale > 1 ? 1 : 2.5
+                lastScale = scale
+            }
+        }
+        .task(id: url) { await load() }
+    }
+
+    private func load() async {
+        uiImage = nil; failed = false
+        let key = url.absoluteString
+        if let cached = await ImageCache.shared.get(key), let img = UIImage(data: cached) {
+            uiImage = img; return
+        }
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+                failed = true; return
+            }
+            await ImageCache.shared.set(key, data)
+            uiImage = UIImage(data: data)
+        } catch {
+            failed = true
+        }
+    }
+}
+
+/// Wraps a plain `UIImageView` with an `ImageAnalysisInteraction` attached —
+/// the same Live Text / data-detector / Visual Look Up interaction iOS's own
+/// Photos app offers, available for any already-uploaded photo, not just
+/// what a live camera sees (unlike Phase 7.3's `DataScannerViewController`,
+/// which needs camera hardware and is unconditionally unavailable in
+/// Simulator, `ImageAnalyzer`'s static-image analysis works there — no
+/// hardware dependency).
+private struct LiveTextImageView: UIViewRepresentable {
+    let image: UIImage
+
+    func makeUIView(context: Context) -> UIImageView {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        view.isUserInteractionEnabled = true
+        if ImageAnalyzer.isSupported {
+            let interaction = ImageAnalysisInteraction()
+            interaction.preferredInteractionTypes = .automatic
+            view.addInteraction(interaction)
+        }
+        return view
+    }
+
+    func updateUIView(_ uiView: UIImageView, context: Context) {
+        guard uiView.image !== image else { return }
+        uiView.image = image
+        guard ImageAnalyzer.isSupported,
+              let interaction = uiView.interactions.compactMap({ $0 as? ImageAnalysisInteraction }).first
+        else { return }
+        Task {
+            let analyzer = ImageAnalyzer()
+            let configuration = ImageAnalyzer.Configuration([.text, .visualLookUp])
+            if let analysis = try? await analyzer.analyze(image, configuration: configuration) {
+                interaction.analysis = analysis
+            }
+        }
     }
 }

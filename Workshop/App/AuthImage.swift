@@ -7,7 +7,7 @@ import NintekKit
 /// `WorkshopAPI.imageURL(imageId:userKey:)` / `buildLogImageURL(...)`, or pass an
 /// external `image_url` directly. Results are cached in memory by URL for the
 /// process lifetime.
-private actor ImageCache {
+actor ImageCache {
     static let shared = ImageCache()
     private var cache: [String: Data] = [:]
     func get(_ key: String) -> Data? { cache[key] }

@@ -106,6 +106,10 @@ targets:
         # Files/PDF import needs no usage string.
         NSCameraUsageDescription: Workshop uses the camera to photograph your projects and build progress.
         NSPhotoLibraryUsageDescription: Workshop uses your photo library to attach sketches and inspiration to projects.
+        # JournalingSuggestionsPicker (build-log "From Journal" button, device
+        # builds only — see the #if canImport(JournalingSuggestions) guard in
+        # ProjectDetailView.swift).
+        NSJournalingSuggestionsUsageDescription: Workshop uses Journaling Suggestions to help you pull a photo from a shop session straight into a build-log note.
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
@@ -140,6 +144,12 @@ targets:
         # enabled on the App ID in the Apple Developer portal.
         com.apple.developer.applesignin:
           - Default
+        # JournalingSuggestionsPicker. Same as Sign in with Apple above —
+        # requires the "Journaling Suggestions" capability enabled on the App
+        # ID in the Apple Developer portal (Enzo to add) before a device
+        # build can use it; the framework isn't even in the Simulator SDK, so
+        # this can't be verified from this environment either way.
+        com.apple.developer.journal-suggestions: true
         # Shared with WorkshopWidgetsExtension — the widget snapshot hand-off.
         com.apple.security.application-groups:
           - group.com.nintek.workshop
@@ -152,7 +162,7 @@ targets:
         # marketing = major.minor.patch (semver), build = monotonic per commit.
         # Starts 0.1.0 → 1.0.0 at TestFlight.
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "44"
+        CURRENT_PROJECT_VERSION: "45"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -205,7 +215,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.widgets
         PRODUCT_NAME: WorkshopWidgets
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "44"
+        CURRENT_PROJECT_VERSION: "45"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
@@ -252,7 +262,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.share
         PRODUCT_NAME: WorkshopShareExtension
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "44"
+        CURRENT_PROJECT_VERSION: "45"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic

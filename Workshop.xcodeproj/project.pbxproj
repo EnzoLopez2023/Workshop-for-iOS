@@ -25,8 +25,10 @@
 		38960C94B65E68A270FFE719 /* PendingSharesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */; };
 		3F8D5BCBE44E0DE2CA469062 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
 		4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */; };
+		4E0B6A52931935BF79FB2C48 /* LockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */; };
 		4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */; };
 		50DDD6885D72A4175D61BA53 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF973223D615FA3E4ACEAFA /* Haptics.swift */; };
+		5199B3F2D20D57EDFA848558 /* ShoppingActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DF0B02AC91E3331A488880 /* ShoppingActivityWidget.swift */; };
 		51BBEACC9AC3FD16E95314DE /* SkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */; };
 		56EF8A6A42F021FC9868FECF /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870B71A12FCBD7C5C2E9CE16 /* InsightsView.swift */; };
 		59D6FB1A722F4CA756623CA6 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B5721D06BC5553A7723584 /* ProjectDetailView.swift */; };
@@ -40,6 +42,7 @@
 		6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */; };
 		6C674978DB0E50B8AC55EB88 /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
 		6E6EFF984D3DD36A18CB187B /* CutPlanBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */; };
+		70522B789248B1C8C63EE50F /* ReviewPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75EB1418350E93379C49C6AE /* ReviewPrompt.swift */; };
 		815377048FD9582DABA705F4 /* CutListActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */; };
 		81C2261DF283838B5FCE835A /* PDFViewerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */; };
 		823567341311CBD8EA6A6CE1 /* UploadProgressPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */; };
@@ -73,6 +76,7 @@
 		E1448FA81D4C4367D102778B /* ProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6F48A0761D786BDEF5A74D /* ProjectCard.swift */; };
 		E3575F0652173805ABE21EAF /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73282C72252EF835CE9FDDC6 /* ShoppingView.swift */; };
 		EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A3EE9656F690ED9F24E4FC /* SignInView.swift */; };
+		EEA4240E129E1476A15777D3 /* ShoppingActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1245FBF0CA4F2687F8C91EEA /* ShoppingActivityController.swift */; };
 		EEC5B8DDF02910E2B1CFF65B /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A64568318FE3FA57CA06E76 /* Palette.swift */; };
 		EF161E56D1B890179046E82B /* NintekKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA77F591CC948B68AD9F1B1 /* NintekKit */; };
 		F197221AA69329CF28317BB9 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */; };
@@ -122,6 +126,7 @@
 		0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthImage.swift; sourceTree = "<group>"; };
 		106781A6BB79C32F349A48FB /* SketchCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchCanvasView.swift; sourceTree = "<group>"; };
 		109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanBoard.swift; sourceTree = "<group>"; };
+		1245FBF0CA4F2687F8C91EEA /* ShoppingActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingActivityController.swift; sourceTree = "<group>"; };
 		148AA1B27DF3EF0320FE04EB /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		17C773FCB81B7645605D4C47 /* CutListActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutListActivityController.swift; sourceTree = "<group>"; };
 		17F44A4C06C5377AAB836619 /* InProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InProgressWidget.swift; sourceTree = "<group>"; };
@@ -129,6 +134,7 @@
 		1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Medium.ttf"; sourceTree = "<group>"; };
 		1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		2032375E9627FFA9498F242F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
 		306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
 		3649EBAF123246F0A52AAD5C /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
 		3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionTablesView.swift; sourceTree = "<group>"; };
@@ -149,6 +155,7 @@
 		71CB6D05E4D70AA1984A94C2 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		73282C72252EF835CE9FDDC6 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
 		74B5721D06BC5553A7723584 /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
+		75EB1418350E93379C49C6AE /* ReviewPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPrompt.swift; sourceTree = "<group>"; };
 		78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishReminderScheduler.swift; sourceTree = "<group>"; };
 		7FEF1D687304FC3EFF440B2C /* ImageLightbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLightbox.swift; sourceTree = "<group>"; };
 		870B71A12FCBD7C5C2E9CE16 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
@@ -160,6 +167,7 @@
 		959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadProgressPanel.swift; sourceTree = "<group>"; };
 		99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Regular.ttf"; sourceTree = "<group>"; };
 		9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1DF0B02AC91E3331A488880 /* ShoppingActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingActivityWidget.swift; sourceTree = "<group>"; };
 		A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopWidgetBundle.swift; sourceTree = "<group>"; };
 		A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopApp.swift; sourceTree = "<group>"; };
 		A8FAAD8B68B47808B2860FF1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -305,8 +313,10 @@
 				EAF973223D615FA3E4ACEAFA /* Haptics.swift */,
 				8A64568318FE3FA57CA06E76 /* Palette.swift */,
 				3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */,
+				75EB1418350E93379C49C6AE /* ReviewPrompt.swift */,
 				2032375E9627FFA9498F242F /* RootView.swift */,
 				F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */,
+				1245FBF0CA4F2687F8C91EEA /* ShoppingActivityController.swift */,
 				DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */,
 				148AA1B27DF3EF0320FE04EB /* Theme.swift */,
 				C4B245BD3F4E06008743C8CD /* ToastCenter.swift */,
@@ -349,6 +359,8 @@
 			children = (
 				AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */,
 				17F44A4C06C5377AAB836619 /* InProgressWidget.swift */,
+				2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */,
+				A1DF0B02AC91E3331A488880 /* ShoppingActivityWidget.swift */,
 				3B86FF4B801E181077A6D19C /* ShoppingListWidget.swift */,
 				3649EBAF123246F0A52AAD5C /* StatsWidget.swift */,
 				BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */,
@@ -528,6 +540,8 @@
 			files = (
 				815377048FD9582DABA705F4 /* CutListActivityWidget.swift in Sources */,
 				A83E97EDD6663A3D9BAF2FD3 /* InProgressWidget.swift in Sources */,
+				4E0B6A52931935BF79FB2C48 /* LockScreenWidget.swift in Sources */,
+				5199B3F2D20D57EDFA848558 /* ShoppingActivityWidget.swift in Sources */,
 				DD142445BAC86506934FD0EF /* ShoppingListWidget.swift in Sources */,
 				8C5974CBDC16865EA6A31597 /* StatsWidget.swift in Sources */,
 				D1A396DD5CA5532496E0EDF1 /* WidgetSupport.swift in Sources */,
@@ -578,11 +592,13 @@
 				E1448FA81D4C4367D102778B /* ProjectCard.swift in Sources */,
 				59D6FB1A722F4CA756623CA6 /* ProjectDetailView.swift in Sources */,
 				FDE87185C27B7821304A7CCA /* ProjectFormView.swift in Sources */,
+				70522B789248B1C8C63EE50F /* ReviewPrompt.swift in Sources */,
 				A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */,
 				B0EC7F6C7B62889595AF2861 /* SettingsKeys.swift in Sources */,
 				980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */,
 				C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */,
 				4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */,
+				EEA4240E129E1476A15777D3 /* ShoppingActivityController.swift in Sources */,
 				13E376CE576876ACD81DA0E4 /* ShoppingListPDFExporter.swift in Sources */,
 				E3575F0652173805ABE21EAF /* ShoppingView.swift in Sources */,
 				EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */,
@@ -619,7 +635,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -644,7 +660,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -666,7 +682,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -752,7 +768,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -775,7 +791,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -800,7 +816,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

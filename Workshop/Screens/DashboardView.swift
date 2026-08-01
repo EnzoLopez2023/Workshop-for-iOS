@@ -444,10 +444,11 @@ struct DashboardView: View {
     private func load() async {
         loading = projects.isEmpty && shaper.isEmpty
         loadError = nil
-        // Reconcile any "check off" tap the shopping-list widget recorded
-        // while backgrounded (see ToggleShoppingItemIntent) — the widget
-        // can't authenticate itself, so the real write happens here instead.
-        if let pendingId = WorkshopWidgetStore.consumePendingShoppingToggle() {
+        // Reconcile any "check off" taps the shopping-list widget or the
+        // shopping Live Activity recorded while backgrounded (see
+        // ToggleShoppingItemIntent / ToggleShoppingActivityItemIntent) —
+        // neither can authenticate itself, so the real writes happen here.
+        for pendingId in WorkshopWidgetStore.consumePendingShoppingToggles() {
             do { try await api.setPurchased(id: pendingId, purchased: true) }
             catch { NSLog("[Workshop] Widget shopping-toggle reconciliation failed for id=%d: %@", pendingId, String(describing: error)) }
         }
