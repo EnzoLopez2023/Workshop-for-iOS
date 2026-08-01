@@ -83,6 +83,25 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         # Required for the Phase 7.1 "tracking cuts" Live Activity.
         NSSupportsLiveActivities: true
+        # "Background fetch" — required alongside BGTaskSchedulerPermittedIdentifiers
+        # for a BGAppRefreshTaskRequest to actually run (keeps widgets from going
+        # stale between app opens; see Workshop/App/BackgroundRefresh.swift).
+        UIBackgroundModes:
+          - fetch
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.nintek.workshop.refresh
+        # Home Screen long-press quick actions, handled on cold launch by
+        # AppDelegate (see DESIGN.md / plan doc for the warm-relaunch caveat).
+        UIApplicationShortcutItems:
+          - UIApplicationShortcutItemType: com.nintek.workshop.newproject
+            UIApplicationShortcutItemTitle: New Project
+            UIApplicationShortcutItemIconType: UIApplicationShortcutIconTypeAdd
+          - UIApplicationShortcutItemType: com.nintek.workshop.shoppinglist
+            UIApplicationShortcutItemTitle: Shopping List
+            UIApplicationShortcutItemIconType: UIApplicationShortcutIconTypeShare
+        # Handoff — continue viewing a project across iPhone/iPad/Mac.
+        NSUserActivityTypes:
+          - com.nintek.workshop.viewing-project
         # Camera + photo library for project sketches, build-log photos (Phase 3);
         # Files/PDF import needs no usage string.
         NSCameraUsageDescription: Workshop uses the camera to photograph your projects and build progress.
@@ -133,7 +152,7 @@ targets:
         # marketing = major.minor.patch (semver), build = monotonic per commit.
         # Starts 0.1.0 → 1.0.0 at TestFlight.
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "43"
+        CURRENT_PROJECT_VERSION: "44"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -186,7 +205,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.widgets
         PRODUCT_NAME: WorkshopWidgets
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "43"
+        CURRENT_PROJECT_VERSION: "44"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
@@ -233,7 +252,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.share
         PRODUCT_NAME: WorkshopShareExtension
         MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "43"
+        CURRENT_PROJECT_VERSION: "44"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.nintek.workshop.refresh</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -58,6 +62,10 @@
 	<string>Workshop uses your photo library to attach sketches and inspiration to projects.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.nintek.workshop.viewing-project</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MartianMonoBoard-Regular.ttf</string>
@@ -66,6 +74,29 @@
 		<string>ArchivoWS-Regular.ttf</string>
 		<string>ArchivoWS-Medium.ttf</string>
 		<string>ArchivoWS-Bold.ttf</string>
+	</array>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAdd</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>New Project</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.nintek.workshop.newproject</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeShare</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Shopping List</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.nintek.workshop.shoppinglist</string>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
 	</array>
 	<key>UILaunchScreen</key>
 	<dict/>

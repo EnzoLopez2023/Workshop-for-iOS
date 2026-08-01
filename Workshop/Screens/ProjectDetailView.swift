@@ -123,6 +123,12 @@ struct ProjectDetailView: View {
                 Task { await load() }
             }
         }
+        .userActivity(HandoffActivity.viewingProject, isActive: d != nil) { activity in
+            guard let d else { return }
+            activity.title = d.title
+            activity.userInfo = [HandoffActivity.projectIdKey: projectId]
+            activity.isEligibleForHandoff = true
+        }
     }
 
     // MARK: Hero + meta

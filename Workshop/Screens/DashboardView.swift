@@ -32,6 +32,7 @@ struct DashboardView: View {
     @State private var confirmDeleteTemplateId: Int?
     @State private var pendingShares: [PendingShareItem] = []
     @State private var showPendingShares = false
+    @StateObject private var intentRouter = IntentRouter.shared
 
     @AppStorage(SettingsKeys.dashboardSort) private var dashboardSortRaw = DashboardSort.updated.rawValue
     @AppStorage(SettingsKeys.showCompletedByDefault) private var showCompletedByDefault = false
@@ -112,12 +113,24 @@ struct DashboardView: View {
             .task { await load() }
             .task { pendingShares = ShareQueue.loadAll() }
             .refreshable { await load() }
-            .onAppear { consumePendingProject() }
+            .onAppear { consumePendingProject(); consumeQuickAction() }
             .onChange(of: model.pendingProjectId) { _, _ in consumePendingProject() }
+            .onChange(of: intentRouter.requestedAction?.id) { _, _ in consumeQuickAction() }
         }
     }
 
     // MARK: Sections
+
+    /// Home Screen Quick Action → "New Project" (see `AppDelegate`/`IntentRouter`).
+    /// Same onAppear-and-onChange belt-and-suspenders as `consumePendingProject`,
+    /// since a cold-launch quick action sets this before this view first exists.
+    private func consumeQuickAction() {
+        guard let action = intentRouter.requestedAction?.action else { return }
+        intentRouter.requestedAction = nil
+        switch action {
+        case .newProject: showNewProject = true
+        }
+    }
 
     /// `onChange` alone drops a deep link that arrives during a cold launch,
     /// because the id is already set before this view is first evaluated.

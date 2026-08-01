@@ -16,8 +16,21 @@ final class IntentRouter: ObservableObject {
     /// requests to the same destination still re-trigger).
     @Published var requestedTab: (id: UUID, destination: AppDestination)?
 
+    /// Bumped by a Home Screen Quick Action (see `AppDelegate`); `DashboardView`
+    /// observes this to open the New Project sheet — a plain tab switch isn't
+    /// enough for "New Project" the way it is for the Siri/Spotlight intents
+    /// above, since it also needs to present UI once on that tab.
+    @Published var requestedAction: (id: UUID, action: QuickAction)?
+
+    enum QuickAction { case newProject }
+
     func request(_ destination: AppDestination) {
         requestedTab = (UUID(), destination)
+    }
+
+    func request(_ action: QuickAction) {
+        requestedTab = (UUID(), .dashboard)
+        requestedAction = (UUID(), action)
     }
 }
 

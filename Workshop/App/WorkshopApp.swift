@@ -4,6 +4,7 @@ import CoreSpotlight
 
 @main
 struct WorkshopApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var model = AppModel()
     @StateObject private var theme = ThemeManager.shared
 
@@ -26,6 +27,14 @@ struct WorkshopApp: App {
                     // reuses the exact same routing as widgets/onOpenURL.
                     guard let id = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
                           let url = URL(string: id) else { return }
+                    model.handleDeepLink(url)
+                }
+                .onContinueUserActivity(HandoffActivity.viewingProject) { activity in
+                    // Handoff from another of Enzo's devices (see ProjectDetailView's
+                    // `.userActivity`) — same workshop://project/<id> URL the deep
+                    // links already speak, so it reuses the identical routing.
+                    guard let id = activity.userInfo?[HandoffActivity.projectIdKey] as? Int,
+                          let url = URL(string: "workshop://project/\(id)") else { return }
                     model.handleDeepLink(url)
                 }
         }

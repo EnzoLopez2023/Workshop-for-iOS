@@ -20,6 +20,7 @@
 		164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */; };
 		20D15BDCF51BCE81D6FA337E /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
 		2595BA7B19D04C0AB9D96715 /* ArchivoWS-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */; };
+		2C75E0EC30260C2B37F4C077 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */; };
 		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
 		38960C94B65E68A270FFE719 /* PendingSharesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */; };
 		3F8D5BCBE44E0DE2CA469062 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
@@ -56,7 +57,9 @@
 		A83E97EDD6663A3D9BAF2FD3 /* InProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F44A4C06C5377AAB836619 /* InProgressWidget.swift */; };
 		A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2032375E9627FFA9498F242F /* RootView.swift */; };
 		AF63547B79702EA97D9656B8 /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
+		AF67BF9AE6A43F5FD3409B38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FAAD8B68B47808B2860FF1 /* AppDelegate.swift */; };
 		B0EC7F6C7B62889595AF2861 /* SettingsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */; };
+		B1105480D22BF671B7C6B8D3 /* HandoffActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */; };
 		C1413981CDB405BA1B9A55BB /* WorkshopWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */; };
 		C243127F07EACEB2CCB01544 /* CutPlanOptimizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */; };
 		C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */; };
@@ -136,6 +139,7 @@
 		4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingSharesView.swift; sourceTree = "<group>"; };
 		555C827DB4292D29C550072C /* CutPlanSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanSheetView.swift; sourceTree = "<group>"; };
 		5567419A91AFD83464561320 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefresh.swift; sourceTree = "<group>"; };
 		588EFFBF642257B4B8549BE2 /* AppleAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuth.swift; sourceTree = "<group>"; };
 		589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-SemiBold.ttf"; sourceTree = "<group>"; };
 		5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanOptimizerView.swift; sourceTree = "<group>"; };
@@ -158,6 +162,7 @@
 		9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopWidgetBundle.swift; sourceTree = "<group>"; };
 		A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopApp.swift; sourceTree = "<group>"; };
+		A8FAAD8B68B47808B2860FF1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutListActivityWidget.swift; sourceTree = "<group>"; };
 		AC6F48A0761D786BDEF5A74D /* ProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCard.swift; sourceTree = "<group>"; };
 		AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSALAuth.swift; sourceTree = "<group>"; };
@@ -169,6 +174,7 @@
 		C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Bold.ttf"; sourceTree = "<group>"; };
 		C4B245BD3F4E06008743C8CD /* ToastCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastCenter.swift; sourceTree = "<group>"; };
 		CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperDetailView.swift; sourceTree = "<group>"; };
+		DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandoffActivity.swift; sourceTree = "<group>"; };
 		DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectFormView.swift; sourceTree = "<group>"; };
 		E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
@@ -288,11 +294,14 @@
 		561B189BBCAAA42DF570F2D6 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A8FAAD8B68B47808B2860FF1 /* AppDelegate.swift */,
 				5567419A91AFD83464561320 /* AppModel.swift */,
 				306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */,
 				0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */,
+				55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */,
 				17C773FCB81B7645605D4C47 /* CutListActivityController.swift */,
 				78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */,
+				DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */,
 				EAF973223D615FA3E4ACEAFA /* Haptics.swift */,
 				8A64568318FE3FA57CA06E76 /* Palette.swift */,
 				3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */,
@@ -538,10 +547,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF67BF9AE6A43F5FD3409B38 /* AppDelegate.swift in Sources */,
 				DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */,
 				F197221AA69329CF28317BB9 /* AppShortcuts.swift in Sources */,
 				5C46D338A16821D6CF6092D8 /* AppleAuth.swift in Sources */,
 				96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */,
+				2C75E0EC30260C2B37F4C077 /* BackgroundRefresh.swift in Sources */,
 				0D9F89CA7C7EEA7068E43E8D /* CSVExport.swift in Sources */,
 				0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */,
 				6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */,
@@ -554,6 +565,7 @@
 				0E3C09081BF8ECC93A8F3F33 /* DimensionScannerView.swift in Sources */,
 				8C11F01C336EF4FF38B76C78 /* FinishReminderScheduler.swift in Sources */,
 				4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */,
+				B1105480D22BF671B7C6B8D3 /* HandoffActivity.swift in Sources */,
 				50DDD6885D72A4175D61BA53 /* Haptics.swift in Sources */,
 				00CD6A4EFF1B5A1C1F5075DD /* ImageLightbox.swift in Sources */,
 				56EF8A6A42F021FC9868FECF /* InsightsView.swift in Sources */,
@@ -607,7 +619,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -632,7 +644,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -654,7 +666,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -740,7 +752,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -763,7 +775,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -788,7 +800,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 43;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
