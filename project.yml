@@ -144,12 +144,6 @@ targets:
         # enabled on the App ID in the Apple Developer portal.
         com.apple.developer.applesignin:
           - Default
-        # JournalingSuggestionsPicker. Same as Sign in with Apple above —
-        # requires the "Journaling Suggestions" capability enabled on the App
-        # ID in the Apple Developer portal (Enzo to add) before a device
-        # build can use it; the framework isn't even in the Simulator SDK, so
-        # this can't be verified from this environment either way.
-        com.apple.developer.journal-suggestions: true
         # Shared with WorkshopWidgetsExtension — the widget snapshot hand-off.
         com.apple.security.application-groups:
           - group.com.nintek.workshop
