@@ -26,7 +26,9 @@ struct ImageLightbox: View {
             Color.black.ignoresSafeArea()
             TabView(selection: $selection) {
                 ForEach(Array(preview.urls.enumerated()), id: \.offset) { idx, url in
-                    ZoomableImage(url: url).tag(idx)
+                    ZoomableImage(url: url)
+                        .tag(idx)
+                        .accessibilityLabel("Project image \(idx + 1) of \(preview.urls.count)")
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: preview.urls.count > 1 ? .automatic : .never))
@@ -38,6 +40,8 @@ struct ImageLightbox: View {
                     .background(.white.opacity(0.15), in: Circle())
             }
             .buttonStyle(.plain)
+            .minimumHitTarget()
+            .accessibilityLabel("Close image viewer")
             .padding(20)
         }
     }

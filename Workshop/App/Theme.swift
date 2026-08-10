@@ -209,6 +209,8 @@ struct BoardToolbarButton: View {
                 .foregroundStyle(glyph)
                 .frame(width: 30, height: 30)
                 .background(fill, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
@@ -256,6 +258,14 @@ extension View {
     /// ``ContentColumnLayout`` for how a wide screen is handled.
     func contentColumn(_ maxWidth: CGFloat = 640) -> some View {
         ContentColumnLayout(maxWidth: maxWidth) { self }
+    }
+
+    /// Keeps compact board glyphs visually restrained while giving every
+    /// control Apple's minimum 44-point interactive target.
+    func minimumHitTarget() -> some View {
+        self
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(Rectangle())
     }
 }
 
@@ -505,7 +515,18 @@ struct FlapToggleStyle: ToggleStyle {
                 .animation(.easeIn(duration: 0.11), value: configuration.isOn)
             }
             .buttonStyle(.plain)
-            .accessibilityAddTraits(configuration.isOn ? [.isButton, .isSelected] : .isButton)
+            .minimumHitTarget()
+        }
+        .accessibilityRepresentation {
+            Toggle(
+                isOn: Binding(
+                    get: { configuration.isOn },
+                    set: { configuration.isOn = $0 }
+                )
+            ) {
+                configuration.label
+            }
+            .toggleStyle(.switch)
         }
     }
 }

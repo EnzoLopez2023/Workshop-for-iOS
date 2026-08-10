@@ -5,14 +5,52 @@ import NintekKit
 /// routes scoped by a `?oid=<userKey>` query param (an `<img>`/URLSession GET
 /// can't send an Authorization header), so callers build the URL with
 /// `WorkshopAPI.imageURL(imageId:userKey:)` / `buildLogImageURL(...)`, or pass an
-/// external `image_url` directly. Results are cached in memory by URL for the
-/// process lifetime.
+/// external `image_url` directly. Results are cached in memory by URL with a
+/// fixed budget so a long image-heavy session cannot grow without bound.
 actor ImageCache {
     static let shared = ImageCache()
-    private var cache: [String: Data] = [:]
-    func get(_ key: String) -> Data? { cache[key] }
-    func set(_ key: String, _ data: Data) { cache[key] = data }
-    func clear() { cache.removeAll(keepingCapacity: false) }
+
+    private struct Entry {
+        let data: Data
+        var lastAccess: UInt64
+    }
+
+    private let byteLimit = 64 * 1_024 * 1_024
+    private var cache: [String: Entry] = [:]
+    private var byteCount = 0
+    private var accessCounter: UInt64 = 0
+
+    func get(_ key: String) -> Data? {
+        guard var entry = cache[key] else { return nil }
+        accessCounter &+= 1
+        entry.lastAccess = accessCounter
+        cache[key] = entry
+        return entry.data
+    }
+
+    func set(_ key: String, _ data: Data) {
+        guard data.count <= byteLimit else { return }
+        if let existing = cache[key] {
+            byteCount -= existing.data.count
+        }
+        accessCounter &+= 1
+        cache[key] = Entry(data: data, lastAccess: accessCounter)
+        byteCount += data.count
+        trimToBudget()
+    }
+
+    func clear() {
+        cache.removeAll(keepingCapacity: false)
+        byteCount = 0
+    }
+
+    private func trimToBudget() {
+        while byteCount > byteLimit,
+              let oldest = cache.min(by: { $0.value.lastAccess < $1.value.lastAccess }) {
+            byteCount -= oldest.value.data.count
+            cache.removeValue(forKey: oldest.key)
+        }
+    }
 }
 
 struct AuthImage: View {

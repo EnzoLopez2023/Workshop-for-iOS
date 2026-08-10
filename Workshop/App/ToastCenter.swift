@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Transient success/error banners — native equivalent of the web's `sonner`
 /// toasts. A singleton so any view or async function can post one without
@@ -23,11 +24,19 @@ final class ToastCenter: ObservableObject {
 
     private func show(_ toast: Toast) {
         dismissTask?.cancel()
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { current = toast }
+        let animation: Animation? = UIAccessibility.isReduceMotionEnabled
+            ? nil
+            : .spring(response: 0.35, dampingFraction: 0.8)
+        withAnimation(animation) { current = toast }
+        UIAccessibility.post(
+            notification: .announcement,
+            argument: "\(toast.style == .success ? "Success" : "Error"): \(toast.message)"
+        )
         dismissTask = Task {
-            try? await Task.sleep(nanoseconds: 2_600_000_000)
+            let duration: UInt64 = UIAccessibility.isVoiceOverRunning ? 5_000_000_000 : 2_600_000_000
+            try? await Task.sleep(nanoseconds: duration)
             guard !Task.isCancelled else { return }
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { current = nil }
+            withAnimation(animation) { current = nil }
         }
     }
 }
@@ -36,20 +45,30 @@ final class ToastCenter: ObservableObject {
 /// whichever tab/screen is showing.
 struct ToastOverlay: View {
     @ObservedObject private var center = ToastCenter.shared
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack {
             if let toast = center.current {
                 HStack(spacing: 10) {
                     Image(systemName: toast.style == .success ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                        .accessibilityHidden(true)
                     Text(toast.message).font(Theme.ui(14, .medium))
                 }
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16).padding(.vertical, 12)
-                .background(toast.style == .success ? Theme.accent : Theme.red, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                .background(
+                    toast.style == .success
+                        ? Color(red: 0.08, green: 0.31, blue: 0.18)
+                        : Color(red: 0.50, green: 0.06, blue: 0.04),
+                    in: RoundedRectangle(cornerRadius: Theme.rFlap)
+                )
                 .shadow(color: .black.opacity(0.28), radius: 6, y: 3)
                 .padding(.top, 8)
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(toast.style == .success ? "Success" : "Error"): \(toast.message)")
+                .accessibilityAddTraits(.isStaticText)
                 .zIndex(1)
             }
             Spacer()

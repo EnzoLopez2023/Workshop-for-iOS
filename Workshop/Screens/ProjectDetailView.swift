@@ -35,6 +35,8 @@ struct ProjectDetailView: View {
     @State private var confirmDelete = false
     @State private var deleting = false
     @State private var savedAsTemplate = false
+    @State private var materialMutationTokens: [Int: UUID] = [:]
+    @State private var loadGeneration = 0
 
     // Finish log
     @State private var showFinishForm = false
@@ -114,7 +116,10 @@ struct ProjectDetailView: View {
                             .frame(width: 30, height: 30)
                             .background(Theme.steelLight,
                                         in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
+                    .accessibilityLabel("Project actions")
                 }
                 .boardToolbarItem()
             }
@@ -216,7 +221,7 @@ struct ProjectDetailView: View {
             let previewURLs = sketches.filter { !$0.isPDF }.compactMap { imageURL($0.id) }
             SectionBox(title: "Sketches & Plans") {
                 imageGrid {
-                    ForEach(sketches) { img in
+                    ForEach(Array(sketches.enumerated()), id: \.element.id) { index, img in
                         if img.isPDF {
                             Button { if let u = imageURL(img.id) { pdfURL = IdentifiableURL(url: u) } } label: {
                                 VStack(spacing: 10) {
@@ -226,11 +231,15 @@ struct ProjectDetailView: View {
                                 .frame(maxWidth: .infinity).aspectRatio(1, contentMode: .fit)
                                 .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
                                 .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
-                            }.buttonStyle(.plain)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Open plan PDF \(index + 1)")
                         } else if let url = imageURL(img.id) {
                             Button { gallery = GalleryPreview(urls: previewURLs, index: previewURLs.firstIndex(of: url) ?? 0) } label: {
                                 squareImageTile(url: url)
-                            }.buttonStyle(.plain)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Open sketch \(index + 1)")
                         }
                     }
                 }
@@ -244,11 +253,13 @@ struct ProjectDetailView: View {
             let urls = inspiration.compactMap { inspirationURL($0) }
             SectionBox(title: "Inspiration") {
                 imageGrid {
-                    ForEach(inspiration) { img in
+                    ForEach(Array(inspiration.enumerated()), id: \.element.id) { index, img in
                         if let url = inspirationURL(img) {
                             Button { gallery = GalleryPreview(urls: urls, index: urls.firstIndex(of: url) ?? 0) } label: {
                                 squareImageTile(url: url)
-                            }.buttonStyle(.plain)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Open inspiration image \(index + 1)")
                         }
                     }
                 }
@@ -295,6 +306,10 @@ struct ProjectDetailView: View {
                             Image(systemName: trackingCuts ? "checklist.checked" : "checklist").font(.system(size: 13))
                         }
                         .tint(trackingCuts ? Theme.accent : Theme.muted)
+                        .minimumHitTarget()
+                        .accessibilityLabel(trackingCuts ? "Stop tracking cuts" : "Track cuts")
+                        .accessibilityValue(trackingCuts ? "On" : "Off")
+                        .accessibilityAddTraits(trackingCuts ? .isSelected : [])
                         Button {
                             if let url = CSVExport.cutListCSV(d.cutList, projectTitle: d.title) {
                                 exportURL = IdentifiableURL(url: url)
@@ -302,6 +317,8 @@ struct ProjectDetailView: View {
                         } label: {
                             Image(systemName: "square.and.arrow.up").font(.system(size: 13))
                         }
+                        .minimumHitTarget()
+                        .accessibilityLabel("Export cut list")
                        })) {
                 VStack(spacing: 0) {
                     ForEach(Array(d.cutList.enumerated()), id: \.element.id) { i, c in
@@ -362,6 +379,8 @@ struct ProjectDetailView: View {
                         } label: {
                             Image(systemName: "square.and.arrow.up").font(.system(size: 13))
                         }
+                        .minimumHitTarget()
+                        .accessibilityLabel("Export materials")
                        })) {
                 VStack(spacing: 0) {
                     ForEach(Array(d.materials.enumerated()), id: \.element.id) { i, m in
@@ -387,6 +406,11 @@ struct ProjectDetailView: View {
                         }
                         .buttonStyle(.plain)
                         .sensoryFeedback(.selection, trigger: m.purchased)
+                        .disabled(materialMutationTokens[m.id] != nil)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityValue(m.purchased ? "Purchased" : "Not purchased")
+                        .accessibilityHint(m.purchased ? "Marks this material as not purchased" : "Marks this material as purchased")
+                        .accessibilityAddTraits(m.purchased ? [.isButton, .isSelected] : .isButton)
                     }
                 }
                 .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
@@ -427,6 +451,8 @@ struct ProjectDetailView: View {
                             Button { Task { await deleteFinishEntry(e) } } label: {
                                 Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
                             }
+                            .minimumHitTarget()
+                            .accessibilityLabel("Delete \(e.productName) finish entry")
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
                     }
@@ -493,13 +519,17 @@ struct ProjectDetailView: View {
                                         AuthImage(url: url, contentMode: .fill)
                                             .frame(maxWidth: 260).frame(height: 180).clipped()
                                             .clipShape(RoundedRectangle(cornerRadius: 3))
-                                    }.buttonStyle(.plain)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel("Open build photo from \(shortDate(e.createdAt))")
                                 }
                             }
                             Spacer(minLength: 0)
                             Button { Task { await deleteBuildEntry(e) } } label: {
                                 Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
                             }
+                            .minimumHitTarget()
+                            .accessibilityLabel("Delete build entry from \(shortDate(e.createdAt))")
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -512,12 +542,14 @@ struct ProjectDetailView: View {
     }
 
     private func buildAddForm() -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        let buildPhotoLabel = buildPhotoData == nil ? "Attach photo" : "Photo attached"
+
+        return VStack(alignment: .leading, spacing: 10) {
             TextField("Cut all the legs to length… First coat looks great…", text: $buildNote, axis: .vertical)
                 .lineLimit(3...6).textFieldStyle(.roundedBorder)
             HStack(spacing: 12) {
                 PhotosPicker(selection: $buildPhotoItem, matching: .images) {
-                    Label(buildPhotoData == nil ? "Attach photo" : "Photo attached", systemImage: "camera")
+                    Label(buildPhotoLabel, systemImage: "camera")
                 }
                 .onChange(of: buildPhotoItem) { _, item in
                     Task {
@@ -586,6 +618,8 @@ struct ProjectDetailView: View {
                             Button { Task { await removeLink(link) } } label: {
                                 Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.muted)
                             }
+                            .minimumHitTarget()
+                            .accessibilityLabel("Remove link to \(link.linkedTitle)")
                         }
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
@@ -666,12 +700,29 @@ struct ProjectDetailView: View {
     }
 
     private func load() async {
+        loadGeneration &+= 1
+        let generation = loadGeneration
         loading = d == nil; loadError = nil
         do {
-            d = try await api.project(id: projectId)
+            var refreshed = try await api.project(id: projectId)
+            guard generation == loadGeneration else { return }
+            let pendingValues = Dictionary(
+                uniqueKeysWithValues: d?.materials.compactMap { material in
+                    materialMutationTokens[material.id] == nil ? nil : (material.id, material.purchased)
+                } ?? []
+            )
+            for index in refreshed.materials.indices {
+                if let pending = pendingValues[refreshed.materials[index].id] {
+                    refreshed.materials[index].purchased = pending
+                }
+            }
+            d = refreshed
             rescheduleFinishReminders()
         }
-        catch { loadError = error.localizedDescription }
+        catch {
+            guard generation == loadGeneration else { return }
+            loadError = error.localizedDescription
+        }
         loading = false
         if model.pendingShowCutPlan {
             showCutPlan = true
@@ -692,11 +743,27 @@ struct ProjectDetailView: View {
     // MARK: Materials — optimistic purchased toggle
 
     private func togglePurchased(_ m: WSMaterial) async {
-        guard let idx = d?.materials.firstIndex(where: { $0.id == m.id }) else { return }
-        let next = !m.purchased
+        guard materialMutationTokens[m.id] == nil,
+              let idx = d?.materials.firstIndex(where: { $0.id == m.id })
+        else { return }
+        loadGeneration &+= 1
+        let token = UUID()
+        materialMutationTokens[m.id] = token
+        let previous = d?.materials[idx].purchased ?? m.purchased
+        let next = !previous
         d?.materials[idx].purchased = next
-        do { try await api.setPurchased(id: m.id, purchased: next) }
-        catch { await load() }
+        do {
+            try await api.setPurchased(id: m.id, purchased: next)
+        } catch {
+            if let current = d?.materials.firstIndex(where: { $0.id == m.id }) {
+                d?.materials[current].purchased = previous
+            }
+            ToastCenter.shared.error("Could not update \(m.name)")
+            Haptics.error()
+        }
+        guard materialMutationTokens[m.id] == token else { return }
+        loadGeneration &+= 1
+        materialMutationTokens[m.id] = nil
     }
 
     // MARK: Save as template / delete
@@ -937,10 +1004,10 @@ private func finishColor(_ type: String) -> Color {
 // Immutable, read-only formatters (formatting is thread-safe); shared to avoid
 // re-allocating one per row.
 nonisolated(unsafe) private let isoParser = ISO8601DateFormatter()
-nonisolated(unsafe) private let ymdParser: DateFormatter = {
+private let ymdParser: DateFormatter = {
     let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX"); return f
 }()
-nonisolated(unsafe) private let displayDate: DateFormatter = {
+private let displayDate: DateFormatter = {
     let f = DateFormatter(); f.dateFormat = "MMM d, yyyy"; f.locale = Locale(identifier: "en_US"); return f
 }()
 

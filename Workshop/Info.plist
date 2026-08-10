@@ -58,8 +58,6 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Workshop uses the camera to photograph your projects and build progress.</string>
-	<key>NSJournalingSuggestionsUsageDescription</key>
-	<string>Workshop uses Journaling Suggestions to help you pull a photo from a shop session straight into a build-log note.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSUserActivityTypes</key>

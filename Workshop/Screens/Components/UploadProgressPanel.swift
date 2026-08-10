@@ -48,6 +48,8 @@ struct UploadProgressPanel: View {
                     Button { onDismiss(u.id) } label: {
                         Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.muted)
                     }
+                    .minimumHitTarget()
+                    .accessibilityLabel("Dismiss upload for \(u.name)")
                 }
             }
             if u.status == .uploading {

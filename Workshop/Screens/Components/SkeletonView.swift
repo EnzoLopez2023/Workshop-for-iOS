@@ -9,18 +9,21 @@ struct SkeletonBlock: View {
     var cornerRadius: CGFloat = 8
 
     @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             .fill(Theme.line)
-            .opacity(pulse ? 0.4 : 0.8)
+            .opacity(reduceMotion ? 0.65 : (pulse ? 0.4 : 0.8))
             .frame(width: width, height: height)
             .frame(maxWidth: width == nil ? .infinity : nil)
             .onAppear {
+                guard !reduceMotion else { return }
                 withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                     pulse = true
                 }
             }
+            .accessibilityHidden(true)
     }
 }
 

@@ -178,6 +178,7 @@ struct DashboardView: View {
                     .tracking(1.0)
                     .foregroundStyle(Theme.accentFill)
                     .monospacedDigit()
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 9)
@@ -214,7 +215,10 @@ struct DashboardView: View {
         projects.filter { $0.status != .completed }.reduce(0) { $0 + ($1.partsCount ?? 0) }
     }
     private var estValue: Int {
-        Int(projects.reduce(0.0) { $0 + ($1.totalCost ?? 0) }.rounded())
+        let rounded = projects.reduce(0.0) { $0 + ($1.totalCost ?? 0) }.rounded()
+        guard rounded.isFinite, rounded > 0 else { return 0 }
+        guard rounded < Double(Int.max) else { return Int.max }
+        return Int(rounded)
     }
 
     /// Board clock — the departure-board dateline, not a live ticking clock.
@@ -257,6 +261,7 @@ struct DashboardView: View {
                                 .background(active ? Theme.steel : Theme.flap)
                         }
                         .buttonStyle(.plain)
+                        .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
                     }
                 }
             }
@@ -333,7 +338,7 @@ struct DashboardView: View {
                         .frame(height: 100).frame(maxWidth: .infinity).clipped()
                         VStack(alignment: .leading, spacing: 10) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(t.templateName ?? t.title).font(Theme.ui(16, .bold)).foregroundStyle(Theme.ink).lineLimit(1)
+                                Text(t.templateName ?? t.title).font(Theme.ui(16, .bold)).foregroundStyle(Theme.ink).lineLimit(2)
                                 Text("\(t.difficulty.rawValue) · \(t.partsCount) part\(t.partsCount == 1 ? "" : "s")")
                                     .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                             }
@@ -357,13 +362,18 @@ struct DashboardView: View {
                                 if confirmDeleteTemplateId == t.id {
                                     Button("Cancel") { confirmDeleteTemplateId = nil }
                                         .font(Theme.ui(12, .regular))
+                                        .minimumHitTarget()
                                     Button { Task { await deleteTemplate(t) } } label: {
                                         Image(systemName: "trash").foregroundStyle(Theme.red)
                                     }
+                                    .minimumHitTarget()
+                                    .accessibilityLabel("Confirm delete \(t.templateName ?? t.title) template")
                                 } else {
                                     Button { confirmDeleteTemplateId = t.id } label: {
                                         Image(systemName: "trash").foregroundStyle(Theme.muted)
                                     }
+                                    .minimumHitTarget()
+                                    .accessibilityLabel("Delete \(t.templateName ?? t.title) template")
                                 }
                             }
                         }

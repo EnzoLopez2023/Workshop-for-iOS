@@ -3,7 +3,7 @@ import NintekKit
 
 /// Settings tab — parity with the web's `Settings.tsx`: appearance (theme,
 /// accent, text size), project defaults (default status, dashboard sort,
-/// show-completed), data export (JSON backup), signed-in identity + sign out,
+/// show-completed), project-summary export, signed-in identity + sign out,
 /// permanent account deletion, and version footer.
 struct MoreView: View {
     let api: WorkshopAPI
@@ -65,9 +65,9 @@ struct MoreView: View {
 
                 Section {
                     Button {
-                        Task { await exportBackup() }
+                        Task { await exportProjectSummary() }
                     } label: {
-                        Label(exporting ? "Preparing…" : "Export JSON Backup", systemImage: "square.and.arrow.down")
+                        Label(exporting ? "Preparing…" : "Export Project Summary", systemImage: "square.and.arrow.down")
                     }
                     .disabled(exporting)
                     if let exportError {
@@ -114,7 +114,7 @@ struct MoreView: View {
                 } header: {
                     BoardCaps("Account")
                 } footer: {
-                    Text("Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a backup first if you want to keep a copy.")
+                    Text("Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a project summary first if you want a reference copy.")
                 }
                 .listRowBackground(Theme.flap)
                 .listRowSeparatorTint(Theme.line)
@@ -261,7 +261,7 @@ struct MoreView: View {
 
     // MARK: Export
 
-    private func exportBackup() async {
+    private func exportProjectSummary() async {
         exporting = true; exportError = nil
         do {
             let projects = try await api.listProjects()
@@ -272,7 +272,7 @@ struct MoreView: View {
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd"
             let url = FileManager.default.temporaryDirectory
-                .appendingPathComponent("workshop-backup-\(df.string(from: Date())).json")
+                .appendingPathComponent("workshop-project-summary-\(df.string(from: Date())).json")
             try data.write(to: url)
             exportURL = IdentifiableURL(url: url)
         } catch {

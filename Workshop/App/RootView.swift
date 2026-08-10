@@ -30,6 +30,7 @@ struct RootView: View {
     // Regular width = iPad full screen (and large split-view). Compact = iPhone,
     // and iPad slide-over / narrow split — where the tab bar is the right idiom.
     @Environment(\.horizontalSizeClass) private var hSize
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     // Sidebar starts hidden on iPad (the system toolbar toggle shows it as an
     // overlay) — that's the ShopKeep-derived pattern and iPad keeps it as-is.
     // On Mac ("Designed for iPad", i.e. the iOS binary running unmodified on
@@ -126,9 +127,13 @@ struct RootView: View {
         // behind it still faintly there. Opaque steel here would look like a
         // second screen had replaced the first.
         .background {
-            Theme.steel.opacity(0.8)
-                .background(.ultraThinMaterial)
-                .ignoresSafeArea()
+            if reduceTransparency {
+                Theme.steel.ignoresSafeArea()
+            } else {
+                Theme.steel.opacity(0.8)
+                    .background(.ultraThinMaterial)
+                    .ignoresSafeArea()
+            }
         }
     }
 

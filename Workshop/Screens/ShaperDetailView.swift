@@ -149,7 +149,7 @@ struct ShaperDetailView: View {
         let urls = p.images.compactMap { imageURL(id: $0.id) }
         return section("Photos") {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 10)], spacing: 10) {
-                ForEach(p.images) { img in
+                ForEach(Array(p.images.enumerated()), id: \.element.id) { index, img in
                     if let url = imageURL(id: img.id) {
                         Button { gallery = GalleryPreview(urls: urls, index: urls.firstIndex(of: url) ?? 0) } label: {
                             // A definite-size Color.clear square (via .fit) bounds the grid
@@ -160,7 +160,9 @@ struct ShaperDetailView: View {
                                 .aspectRatio(4.0 / 3.0, contentMode: .fit)
                                 .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
                                 .clipShape(RoundedRectangle(cornerRadius: 3))
-                        }.buttonStyle(.plain)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Open Shaper project photo \(index + 1)")
                     }
                 }
             }

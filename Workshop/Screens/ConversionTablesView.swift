@@ -12,6 +12,7 @@ struct ConversionTablesView: View {
     @State private var inputText = ""
     @State private var unit: ConvUnit = .mm
     @State private var tab: ConvTab = .mmToIn
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         NavigationStack {
@@ -74,7 +75,7 @@ struct ConversionTablesView: View {
                 }
             }
             if hasVal {
-                HStack(spacing: 28) {
+                conversionResultsLayout {
                     resultPill("Millimeters", String(format: "%.3f mm", mmVal), accent: false)
                     resultPill("Decimal Inches", String(format: "%.5f\"", inVal), accent: false)
                     resultPill("Nearest 1/32\"", toFrac32(inVal), accent: true)
@@ -94,13 +95,23 @@ struct ConversionTablesView: View {
                 .foregroundStyle(active ? Theme.onSteel : Theme.ink)
                 .padding(.horizontal, 16).padding(.vertical, 8)
                 .background(active ? Theme.steel : Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
-        }.buttonStyle(.plain)
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
+    }
+
+    private var conversionResultsLayout: AnyLayout {
+        if dynamicTypeSize.isAccessibilitySize {
+            AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+        } else {
+            AnyLayout(HStackLayout(spacing: 28))
+        }
     }
 
     private func resultPill(_ label: String, _ value: String, accent: Bool) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label.uppercased()).font(Theme.ui(10, .bold)).tracking(0.8).foregroundStyle(Theme.muted)
-            Text(value).font(accent ? Theme.display(20) : .system(size: 20, weight: .bold))
+            Text(value).font(accent ? Theme.display(20) : Theme.ui(20, .bold, relativeTo: .title3))
                 .foregroundStyle(accent ? Theme.accent : Theme.ink)
         }
     }
@@ -118,7 +129,9 @@ struct ConversionTablesView: View {
                             .foregroundStyle(active ? Theme.onSteel : Theme.ink)
                             .padding(.horizontal, 16).padding(.vertical, 8)
                             .background(active ? Theme.steel : Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
-                    }.buttonStyle(.plain)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
                 }
             }
         }

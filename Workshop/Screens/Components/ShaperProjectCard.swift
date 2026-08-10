@@ -62,6 +62,20 @@ struct ShaperProjectCard: View {
         .background(Theme.flap)
         .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
         .overlay(RoundedRectangle(cornerRadius: Theme.rPanel).strokeBorder(Theme.line, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
+    }
+
+    private var accessibilitySummary: String {
+        var values = [
+            project.title.isEmpty ? "Untitled Shaper project" : project.title,
+            "\(project.materials.count) materials",
+            "Source Shaper"
+        ]
+        if let description = project.description, !description.isEmpty {
+            values.insert(description, at: 1)
+        }
+        return values.joined(separator: ", ")
     }
 
     private func cell(_ label: String, _ value: String, wide: Bool = false) -> some View {

@@ -61,6 +61,22 @@ struct ProjectCard: View {
         .background(Theme.flap)
         .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
         .overlay(RoundedRectangle(cornerRadius: Theme.rPanel).strokeBorder(Theme.line, lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
+    }
+
+    private var accessibilitySummary: String {
+        var values = [
+            project.title,
+            "Status \(project.status.rawValue)",
+            "Stock \(project.woodTypes.isEmpty ? "not specified" : project.woodTypes.joined(separator: ", "))",
+            "\(project.partsCount ?? 0) parts",
+            project.estimatedHours > 0 ? "\(project.estimatedHours) hours" : "Hours not estimated"
+        ]
+        if let description = project.description, !description.isEmpty {
+            values.insert(description, at: 2)
+        }
+        return values.joined(separator: ", ")
     }
 
     private func cell(_ label: String, _ value: String, fixed: Bool = false) -> some View {

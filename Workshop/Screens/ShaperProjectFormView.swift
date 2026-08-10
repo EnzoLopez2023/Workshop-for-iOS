@@ -32,6 +32,10 @@ struct ShaperProjectFormView: View {
     @State private var queuedImageURLs: [String] = []
     @State private var pickerItems: [PhotosPickerItem] = []
     @State private var uploadStatus: String?
+    @State private var failedPhotoUploads: [Data] = []
+    @State private var unresolvedPhotoReadFailures = 0
+    @State private var uploadFailed = false
+    @State private var uploadingPhotos = false
 
     @State private var loading: Bool
     @State private var loadError: String?
@@ -92,7 +96,9 @@ struct ShaperProjectFormView: View {
     }
 
     private var form: some View {
-        List {
+        let photoPickerLabel = uploadingPhotos ? "Uploading…" : "Upload Photos"
+
+        return List {
             Section {
                 TextField("Shaper Hub URL", text: $shaperUrl)
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
@@ -125,12 +131,31 @@ struct ShaperProjectFormView: View {
                     Text("\(queuedPhotos.count) photo\(queuedPhotos.count == 1 ? "" : "s") queued — will upload on save")
                         .font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
                 }
+                if unresolvedPhotoReadFailures > 0 {
+                    Text(photoReadFailureMessage(unresolvedPhotoReadFailures))
+                        .font(Theme.ui(13, .regular, relativeTo: .footnote))
+                        .foregroundStyle(Theme.red)
+                    Button("Dismiss Photo Error") {
+                        unresolvedPhotoReadFailures = 0
+                    }
+                }
                 if let uploadStatus {
-                    Text(uploadStatus).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(.secondary)
+                    Text(uploadStatus)
+                        .font(Theme.ui(13, .regular, relativeTo: .footnote))
+                        .foregroundStyle(uploadFailed ? Theme.red : Theme.muted)
+                }
+                if editing, !failedPhotoUploads.isEmpty {
+                    Button {
+                        Task { await retryFailedPhotoUploads() }
+                    } label: {
+                        Label("Retry Failed Uploads", systemImage: "arrow.clockwise")
+                    }
+                    .disabled(uploadingPhotos)
                 }
                 PhotosPicker(selection: $pickerItems, matching: .images) {
-                    Label("Upload Photos", systemImage: "photo.badge.plus")
+                    Label(photoPickerLabel, systemImage: "photo.badge.plus")
                 }
+                .disabled(uploadingPhotos)
                 .onChange(of: pickerItems) { _, items in Task { await handlePickerSelection(items) } }
             }
 
@@ -240,33 +265,126 @@ struct ShaperProjectFormView: View {
     // MARK: Photo handling
 
     private func handlePickerSelection(_ items: [PhotosPickerItem]) async {
+        guard !items.isEmpty else { return }
+        uploadingPhotos = true
+        uploadFailed = false
+        defer {
+            uploadingPhotos = false
+            pickerItems = []
+        }
+
+        var preparedPhotos: [Data] = []
+        var readFailures = 0
         for item in items {
-            guard let data = try? await item.loadTransferable(type: Data.self),
-                  let uiImage = UIImage(data: data),
-                  let jpeg = uiImage.jpegData(compressionQuality: 0.85) else { continue }
-            if let shaperId {
-                uploadStatus = "Uploading…"
-                do {
-                    let file = MultipartFile(filename: "photo-\(Int(Date().timeIntervalSince1970)).jpg",
-                                            mimeType: "image/jpeg", data: jpeg)
-                    try await api.uploadShaperImage(shaperProjectId: shaperId, file: file)
-                    uploadStatus = "Uploaded"
-                    await refreshImages(shaperId)
-                    try? await Task.sleep(nanoseconds: 2_000_000_000)
-                    uploadStatus = nil
-                } catch {
-                    uploadStatus = "Upload failed: \(error.localizedDescription)"
+            do {
+                guard let data = try await item.loadTransferable(type: Data.self),
+                      let uiImage = UIImage(data: data),
+                      let converted = uiImage.jpegData(compressionQuality: 0.85)
+                else {
+                    readFailures += 1
+                    continue
                 }
-            } else {
-                queuedPhotos.append(jpeg)
+                preparedPhotos.append(converted)
+            } catch {
+                readFailures += 1
             }
         }
-        pickerItems = []
+
+        unresolvedPhotoReadFailures += readFailures
+
+        guard let shaperId else {
+            queuedPhotos.append(contentsOf: preparedPhotos)
+            uploadStatus = nil
+            return
+        }
+
+        let result = await uploadPhotoBatch(preparedPhotos, shaperId: shaperId)
+        failedPhotoUploads.append(contentsOf: result.failed)
+        var refreshed = true
+        if result.uploaded > 0 {
+            refreshed = await refreshImages(shaperId)
+        }
+
+        if !failedPhotoUploads.isEmpty {
+            uploadFailed = true
+            uploadStatus = "\(failedPhotoUploads.count) photo upload\(failedPhotoUploads.count == 1 ? " is" : "s are") waiting to retry."
+        } else if !refreshed {
+            uploadFailed = true
+            uploadStatus = "Photos uploaded, but the photo list could not refresh. Reopen the project to see them."
+        } else if result.uploaded > 0 {
+            await showUploadSuccess(result.uploaded)
+        }
     }
 
-    private func refreshImages(_ shaperId: Int) async {
-        guard let p = try? await api.shaperProject(id: shaperId) else { return }
-        existingImages = p.images
+    private func retryFailedPhotoUploads() async {
+        guard let shaperId, !failedPhotoUploads.isEmpty else { return }
+        uploadingPhotos = true
+        uploadFailed = false
+        let retryPhotos = failedPhotoUploads
+        failedPhotoUploads = []
+        defer { uploadingPhotos = false }
+
+        let result = await uploadPhotoBatch(retryPhotos, shaperId: shaperId)
+        failedPhotoUploads = result.failed
+        var refreshed = true
+        if result.uploaded > 0 {
+            refreshed = await refreshImages(shaperId)
+        }
+
+        if !failedPhotoUploads.isEmpty {
+            uploadFailed = true
+            uploadStatus = "\(failedPhotoUploads.count) photo upload\(failedPhotoUploads.count == 1 ? " is" : "s are") still waiting to retry."
+        } else if !refreshed {
+            uploadFailed = true
+            uploadStatus = "Photos uploaded, but the photo list could not refresh. Reopen the project to see them."
+        } else {
+            await showUploadSuccess(result.uploaded)
+        }
+    }
+
+    private func uploadPhotoBatch(_ photos: [Data], shaperId: Int) async -> (uploaded: Int, failed: [Data]) {
+        var uploaded = 0
+        var failed: [Data] = []
+        for (index, jpeg) in photos.enumerated() {
+            uploadStatus = "Uploading \(index + 1) of \(photos.count)…"
+            do {
+                let file = MultipartFile(filename: "photo-\(UUID().uuidString).jpg",
+                                         mimeType: "image/jpeg", data: jpeg)
+                try await api.uploadShaperImage(shaperProjectId: shaperId, file: file)
+                uploaded += 1
+            } catch {
+                NSLog("[Workshop] Shaper photo upload failed: %@", String(describing: error))
+                failed.append(jpeg)
+            }
+        }
+        return (uploaded, failed)
+    }
+
+    private func refreshImages(_ shaperId: Int) async -> Bool {
+        do {
+            existingImages = try await api.shaperProject(id: shaperId).images
+            return true
+        } catch {
+            NSLog("[Workshop] Could not refresh Shaper photos: %@", String(describing: error))
+            ToastCenter.shared.error("Could not refresh project photos")
+            return false
+        }
+    }
+
+    private func showUploadSuccess(_ count: Int) async {
+        guard count > 0 else {
+            uploadStatus = nil
+            return
+        }
+        let message = "\(count) photo\(count == 1 ? "" : "s") uploaded"
+        uploadFailed = false
+        uploadStatus = message
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        if uploadStatus == message { uploadStatus = nil }
+    }
+
+    private func photoReadFailureMessage(_ count: Int) -> String {
+        "\(count) selected photo\(count == 1 ? "" : "s") could not be read. Select \(count == 1 ? "it" : "them") again to retry."
     }
 
     // MARK: Cut rows
@@ -359,13 +477,13 @@ struct ShaperProjectFormView: View {
             // Drain both queues as they land: a retry after a mid-save failure
             // must not upload the photos that already made it a second time.
             while let data = queuedPhotos.first {
-                let file = MultipartFile(filename: "photo-\(Int(Date().timeIntervalSince1970)).jpg",
+                let file = MultipartFile(filename: "photo-\(UUID().uuidString).jpg",
                                         mimeType: "image/jpeg", data: data)
-                _ = try? await api.uploadShaperImage(shaperProjectId: savedId, file: file)
+                _ = try await api.uploadShaperImage(shaperProjectId: savedId, file: file)
                 queuedPhotos.removeFirst()
             }
             while let url = queuedImageURLs.first {
-                _ = try? await api.addShaperImageURL(shaperProjectId: savedId, url: url)
+                _ = try await api.addShaperImageURL(shaperProjectId: savedId, url: url)
                 queuedImageURLs.removeFirst()
             }
 

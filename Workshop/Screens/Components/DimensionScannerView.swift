@@ -54,6 +54,7 @@ struct DimensionScannerSheet: View {
     @Binding var thickness: String
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @State private var target: Field = .length
     @State private var lastScanned: String?
 
@@ -84,8 +85,14 @@ struct DimensionScannerSheet: View {
                     if let lastScanned {
                         Text("Filled \(target.rawValue): \(lastScanned)")
                             .font(Theme.ui(13, .medium, relativeTo: .footnote))
+                            .foregroundStyle(reduceTransparency ? Theme.onSteel : Theme.ink)
                             .padding(.horizontal, 14).padding(.vertical, 8)
-                            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                            .background(
+                                reduceTransparency
+                                    ? AnyShapeStyle(Theme.steel)
+                                    : AnyShapeStyle(.thinMaterial),
+                                in: RoundedRectangle(cornerRadius: Theme.rFlap)
+                            )
                             .padding(.bottom, 24)
                     }
                 }
@@ -106,6 +113,10 @@ struct DimensionScannerSheet: View {
         case .thickness: thickness = text
         }
         lastScanned = text
+        UIAccessibility.post(
+            notification: .announcement,
+            argument: "Filled \(target.rawValue): \(text)"
+        )
         Haptics.success()
     }
 }

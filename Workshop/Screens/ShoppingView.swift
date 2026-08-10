@@ -15,6 +15,8 @@ struct ShoppingView: View {
     @State private var showPurchased = false
     @State private var exportURL: IdentifiableURL?
     @State private var trackingShopping = ShoppingActivityController.isTracking
+    @State private var mutationTokens: [Int: UUID] = [:]
+    @State private var loadGeneration = 0
 
     var body: some View {
         NavigationStack {
@@ -59,6 +61,8 @@ struct ShoppingView: View {
                         }
                     }
                     .disabled(items.allSatisfy { $0.purchased })
+                    .accessibilityValue(trackingShopping ? "On" : "Off")
+                    .accessibilityAddTraits(trackingShopping ? .isSelected : [])
                 }
                 .boardToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
@@ -168,6 +172,11 @@ struct ShoppingView: View {
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: item.purchased)
+        .disabled(mutationTokens[item.id] != nil)
+        .accessibilityElement(children: .combine)
+        .accessibilityValue(item.purchased ? "Purchased" : "Not purchased")
+        .accessibilityHint(item.purchased ? "Marks this item as not purchased" : "Marks this item as purchased")
+        .accessibilityAddTraits(item.purchased ? [.isButton, .isSelected] : .isButton)
     }
 
     // MARK: States
@@ -190,21 +199,55 @@ struct ShoppingView: View {
     // MARK: Data
 
     private func load() async {
+        loadGeneration &+= 1
+        let generation = loadGeneration
         loading = items.isEmpty; loadError = nil
         do {
-            items = try await api.shoppingList()
+            var refreshed = try await api.shoppingList()
+            guard generation == loadGeneration else { return }
+            let pendingValues = Dictionary(
+                uniqueKeysWithValues: items.compactMap { item in
+                    mutationTokens[item.id] == nil ? nil : (item.id, item.purchased)
+                }
+            )
+            for index in refreshed.indices {
+                if let pending = pendingValues[refreshed[index].id] {
+                    refreshed[index].purchased = pending
+                }
+            }
+            items = refreshed
             syncWidgetSnapshot()
-        } catch { loadError = error.localizedDescription }
+        } catch {
+            guard generation == loadGeneration else { return }
+            loadError = error.localizedDescription
+        }
         loading = false
     }
 
     private func togglePurchased(_ item: ShoppingItem) async {
-        guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
-        let next = !item.purchased
+        guard mutationTokens[item.id] == nil,
+              let idx = items.firstIndex(where: { $0.id == item.id })
+        else { return }
+        loadGeneration &+= 1
+        let token = UUID()
+        mutationTokens[item.id] = token
+        let previous = items[idx].purchased
+        let next = !previous
         items[idx].purchased = next
         syncWidgetSnapshot()
-        do { try await api.setPurchased(id: item.id, purchased: next) }
-        catch { await load() }
+        do {
+            try await api.setPurchased(id: item.id, purchased: next)
+        } catch {
+            if let current = items.firstIndex(where: { $0.id == item.id }) {
+                items[current].purchased = previous
+            }
+            syncWidgetSnapshot()
+            ToastCenter.shared.error("Could not update \(item.name)")
+            Haptics.error()
+        }
+        guard mutationTokens[item.id] == token else { return }
+        loadGeneration &+= 1
+        mutationTokens[item.id] = nil
     }
 
     /// Publishes the top unpurchased items for the Home Screen widget's

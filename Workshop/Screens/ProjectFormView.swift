@@ -289,6 +289,8 @@ struct ProjectFormView: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(Theme.accent)
+                .minimumHitTarget()
+                .accessibilityLabel("Scan dimensions for \(row.wrappedValue.partName.isEmpty ? "part" : row.wrappedValue.partName)")
             }
             HStack(spacing: 8) {
                 TextField("Qty", value: row.qty, format: .number)
@@ -314,6 +316,10 @@ struct ProjectFormView: View {
                         .foregroundStyle(row.wrappedValue.purchased ? Theme.accent : Theme.muted)
                 }
                 .buttonStyle(.plain)
+                .minimumHitTarget()
+                .accessibilityLabel("Purchased")
+                .accessibilityValue(row.wrappedValue.purchased ? "On" : "Off")
+                .accessibilityAddTraits(row.wrappedValue.purchased ? [.isButton, .isSelected] : .isButton)
                 TextField("Name", text: row.name).font(Theme.ui(15, .medium))
             }
             HStack(spacing: 8) {
@@ -348,6 +354,8 @@ struct ProjectFormView: View {
                                             in: RoundedRectangle(cornerRadius: Theme.rFlap))
                         }
                         .buttonStyle(.plain)
+                        .minimumHitTarget()
+                        .accessibilityLabel("Remove \(kind == .sketch ? "sketch or plan" : "inspiration image")")
                         .offset(x: 6, y: -6)
                     }
                 }
