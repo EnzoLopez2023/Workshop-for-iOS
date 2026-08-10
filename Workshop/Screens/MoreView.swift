@@ -292,11 +292,27 @@ struct MoreView: View {
         } catch {
             NSLog("[Workshop] Account deletion failed: %@", String(describing: error))
             Haptics.error()
-            if let apiError = error as? APIError, apiError.isUnauthorized {
-                accountDeletionError = "Your session expired before deletion could be confirmed. Sign out, sign back in, and try again."
-            } else {
-                accountDeletionError = "We couldn't delete your account. Your Workshop data remains available. Check your connection and try again."
-            }
+            accountDeletionError = accountDeletionMessage(for: error)
+        }
+    }
+
+    private func accountDeletionMessage(for error: Error) -> String {
+        guard let apiError = error as? APIError else {
+            return "We couldn't confirm account deletion. Check your connection and try again."
+        }
+        switch apiError {
+        case .unauthorized:
+            return "Your session expired before deletion could be confirmed. Sign out, sign back in, and try again."
+        case .http(409, let code) where code == "apple_reauthentication_required":
+            return "Sign out, then sign in with Apple again before retrying. Apple requires one fresh sign-in before Workshop can revoke access."
+        case .http(409, _):
+            return "Another account operation is still finishing. Wait a moment, then try again."
+        case .http(502, let code) where code == "apple_token_revocation_failed":
+            return "Apple couldn't confirm that access was revoked, so Workshop kept your account intact. Try again."
+        case .http(503, let code) where code == "apple_revocation_unavailable":
+            return "Account deletion is temporarily unavailable. Your Workshop data remains intact; try again later."
+        default:
+            return "We couldn't confirm account deletion. Your local account is still signed in; try again."
         }
     }
 }
