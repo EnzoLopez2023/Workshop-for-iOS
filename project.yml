@@ -58,6 +58,14 @@ targets:
       # "Add to Workshop" from Safari/Photos/Pinterest share sheets (Phase 7.5).
       - target: WorkshopShareExtension
         embed: true
+    # MSAL is a prebuilt (stripped) binary SPM target, so Xcode can't generate
+    # a dSYM for it and App Store Connect answers every upload with "Upload
+    # Symbols Failed". Stage Microsoft's published dSYM into the archive.
+    # No-ops on Debug builds. Kept identical to ShopKeep's copy.
+    postBuildScripts:
+      - script: '"$SRCROOT/Scripts/embed-msal-dsym.sh"'
+        name: Stage MSAL dSYM
+        basedOnDependencyAnalysis: false
     info:
       path: Workshop/Info.plist
       properties:
@@ -102,10 +110,12 @@ targets:
         # Handoff — continue viewing a project across iPhone/iPad/Mac.
         NSUserActivityTypes:
           - com.nintek.workshop.viewing-project
-        # Camera + photo library for project sketches, build-log photos (Phase 3);
-        # Files/PDF import needs no usage string.
+        # Camera for project sketches and build-log photos. The photo library
+        # is only ever reached through `PhotosPicker`, which runs out of process
+        # and hands back just the chosen image — that needs no usage string, and
+        # declaring one anyway asks for access the app never uses. Files/PDF
+        # import needs no string either.
         NSCameraUsageDescription: Workshop uses the camera to photograph your projects and build progress.
-        NSPhotoLibraryUsageDescription: Workshop uses your photo library to attach sketches and inspiration to projects.
         # JournalingSuggestionsPicker (build-log "From Journal" button, device
         # builds only — see the #if canImport(JournalingSuggestions) guard in
         # ProjectDetailView.swift).
@@ -154,8 +164,8 @@ targets:
         # Single source of truth for the app version — Info.plist references these
         # via $(MARKETING_VERSION)/$(CURRENT_PROJECT_VERSION). Bump every commit:
         # marketing = major.minor.patch (semver), build = monotonic per commit.
-        MARKETING_VERSION: "2.0"
-        CURRENT_PROJECT_VERSION: "2"
+        MARKETING_VERSION: "2.1"
+        CURRENT_PROJECT_VERSION: "4"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -207,8 +217,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.widgets
         PRODUCT_NAME: WorkshopWidgets
-        MARKETING_VERSION: "2.0"
-        CURRENT_PROJECT_VERSION: "2"
+        MARKETING_VERSION: "2.1"
+        CURRENT_PROJECT_VERSION: "4"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
@@ -254,8 +264,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nintek.workshop.share
         PRODUCT_NAME: WorkshopShareExtension
-        MARKETING_VERSION: "2.0"
-        CURRENT_PROJECT_VERSION: "2"
+        MARKETING_VERSION: "2.1"
+        CURRENT_PROJECT_VERSION: "4"
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic

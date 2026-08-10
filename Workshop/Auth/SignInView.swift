@@ -8,7 +8,11 @@ import AuthenticationServices
 /// mode in native.
 struct SignInView: View {
     @EnvironmentObject private var model: AppModel
-    @State private var signingIn = false
+    /// Which provider is mid-flight, so only that plate shows the busy state.
+    @State private var signingIn: SignInProvider?
+    @State private var appleSignIn = AppleSignInController()
+
+    private var busy: Bool { signingIn != nil }
 
     var body: some View {
         ZStack {
@@ -72,36 +76,21 @@ struct SignInView: View {
 
                 Spacer(minLength: 24)
                 Spacer(minLength: 0)
+                // The two providers are one pair of plates: same lettering,
+                // same metrics, same square corners — only the fill and the
+                // mark tell them apart. A system SignInWithAppleButton owns its
+                // own type and height, so it can never join that pair; Apple's
+                // request is made directly instead and the plate is ours.
                 VStack(spacing: 12) {
-                    Button {
-                        Task { await signIn() }
-                    } label: {
-                        HStack(spacing: 8) {
-                            if signingIn { ProgressView().tint(Theme.steelDark) }
-                            Text(signingIn ? "SIGNING IN…" : "SIGN IN WITH MICROSOFT")
-                                .font(Theme.board(12, .bold, relativeTo: .callout))
-                                .tracking(1.1)
-                        }
-                        .foregroundStyle(Theme.steelDark)
-                        .frame(maxWidth: .infinity).padding(.vertical, 15)
-                        .background(Theme.accentFill)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+                    SignInPlate(provider: .microsoft, busy: signingIn == .microsoft) {
+                        Task { await signInWithMicrosoft() }
                     }
-                    // Without an explicit style the system dims the whole label
-                    // in dark mode, which mutes the one amber action on screen.
-                    .buttonStyle(.plain)
-                    .disabled(signingIn)
+                    .disabled(busy)
 
-                    SignInWithAppleButton(.signIn) { request in
-                        request.requestedScopes = [.fullName, .email]
-                    } onCompletion: { result in
-                        Task { await handleApple(result) }
+                    SignInPlate(provider: .apple, busy: signingIn == .apple) {
+                        startAppleSignIn()
                     }
-                    .signInWithAppleButtonStyle(.black)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-                    .disabled(signingIn)
+                    .disabled(busy)
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 40)
@@ -110,11 +99,18 @@ struct SignInView: View {
         }
     }
 
-    private func signIn() async {
+    private func signInWithMicrosoft() async {
         guard let vc = topViewController() else { return }
-        signingIn = true
+        signingIn = .microsoft
         await model.signInWithMicrosoft(presenting: vc)
-        signingIn = false
+        signingIn = nil
+    }
+
+    private func startAppleSignIn() {
+        signingIn = .apple
+        appleSignIn.start { result in
+            Task { await handleApple(result) }
+        }
     }
 
     private func handleApple(_ result: Result<ASAuthorization, Error>) async {
@@ -122,21 +118,174 @@ struct SignInView: View {
         case .success(let auth):
             let credential = auth.credential as? ASAuthorizationAppleIDCredential
             let idToken = credential?.identityToken.flatMap { String(data: $0, encoding: .utf8) }
+            let authorizationCode = credential?.authorizationCode.flatMap { String(data: $0, encoding: .utf8) }
             // fullName arrives only on the first consent; format to "First Last".
             let name = credential?.fullName.flatMap { components -> String? in
                 let s = PersonNameComponentsFormatter().string(from: components)
                     .trimmingCharacters(in: .whitespaces)
                 return s.isEmpty ? nil : s
             }
-            signingIn = true
-            await model.signInWithApple(idToken: idToken, name: name)   // nil token → model reports the error
-            signingIn = false
+            await model.signInWithApple(
+                idToken: idToken,
+                authorizationCode: authorizationCode,
+                name: name
+            )
         case .failure(let error):
             // A user-cancelled sheet isn't an error worth surfacing.
-            if let authError = error as? ASAuthorizationError, authError.code == .canceled { return }
-            signingIn = true
-            await model.signInWithApple(idToken: nil, name: nil)
-            signingIn = false
+            if let authError = error as? ASAuthorizationError, authError.code == .canceled {
+                signingIn = nil
+                return
+            }
+            await model.signInWithApple(idToken: nil, authorizationCode: nil, name: nil)
         }
+        signingIn = nil
+    }
+}
+
+// MARK: - The plate pair
+
+private enum SignInProvider {
+    case microsoft, apple
+
+    /// Board lettering, so both plates speak the concourse's caps. The wording
+    /// itself is each provider's required phrase, unchanged.
+    var title: String {
+        switch self {
+        case .microsoft: "SIGN IN WITH MICROSOFT"
+        case .apple:     "SIGN IN WITH APPLE"
+        }
+    }
+
+    /// Amber is this screen's one signal lamp and marks the primary action;
+    /// Apple's plate is the ink counterpart, not a second lamp.
+    var fill: Color {
+        switch self {
+        case .microsoft: Theme.accentFill
+        case .apple:     Color(uiColor: UIColor(rgb: 0x14181A))
+        }
+    }
+
+    var foreground: Color {
+        switch self {
+        case .microsoft: Theme.steelDark
+        case .apple:     .white
+        }
+    }
+}
+
+/// One sign-in action as a flap-square plate on the concourse.
+private struct SignInPlate: View {
+    let provider: SignInProvider
+    let busy: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 9) {
+                if busy {
+                    ProgressView().tint(provider.foreground)
+                } else {
+                    mark
+                }
+                Text(busy ? "SIGNING IN…" : provider.title)
+                    .font(Theme.board(12, .bold, relativeTo: .callout))
+                    .tracking(1.1)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
+            .foregroundStyle(provider.foreground)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 15)
+            .background(provider.fill)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+        }
+        // Without an explicit style the system dims the whole label in dark
+        // mode, which mutes the one amber action on screen.
+        .buttonStyle(.plain)
+        .accessibilityLabel(provider.title.capitalized)
+    }
+
+    @ViewBuilder private var mark: some View {
+        switch provider {
+        case .microsoft:
+            // Microsoft's mark needs a white or dark ground — its yellow square
+            // is invisible on amber. A white flap chip gives it one, and reads
+            // as board hardware rather than a sticker.
+            MicrosoftLogo(size: 13)
+                .padding(3)
+                .background(.white)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rFlap))
+        case .apple:
+            Image(systemName: "applelogo")
+                .font(.system(size: 16))
+                // The glyph sits high in its box; nudge it onto the cap line.
+                .offset(y: -1)
+        }
+    }
+}
+
+/// The Microsoft mark — four squares, per Microsoft's sign-in button branding.
+private struct MicrosoftLogo: View {
+    var size: CGFloat = 15
+    /// Gutter between the squares, as a share of the mark's width.
+    private let gutter: CGFloat = 0.1
+
+    var body: some View {
+        VStack(spacing: size * gutter) {
+            HStack(spacing: size * gutter) {
+                Rectangle().fill(Color(uiColor: UIColor(rgb: 0xF25022)))
+                Rectangle().fill(Color(uiColor: UIColor(rgb: 0x7FBA00)))
+            }
+            HStack(spacing: size * gutter) {
+                Rectangle().fill(Color(uiColor: UIColor(rgb: 0x00A4EF)))
+                Rectangle().fill(Color(uiColor: UIColor(rgb: 0xFFB900)))
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+    }
+}
+
+/// Drives Sign in with Apple from our own plate. `SignInWithAppleButton` bundles
+/// the request with an appearance we can't match to the Microsoft plate, so the
+/// request is issued here and the button is left to `SignInPlate`.
+@MainActor
+final class AppleSignInController: NSObject, ASAuthorizationControllerDelegate,
+                                   ASAuthorizationControllerPresentationContextProviding {
+    private var completion: ((Result<ASAuthorization, Error>) -> Void)?
+    /// `ASAuthorizationController` holds its delegate weakly, so the request
+    /// keeps us alive for exactly as long as it's in flight.
+    private var inFlight: AppleSignInController?
+
+    func start(_ completion: @escaping (Result<ASAuthorization, Error>) -> Void) {
+        self.completion = completion
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.delegate = self
+        controller.presentationContextProvider = self
+        inFlight = self
+        controller.performRequests()
+    }
+
+    func authorizationController(controller: ASAuthorizationController,
+                                 didCompleteWithAuthorization authorization: ASAuthorization) {
+        finish(.success(authorization))
+    }
+
+    func authorizationController(controller: ASAuthorizationController,
+                                 didCompleteWithError error: Error) {
+        finish(.failure(error))
+    }
+
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        topViewController()?.view.window ?? ASPresentationAnchor()
+    }
+
+    private func finish(_ result: Result<ASAuthorization, Error>) {
+        let handler = completion
+        completion = nil
+        inFlight = nil
+        handler?(result)
     }
 }

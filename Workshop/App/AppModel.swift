@@ -11,6 +11,8 @@ import NintekKit
 /// the web — or with a Workshop session minted from Sign in with Apple.
 @MainActor
 final class AppModel: ObservableObject {
+    private static let suppressAutomaticSignInKey = "ws.suppressAutomaticSignIn"
+
     let msalAuth: MSALAuth?
     let appleAuth: AppleAuthService
     private(set) var api: WorkshopAPI
@@ -88,10 +90,11 @@ final class AppModel: ObservableObject {
         let auth = try? MSALAuth()
         self.msalAuth = auth
 
-        if AppleSessionStore.hasSession {
+        let automaticSignInSuppressed = UserDefaults.standard.bool(forKey: Self.suppressAutomaticSignInKey)
+        if AppleSessionStore.hasSession, !automaticSignInSuppressed {
             self.api = WorkshopAPI(baseURL: base, tokenProvider: SessionTokenProvider(service: appleAuth))
             self.isSignedIn = true
-        } else if let auth {
+        } else if let auth, !automaticSignInSuppressed {
             self.api = WorkshopAPI(baseURL: base, tokenProvider: MSALTokenProvider(auth: auth))
             self.isSignedIn = auth.hasAccount
         } else {
@@ -112,6 +115,7 @@ final class AppModel: ObservableObject {
             try await msalAuth.signInInteractively(presenting: viewController)
             api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: MSALTokenProvider(auth: msalAuth))
             isSignedIn = msalAuth.hasAccount
+            UserDefaults.standard.removeObject(forKey: Self.suppressAutomaticSignInKey)
             authError = nil
         } catch let error as NSError {
             if error.domain == MSALErrorDomain, error.code == MSALError.userCanceled.rawValue { return }
@@ -133,15 +137,20 @@ final class AppModel: ObservableObject {
     /// Exchange the Apple identity token (from SignInWithAppleButton) for a
     /// Workshop session and switch the API client to it. A nil token means the
     /// authorization produced no usable token (or failed) — surfaced as an error.
-    func signInWithApple(idToken: String?, name: String?) async {
-        guard let idToken else {
+    func signInWithApple(idToken: String?, authorizationCode: String?, name: String?) async {
+        guard let idToken, let authorizationCode else {
             authError = "Apple sign-in failed. Please try again."
             return
         }
         do {
-            try await appleAuth.exchange(idToken: idToken, name: name)
+            try await appleAuth.exchange(
+                idToken: idToken,
+                authorizationCode: authorizationCode,
+                name: name
+            )
             api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: SessionTokenProvider(service: appleAuth))
             isSignedIn = true
+            UserDefaults.standard.removeObject(forKey: Self.suppressAutomaticSignInKey)
             authError = nil
         } catch {
             NSLog("[Workshop] Apple sign-in failed: %@", String(describing: error))
@@ -149,10 +158,42 @@ final class AppModel: ObservableObject {
         }
     }
 
-    func signOut() {
+    /// Permanently remove the authenticated account on the server, then clear
+    /// every local surface that could retain its data. Local state is left
+    /// untouched if the server call fails, so a network error never masquerades
+    /// as successful deletion.
+    func deleteAccount() async throws {
+        let deletedUserKey = userKey
+        try await api.deleteAccount()
+        StarterSeeder.clearRun(userKey: deletedUserKey)
+        await signOut()
+    }
+
+    func signOut() async {
+        // This flag is the backstop if MSAL's cache removal fails: relaunch must
+        // stay signed out until the user explicitly chooses Microsoft again,
+        // rather than silently recreating an account they just deleted.
+        UserDefaults.standard.set(true, forKey: Self.suppressAutomaticSignInKey)
+        authError = nil
         AppleSessionStore.clear()
-        try? msalAuth?.signOut()
+        do {
+            try msalAuth?.signOut()
+        } catch {
+            NSLog("[Workshop] MSAL account removal failed during sign-out: %@", String(describing: error))
+            authError = "Workshop signed out, but Microsoft could not clear its cached account. Restart the app before signing in again."
+        }
         isSignedIn = false
+        selectedTab = AppDestination.dashboard.rawValue
+        pendingProjectId = nil
+        pendingShowCutPlan = false
+        #if DEBUG
+        pendingShaperId = nil
+        #endif
+        for item in ShareQueue.loadAll() {
+            ShareQueue.remove(item)
+        }
+        await ImageCache.shared.clear()
+        FinishReminderScheduler.cancelAll()
         WorkshopWidgetStore.clear()
         WidgetCenter.shared.reloadAllTimelines()
         SpotlightIndexer.clear()

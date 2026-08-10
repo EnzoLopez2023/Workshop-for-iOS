@@ -457,6 +457,7 @@ struct DashboardView: View {
             async let s = api.listShaperProjects()
             async let t = api.listTemplates()
             (projects, shaper, templates) = try await (p, s, t)
+            await seedStarterContentIfNeeded()
             var snapshot = WorkshopWidgetSnapshot(projects: projects)
             snapshot.shoppingItems = WorkshopWidgetStore.load()?.shoppingItems ?? []
             WorkshopWidgetStore.save(snapshot)
@@ -466,6 +467,30 @@ struct DashboardView: View {
             loadError = error.localizedDescription
         }
         loading = false
+    }
+
+    /// A new account otherwise opens on "No projects yet", which asks the user
+    /// to invent something before the app has shown them what a record here
+    /// even looks like. Fill it once, with builds they can edit or delete —
+    /// ``StarterSeeder`` owns the once-only, empty-account-only guard.
+    private func seedStarterContentIfNeeded() async {
+        let userKey = model.userKey
+        guard !StarterSeeder.hasRun(userKey: userKey) else { return }
+        // Marked before the writes, not after: a seed that half-fails must not
+        // come back on the next pull-to-refresh and duplicate what did land.
+        StarterSeeder.markRun(userKey: userKey)
+        guard projects.isEmpty, shaper.isEmpty, templates.isEmpty else { return }
+
+        let created = await StarterSeeder.seed(api: api)
+        guard created > 0 else { return }
+        do {
+            async let p = api.listProjects()
+            async let s = api.listShaperProjects()
+            (projects, shaper) = try await (p, s)
+        } catch {
+            NSLog("[Workshop] Reload after seeding starter content failed: %@", String(describing: error))
+        }
+        ToastCenter.shared.success("Added \(created) starter projects to get you going.")
     }
 
     private func useTemplate(_ t: WSTemplate) async {

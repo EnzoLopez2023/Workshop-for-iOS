@@ -79,6 +79,13 @@ enum Theme {
         .custom(weight.faceName, size: size, relativeTo: style)
     }
 
+    /// Board lettering that does **not** scale with Dynamic Type. Only for the
+    /// few places where the glyph *is* the control — the text-size picker,
+    /// where a scaling sample would defeat the point of the sample.
+    static func boardFixed(_ size: CGFloat, _ weight: BoardWeight = .semibold) -> Font {
+        .custom(weight.faceName, fixedSize: size)
+    }
+
     /// Prose. Archivo — used for descriptions and body copy only, never for
     /// board lettering.
     static func ui(_ size: CGFloat, _ weight: UIWeight = .regular,
@@ -245,11 +252,49 @@ extension View {
             .background(Theme.concourse.ignoresSafeArea())
     }
 
-    /// Constrain content to a readable/card column, centered. On iPad (regular
-    /// width) the cap keeps cards from stretching; on iPhone the cap exceeds the
-    /// screen so content stays full-width.
+    /// Constrain content to a readable/card column, centered — see
+    /// ``ContentColumnLayout`` for how a wide screen is handled.
     func contentColumn(_ maxWidth: CGFloat = 640) -> some View {
-        frame(maxWidth: maxWidth).frame(maxWidth: .infinity)
+        ContentColumnLayout(maxWidth: maxWidth) { self }
+    }
+}
+
+/// The reading column. Content is capped so cards don't stretch into ribbons,
+/// but a hard cap turns a landscape iPad — or an iPhone on its side — into a
+/// narrow app with two dead bands beside it. So wherever the space is wider
+/// than the cap, the column hands back a third of the empty margin: still a
+/// column, noticeably less blank. Where there's no slack (any phone in
+/// portrait) this is a no-op and content stays full-width.
+///
+/// This is a `Layout` rather than a `.frame(maxWidth:)` because it needs the
+/// width actually *proposed* to the content (inside the screen's padding), and
+/// a `GeometryReader` would take the whole space instead of measuring it.
+struct ContentColumnLayout: Layout {
+    let maxWidth: CGFloat
+    /// Share of the leftover margin the column reclaims.
+    private let reclaim: CGFloat = 0.33
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let available = available(in: proposal)
+        let height = subviews.first?
+            .sizeThatFits(ProposedViewSize(width: columnWidth(in: available), height: proposal.height))
+            .height ?? 0
+        return CGSize(width: available, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard let subview = subviews.first else { return }
+        subview.place(at: CGPoint(x: bounds.midX, y: bounds.minY), anchor: .top,
+                      proposal: ProposedViewSize(width: columnWidth(in: bounds.width), height: bounds.height))
+    }
+
+    private func available(in proposal: ProposedViewSize) -> CGFloat {
+        guard let width = proposal.width, width.isFinite, width > 0 else { return maxWidth }
+        return width
+    }
+
+    private func columnWidth(in available: CGFloat) -> CGFloat {
+        min(available, available * reclaim + maxWidth * (1 - reclaim))
     }
 }
 
@@ -391,6 +436,36 @@ enum Appearance: String, CaseIterable, Identifiable {
     var scheme: ColorScheme? {
         switch self { case .light: .light; case .dark: .dark; case .system: nil }
     }
+}
+
+/// Text size in five steps (persisted as an Int; applied in RootView as a
+/// Dynamic Type override). This replaces the old "Large Text" on/off switch,
+/// which only ever offered two of these.
+///
+/// Step 2 is iOS's own default — the size the app rendered at with the switch
+/// off, so nobody's board changes size behind them without asking. Step 3 is
+/// Workshop's default: a shop screen is read at arm's length, across a bench,
+/// often through safety glasses, so one notch up is the better starting point.
+enum TextSize: Int, CaseIterable, Identifiable {
+    case one = 1, two, three, four, five
+
+    static let standard = TextSize.three
+
+    var id: Int { rawValue }
+
+    var dynamicTypeSize: DynamicTypeSize {
+        switch self {
+        case .one:   .medium
+        case .two:   .large
+        case .three: .xLarge
+        case .four:  .xxLarge
+        case .five:  .xxxLarge
+        }
+    }
+
+    /// Size of the sample glyph in the picker, so the control shows its ramp
+    /// rather than naming it.
+    var sampleSize: CGFloat { 9 + CGFloat(rawValue) * 3 }
 }
 
 /// A toggle rendered as a two-cell flap module: the switch *is* a flap that

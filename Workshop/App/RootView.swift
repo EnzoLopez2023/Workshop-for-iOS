@@ -23,11 +23,10 @@ struct RootView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var theme: ThemeManager
     @AppStorage("ws.appearance") private var appearanceRaw = Appearance.system.rawValue
-    // Web's "Large Text" bumps root font-size 6.25% (rem-based CSS scales
-    // everything); the closest native lever is Dynamic Type scale, which only
-    // moves text using relative fonts (nav titles, List/Form default text) —
-    // Theme's explicit `.system(size:)` call sites are unaffected either way.
-    @AppStorage("ws.fontSizeLarge") private var fontSizeLarge = false
+    // Five-step text size (see `TextSize`). Dynamic Type is the native lever
+    // the web's rem-based root font-size maps onto: it moves everything drawn
+    // with a relative font, which is every face `Theme` hands out.
+    @AppStorage(SettingsKeys.textSize) private var textSizeRaw = TextSize.standard.rawValue
     // Regular width = iPad full screen (and large split-view). Compact = iPhone,
     // and iPad slide-over / narrow split — where the tab bar is the right idiom.
     @Environment(\.horizontalSizeClass) private var hSize
@@ -64,7 +63,7 @@ struct RootView: View {
         .tint(Theme.accentDeep)
         .id(theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
-        .dynamicTypeSize(fontSizeLarge ? .xLarge : .large)
+        .dynamicTypeSize((TextSize(rawValue: textSizeRaw) ?? .standard).dynamicTypeSize)
         .onChange(of: intentRouter.requestedTab?.id) { _, _ in
             if let dest = intentRouter.requestedTab?.destination {
                 model.selectedTab = dest.rawValue
@@ -122,7 +121,15 @@ struct RootView: View {
             sidebarFooter
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Theme.steel.ignoresSafeArea())
+        // The rail slides in over the board rather than beside it, so it reads
+        // as a panel pulled across the concourse: frosted steel, with the rows
+        // behind it still faintly there. Opaque steel here would look like a
+        // second screen had replaced the first.
+        .background {
+            Theme.steel.opacity(0.8)
+                .background(.ultraThinMaterial)
+                .ignoresSafeArea()
+        }
     }
 
     /// A destination on the rail. The active one is lit: an amber lamp bar on
@@ -174,7 +181,9 @@ struct RootView: View {
         .padding(.horizontal, 14)
         .padding(.top, 16)
         .padding(.bottom, 14)
-        .background(Theme.steelFace)
+        // Slightly sheer, so the band belongs to the frosted panel below it
+        // instead of sitting on top of it as a separate solid plate.
+        .background(Theme.steelFace.opacity(0.9))
         .overlay(alignment: .bottom) {
             Rectangle().fill(Color.black.opacity(0.22)).frame(height: 1)
         }

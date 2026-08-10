@@ -13,6 +13,7 @@
 		0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13623EDDF4C567E31761B93 /* CameraPicker.swift */; };
 		0D9F89CA7C7EEA7068E43E8D /* CSVExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95D18C2D2B29AE22ABFE739 /* CSVExport.swift */; };
 		0E3C09081BF8ECC93A8F3F33 /* DimensionScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FD7CAEE3EC59AB102C2447 /* DimensionScannerView.swift */; };
+		10D3B5ACDA17877D1D74FEC7 /* StarterProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A667D8225FE6D72AAFE0EB3 /* StarterProjects.swift */; };
 		13DCDEE78255515A7FCE2A5B /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C3230F2228F4DBCC175B8B36 /* MSAL */; };
 		13E376CE576876ACD81DA0E4 /* ShoppingListPDFExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */; };
 		14BB0ADBE9656507E986CD65 /* CutListActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C773FCB81B7645605D4C47 /* CutListActivityController.swift */; };
@@ -23,7 +24,9 @@
 		2C75E0EC30260C2B37F4C077 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */; };
 		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
 		38960C94B65E68A270FFE719 /* PendingSharesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */; };
+		3F4777EBDAE3AFA101B4199F /* plan-kapex-fence.png in Resources */ = {isa = PBXBuildFile; fileRef = 237C9398DF9C4BDC9A70E9A0 /* plan-kapex-fence.png */; };
 		3F8D5BCBE44E0DE2CA469062 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
+		4C5147A20ABACD9DAD292A74 /* plan-serving-tray.png in Resources */ = {isa = PBXBuildFile; fileRef = EE7FDD7B4F17851DBE8D24B3 /* plan-serving-tray.png */; };
 		4C6C803FBF5D2E2B626CA5AD /* ShaperProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */; };
 		4E0B6A52931935BF79FB2C48 /* LockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */; };
 		4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E2F4AF30FB3E7BB8D68D042 /* FlowLayout.swift */; };
@@ -41,11 +44,13 @@
 		688CF527C82F30D46B4248BC /* MartianMonoBoard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */; };
 		6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */; };
 		6C674978DB0E50B8AC55EB88 /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
+		6D4B3812BE7D9E7D1D0034C9 /* plan-dartboard-cabinet.png in Resources */ = {isa = PBXBuildFile; fileRef = B590F8759DA28124B7FFDF3C /* plan-dartboard-cabinet.png */; };
 		6E6EFF984D3DD36A18CB187B /* CutPlanBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */; };
 		70522B789248B1C8C63EE50F /* ReviewPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75EB1418350E93379C49C6AE /* ReviewPrompt.swift */; };
 		815377048FD9582DABA705F4 /* CutListActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */; };
 		81C2261DF283838B5FCE835A /* PDFViewerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */; };
 		823567341311CBD8EA6A6CE1 /* UploadProgressPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */; };
+		8793093F4158C014F58097F2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6274F57A8CA35EDEB0067DB8 /* PrivacyInfo.xcprivacy */; };
 		879ED77BBD40176501010B0E /* WorkshopShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 93A9F8CE901174A0D021B607 /* WorkshopShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		885D2618314181541DE27A1A /* NintekKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1C854373FC6BB16226E36396 /* NintekKit */; };
 		8968B287FACF33CE8A15F92E /* SketchCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106781A6BB79C32F349A48FB /* SketchCanvasView.swift */; };
@@ -54,21 +59,26 @@
 		8C11F01C336EF4FF38B76C78 /* FinishReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */; };
 		8C5974CBDC16865EA6A31597 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3649EBAF123246F0A52AAD5C /* StatsWidget.swift */; };
 		8D4AD3667275111EAF75773E /* MartianMonoBoard-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */; };
+		8DA6826172D2CF4E86B6CA94 /* plan-clamping-squares.png in Resources */ = {isa = PBXBuildFile; fileRef = A214C72A3C96318A6C630456 /* plan-clamping-squares.png */; };
 		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
 		980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */; };
 		9B002885CBE9E3B660708DAF /* SplitFlap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F75F91A9390BB731A7B898 /* SplitFlap.swift */; };
+		A4C48ED10A9FF674F7CE8AD7 /* plan-bread-box.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EFEA177EA1366D9CA438E41 /* plan-bread-box.png */; };
 		A83E97EDD6663A3D9BAF2FD3 /* InProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F44A4C06C5377AAB836619 /* InProgressWidget.swift */; };
 		A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2032375E9627FFA9498F242F /* RootView.swift */; };
 		AF63547B79702EA97D9656B8 /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		AF67BF9AE6A43F5FD3409B38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FAAD8B68B47808B2860FF1 /* AppDelegate.swift */; };
 		B0EC7F6C7B62889595AF2861 /* SettingsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */; };
 		B1105480D22BF671B7C6B8D3 /* HandoffActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */; };
+		B7A2F06C1310268B4C66A967 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8C6E394C19110EB49DA75443 /* PrivacyInfo.xcprivacy */; };
+		BF57C085955A06755666D75B /* plan-hand-tool-cabinet.png in Resources */ = {isa = PBXBuildFile; fileRef = C382634DF7982C243F1B548F /* plan-hand-tool-cabinet.png */; };
 		C1413981CDB405BA1B9A55BB /* WorkshopWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */; };
 		C243127F07EACEB2CCB01544 /* CutPlanOptimizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */; };
 		C3D084D62253CAAB07A661BD /* ShaperProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */; };
 		C4593A2069D935BFAE0015BB /* ToastCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B245BD3F4E06008743C8CD /* ToastCenter.swift */; };
 		C5C0875211F4EF265A28564F /* MartianMonoBoard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */; };
 		CC5D73AEF358946C442B5C20 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
+		CDF95BA6803FD0113D013B7F /* plan-push-sticks.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2FB61CF4C4AF58B8ABF314 /* plan-push-sticks.png */; };
 		D1A396DD5CA5532496E0EDF1 /* WidgetSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */; };
 		DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567419A91AFD83464561320 /* AppModel.swift */; };
 		DB764F22BC7AAD02BFE3AB07 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD1366C665EF510EA7A526B /* MoreView.swift */; };
@@ -82,6 +92,7 @@
 		F197221AA69329CF28317BB9 /* AppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */; };
 		F20DFCBF63D1A41DB3749948 /* CutPlanSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555C827DB4292D29C550072C /* CutPlanSheetView.swift */; };
 		F37BA266D4D618C319AFFF9B /* NintekKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7877A30098F9A178C3E5F7A9 /* NintekKit */; };
+		F8A087E30BB8720D3ED98C11 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D3A2D2CA601E57D23EA6E423 /* PrivacyInfo.xcprivacy */; };
 		F9233CA688217FEF8A9D0B1A /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		FA516B0575697E740BF045DC /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */; };
 		FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */; };
@@ -134,6 +145,7 @@
 		1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Medium.ttf"; sourceTree = "<group>"; };
 		1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		2032375E9627FFA9498F242F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		237C9398DF9C4BDC9A70E9A0 /* plan-kapex-fence.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-kapex-fence.png"; sourceTree = "<group>"; };
 		2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
 		306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
 		3649EBAF123246F0A52AAD5C /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
@@ -148,9 +160,12 @@
 		55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefresh.swift; sourceTree = "<group>"; };
 		588EFFBF642257B4B8549BE2 /* AppleAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuth.swift; sourceTree = "<group>"; };
 		589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-SemiBold.ttf"; sourceTree = "<group>"; };
+		5A667D8225FE6D72AAFE0EB3 /* StarterProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterProjects.swift; sourceTree = "<group>"; };
 		5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanOptimizerView.swift; sourceTree = "<group>"; };
+		6274F57A8CA35EDEB0067DB8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		64F4CB70E3C122071AD83DA2 /* NintekKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NintekKit; path = ../NintekKit; sourceTree = SOURCE_ROOT; };
 		68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewerSheet.swift; sourceTree = "<group>"; };
+		6EFEA177EA1366D9CA438E41 /* plan-bread-box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-bread-box.png"; sourceTree = "<group>"; };
 		70402D41911248F2517937B6 /* Workshop.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Workshop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71CB6D05E4D70AA1984A94C2 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		73282C72252EF835CE9FDDC6 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
@@ -161,6 +176,7 @@
 		870B71A12FCBD7C5C2E9CE16 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		8A2F5F9452881395F168D1F0 /* ProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFormView.swift; sourceTree = "<group>"; };
 		8A64568318FE3FA57CA06E76 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		8C6E394C19110EB49DA75443 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		8F3CF4D5FF5694F948FB5520 /* ShaperProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectCard.swift; sourceTree = "<group>"; };
 		90A3EE9656F690ED9F24E4FC /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		93A9F8CE901174A0D021B607 /* WorkshopShareExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -168,6 +184,7 @@
 		99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Regular.ttf"; sourceTree = "<group>"; };
 		9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1DF0B02AC91E3331A488880 /* ShoppingActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingActivityWidget.swift; sourceTree = "<group>"; };
+		A214C72A3C96318A6C630456 /* plan-clamping-squares.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-clamping-squares.png"; sourceTree = "<group>"; };
 		A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopWidgetBundle.swift; sourceTree = "<group>"; };
 		A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopApp.swift; sourceTree = "<group>"; };
 		A8FAAD8B68B47808B2860FF1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -176,18 +193,23 @@
 		AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSALAuth.swift; sourceTree = "<group>"; };
 		AEA03A837E8F1A95A6D8184D /* SkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonView.swift; sourceTree = "<group>"; };
 		AFD1366C665EF510EA7A526B /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
+		B590F8759DA28124B7FFDF3C /* plan-dartboard-cabinet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-dartboard-cabinet.png"; sourceTree = "<group>"; };
 		B5FD7CAEE3EC59AB102C2447 /* DimensionScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionScannerView.swift; sourceTree = "<group>"; };
 		B88A2F381FC79622473BFD0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSupport.swift; sourceTree = "<group>"; };
 		C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Bold.ttf"; sourceTree = "<group>"; };
+		C382634DF7982C243F1B548F /* plan-hand-tool-cabinet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-hand-tool-cabinet.png"; sourceTree = "<group>"; };
 		C4B245BD3F4E06008743C8CD /* ToastCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastCenter.swift; sourceTree = "<group>"; };
+		CD2FB61CF4C4AF58B8ABF314 /* plan-push-sticks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-push-sticks.png"; sourceTree = "<group>"; };
 		CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperDetailView.swift; sourceTree = "<group>"; };
+		D3A2D2CA601E57D23EA6E423 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandoffActivity.swift; sourceTree = "<group>"; };
 		DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		DDD33FB78582F5051461BDC9 /* ShaperProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperProjectFormView.swift; sourceTree = "<group>"; };
 		E2B2F5D1A8F68330FA6152A3 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
 		EAF973223D615FA3E4ACEAFA /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Regular.ttf"; sourceTree = "<group>"; };
+		EE7FDD7B4F17851DBE8D24B3 /* plan-serving-tray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-serving-tray.png"; sourceTree = "<group>"; };
 		F13623EDDF4C567E31761B93 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListPDFExporter.swift; sourceTree = "<group>"; };
 		F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKeys.swift; sourceTree = "<group>"; };
@@ -239,6 +261,7 @@
 		3548FEECF2FEFE8F0FAD1BFF /* WorkshopShareExtension */ = {
 			isa = PBXGroup;
 			children = (
+				6274F57A8CA35EDEB0067DB8 /* PrivacyInfo.xcprivacy */,
 				71CB6D05E4D70AA1984A94C2 /* ShareViewController.swift */,
 			);
 			path = WorkshopShareExtension;
@@ -318,6 +341,7 @@
 				F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */,
 				1245FBF0CA4F2687F8C91EEA /* ShoppingActivityController.swift */,
 				DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */,
+				5A667D8225FE6D72AAFE0EB3 /* StarterProjects.swift */,
 				148AA1B27DF3EF0320FE04EB /* Theme.swift */,
 				C4B245BD3F4E06008743C8CD /* ToastCenter.swift */,
 				A2A37C6D7B4598883F3DC685 /* WorkshopApp.swift */,
@@ -329,8 +353,10 @@
 			isa = PBXGroup;
 			children = (
 				B88A2F381FC79622473BFD0A /* Assets.xcassets */,
+				D3A2D2CA601E57D23EA6E423 /* PrivacyInfo.xcprivacy */,
 				561B189BBCAAA42DF570F2D6 /* App */,
 				F38C6DBDB004A4B024EFCB20 /* Auth */,
+				E6B8DF65C99B48A984E9025B /* Resources */,
 				517951C5E68B35AD8FFD05DF /* Screens */,
 			);
 			path = Workshop;
@@ -344,6 +370,20 @@
 				9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A399F6EE9007A545DE3CAC02 /* StarterPlans */ = {
+			isa = PBXGroup;
+			children = (
+				6EFEA177EA1366D9CA438E41 /* plan-bread-box.png */,
+				A214C72A3C96318A6C630456 /* plan-clamping-squares.png */,
+				B590F8759DA28124B7FFDF3C /* plan-dartboard-cabinet.png */,
+				C382634DF7982C243F1B548F /* plan-hand-tool-cabinet.png */,
+				237C9398DF9C4BDC9A70E9A0 /* plan-kapex-fence.png */,
+				CD2FB61CF4C4AF58B8ABF314 /* plan-push-sticks.png */,
+				EE7FDD7B4F17851DBE8D24B3 /* plan-serving-tray.png */,
+			);
+			path = StarterPlans;
 			sourceTree = "<group>";
 		};
 		D7414950DCE8EE8D5F614E7C /* Packages */ = {
@@ -360,6 +400,7 @@
 				AA5658EEF4B371C752E34A34 /* CutListActivityWidget.swift */,
 				17F44A4C06C5377AAB836619 /* InProgressWidget.swift */,
 				2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */,
+				8C6E394C19110EB49DA75443 /* PrivacyInfo.xcprivacy */,
 				A1DF0B02AC91E3331A488880 /* ShoppingActivityWidget.swift */,
 				3B86FF4B801E181077A6D19C /* ShoppingListWidget.swift */,
 				3649EBAF123246F0A52AAD5C /* StatsWidget.swift */,
@@ -367,6 +408,14 @@
 				A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */,
 			);
 			path = WorkshopWidgets;
+			sourceTree = "<group>";
+		};
+		E6B8DF65C99B48A984E9025B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A399F6EE9007A545DE3CAC02 /* StarterPlans */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		F38C6DBDB004A4B024EFCB20 /* Auth */ = {
@@ -430,6 +479,7 @@
 				C5E466DEB77C3B8DEAD9E05A /* Resources */,
 				2E9D4774418890D29043D976 /* Frameworks */,
 				2FBF1183C5A6E985239AA9BA /* Embed Foundation Extensions */,
+				249781CC070F0D3A28865482 /* Stage MSAL dSYM */,
 			);
 			buildRules = (
 			);
@@ -505,6 +555,7 @@
 				AF63547B79702EA97D9656B8 /* MartianMonoBoard-Bold.ttf in Resources */,
 				5D0452A0879B81CF56A12A80 /* MartianMonoBoard-Regular.ttf in Resources */,
 				C5C0875211F4EF265A28564F /* MartianMonoBoard-SemiBold.ttf in Resources */,
+				B7A2F06C1310268B4C66A967 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,6 +565,7 @@
 			files = (
 				20D15BDCF51BCE81D6FA337E /* ArchivoWS-Regular.ttf in Resources */,
 				F9233CA688217FEF8A9D0B1A /* MartianMonoBoard-Bold.ttf in Resources */,
+				8793093F4158C014F58097F2 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -528,10 +580,40 @@
 				158BEB63436FD55F1B45BDE6 /* MartianMonoBoard-Bold.ttf in Resources */,
 				8D4AD3667275111EAF75773E /* MartianMonoBoard-Regular.ttf in Resources */,
 				688CF527C82F30D46B4248BC /* MartianMonoBoard-SemiBold.ttf in Resources */,
+				F8A087E30BB8720D3ED98C11 /* PrivacyInfo.xcprivacy in Resources */,
+				A4C48ED10A9FF674F7CE8AD7 /* plan-bread-box.png in Resources */,
+				8DA6826172D2CF4E86B6CA94 /* plan-clamping-squares.png in Resources */,
+				6D4B3812BE7D9E7D1D0034C9 /* plan-dartboard-cabinet.png in Resources */,
+				BF57C085955A06755666D75B /* plan-hand-tool-cabinet.png in Resources */,
+				3F4777EBDAE3AFA101B4199F /* plan-kapex-fence.png in Resources */,
+				CDF95BA6803FD0113D013B7F /* plan-push-sticks.png in Resources */,
+				4C5147A20ABACD9DAD292A74 /* plan-serving-tray.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		249781CC070F0D3A28865482 /* Stage MSAL dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Stage MSAL dSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/Scripts/embed-msal-dsym.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		224A2068D6412314B3C562ED /* Sources */ = {
@@ -606,6 +688,7 @@
 				8968B287FACF33CE8A15F92E /* SketchCanvasView.swift in Sources */,
 				9B002885CBE9E3B660708DAF /* SplitFlap.swift in Sources */,
 				164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */,
+				10D3B5ACDA17877D1D74FEC7 /* StarterProjects.swift in Sources */,
 				FB57FF11A4D69B3637A475F0 /* StatusBadge.swift in Sources */,
 				65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */,
 				C4593A2069D935BFAE0015BB /* ToastCenter.swift in Sources */,
@@ -635,7 +718,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -644,7 +727,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.widgets;
 				PRODUCT_NAME = WorkshopWidgets;
 				SDKROOT = iphoneos;
@@ -660,7 +743,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -668,7 +751,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop;
 				PRODUCT_NAME = Workshop;
 				SDKROOT = iphoneos;
@@ -682,7 +765,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -691,7 +774,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.share;
 				PRODUCT_NAME = WorkshopShareExtension;
 				SDKROOT = iphoneos;
@@ -768,7 +851,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -777,7 +860,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.share;
 				PRODUCT_NAME = WorkshopShareExtension;
 				SDKROOT = iphoneos;
@@ -791,7 +874,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -800,7 +883,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.widgets;
 				PRODUCT_NAME = WorkshopWidgets;
 				SDKROOT = iphoneos;
@@ -816,7 +899,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -824,7 +907,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop;
 				PRODUCT_NAME = Workshop;
 				SDKROOT = iphoneos;

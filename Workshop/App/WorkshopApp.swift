@@ -8,7 +8,10 @@ struct WorkshopApp: App {
     @StateObject private var model = AppModel()
     @StateObject private var theme = ThemeManager.shared
 
-    init() { Theme.configureAppearance() }
+    init() {
+        SettingsKeys.migrateLegacyTextSize()
+        Theme.configureAppearance()
+    }
 
     var body: some Scene {
         WindowGroup {

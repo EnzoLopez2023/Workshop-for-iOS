@@ -53,7 +53,7 @@ struct ConversionTablesView: View {
 
     // MARK: Quick converter
 
-    private var num: Double { Double(inputText) ?? 0 }
+    private var num: Double { Double(inputText).flatMap { $0.isFinite ? $0 : nil } ?? 0 }
     private var mmVal: Double { unit == .mm ? num : num * 25.4 }
     private var inVal: Double { unit == .in ? num : num / 25.4 }
     private var hasVal: Bool { num > 0 }
@@ -262,7 +262,11 @@ private func gcd(_ a: Int, _ b: Int) -> Int { b == 0 ? a : gcd(b, a % b) }
 
 /// Nearest 1/32" fractional label for a decimal-inches value.
 private func toFrac32(_ inches: Double) -> String {
-    if inches <= 0 { return "0\"" }
+    // `Int(_:)` traps on infinity, NaN, and anything past Int64 — and this is
+    // fed straight from a text field, where holding down "9" reaches 1e22 in a
+    // couple of seconds. Screen the value before converting, not after.
+    guard inches.isFinite, inches > 0 else { return "0\"" }
+    guard inches < 1e9 else { return "—" }
     let whole = Int(inches.rounded(.down))
     let frac = inches - Double(whole)
     var n = Int((frac * 32).rounded())

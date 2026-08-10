@@ -12,6 +12,7 @@ actor ImageCache {
     private var cache: [String: Data] = [:]
     func get(_ key: String) -> Data? { cache[key] }
     func set(_ key: String, _ data: Data) { cache[key] = data }
+    func clear() { cache.removeAll(keepingCapacity: false) }
 }
 
 struct AuthImage: View {

@@ -50,6 +50,27 @@ Both families are registered in `project.yml` for the **app and widget targets
 separately**. An app extension cannot read its host app's `UIAppFonts`, so the
 duplication is deliberate.
 
+Text size is a five-step scale (`TextSize`), applied once at `RootView` as a
+Dynamic Type override, so it reaches everything the two helpers hand out. Step 2
+is iOS's own default; **step 3 is Workshop's** — a shop screen is read at arm's
+length, across a bench, often through safety glasses. Step 5 stops at
+`.xxxLarge`; the accessibility sizes above it break the board's fixed-slot rows.
+`Theme.boardFixed` is the one escape hatch, for the picker's own samples, where
+type that scaled with the setting would defeat the sample.
+
+## The reading column
+
+`contentColumn(_:)` caps content so cards don't stretch into ribbons. A hard cap,
+though, turns a landscape iPad into a narrow app between two dead bands — so
+where the space is wider than the cap, the column reclaims **a third of the
+leftover margin** (`ContentColumnLayout`). Still a column, noticeably less blank.
+
+It's a `Layout`, not a `.frame(maxWidth:)`, because it needs the width actually
+*proposed* to the content; a `GeometryReader` would claim the space instead of
+measuring it. The trigger is width, not orientation — a vertical `ScrollView`
+proposes a `nil` height to its content, so orientation is not knowable from in
+there. Where there's no slack (any phone in portrait) it is a no-op.
+
 ## The rule about amber
 
 Amber is a signal lamp, not a brand colour. **One amber element per screen**,
@@ -69,6 +90,7 @@ Use `Theme.accentDeep` (#C77800) for system control tints. `Theme.accent`
 | `ProjectCard` / `ShaperProjectCard` | Departure cards: tracked-caps title, status flag, three-cell data strip |
 | `BoardCaps` / `Readout` / `Rail` | The board's structural type and rules |
 | `BoardToolbarButton` | A flap on the steel band, amber or recessed steel |
+| `SignInPlate` | The two providers as one pair of plates: same lettering, same metrics, only fill and mark differ |
 | `CutPlanBoard` | Recolours NintekKit cut plans at the app boundary. Sheet and ink stay fixed — a cut plan is a printed document, not a themed surface |
 
 ## Where the platform wins
@@ -143,6 +165,11 @@ capsule. It is a plain stack of buttons instead. The split view, its collapse
 toggle (which lives in the *detail* column's toolbar) and the swipe gesture
 all stay native.
 
+When it slides in over the board rather than beside it, the rail is **frosted
+steel** — `Theme.steel` at 0.8 over `.ultraThinMaterial`, header band at 0.9 —
+so the rows behind it stay faintly there. Opaque steel reads as a second screen
+having replaced the first.
+
 **A `Rectangle` with only a width set has unbounded height** and will stretch
 its row to the full column. The lamp bar rides in an `.overlay(alignment:
 .leading)`, which never affects layout.
@@ -170,6 +197,75 @@ Rectangle().fill(Theme.flapShade)
 
 An explicit `.frame(width:height:)` or `.frame(height:)` before `.clipped()`
 works too. Every call site uses one of these two forms.
+
+## Shipping to the App Store
+
+Three things here exist only because App Review or the upload validator demands
+them, and all three are easy to undo by accident.
+
+**Every binary carries a `PrivacyInfo.xcprivacy`** — the app, the widget and the
+share extension. All three statically link NintekKit, which reads and writes the
+App Group defaults, and `UserDefaults` is a required-reason API: an upload with
+an undeclared use is rejected outright with ITMS-91053. The reasons are `CA92.1`
+(the app's own defaults) and `1C8F.1` (the group). The app's manifest also lists
+what the account collects — name, email, user id, photos, project content — all
+linked to the user, none of it tracking, all of it App Functionality. Those
+answers are cross-checked against App Store Connect, so change both or neither.
+
+**The photo library has no usage string, on purpose.** Photos only ever arrive
+through `PhotosPicker`, which runs out of process and hands back the one image
+the user chose; the app never touches `PHPhotoLibrary`. Declaring
+`NSPhotoLibraryUsageDescription` anyway would ask for access it doesn't use,
+which reviewers read as overreach. `NSCameraUsageDescription` is real — see
+`CameraPicker`, which is `sourceType = .camera` only.
+
+**Account deletion is server-first.** Guideline 5.1.1(v) requires any app that
+creates an account to let the user initiate permanent deletion in-app. The
+Account section in More puts that action beside Sign Out, explains what leaves,
+offers the JSON backup immediately above it, and protects the irreversible call
+with a system destructive-confirmation alert. It calls authenticated
+`DELETE /api/account`; the server derives the account from the bearer token,
+never from a client-supplied user id.
+
+The client clears credentials, widgets, Spotlight, pending shares, reminders,
+decoded-image memory and the starter-seed marker **only after** the server
+confirms deletion. A network or server failure leaves the session intact and
+the action retryable; local success-shaped cleanup must never hide server data
+that still exists.
+
+Sign in with Apple has one extra obligation: deleting Workshop data is not
+enough — Apple's token must be revoked too. Every Apple sign-in therefore sends
+both `identityToken` and the short-lived `authorizationCode` to
+`POST /api/auth/apple`. The server exchanges the code using credentials that
+must never ship in the app, stores the resulting Apple refresh token encrypted,
+and revokes it with Apple before deleting the account. Microsoft deletion
+removes the Workshop account only; it does not delete the user's Entra account.
+
+## Failing safely
+
+Two shapes of bug turned up often enough to be worth naming.
+
+**`Int(_:)` traps.** It is a runtime crash on infinity, NaN, and anything past
+`Int64` — not a clamp and not an optional. Any value that came from a text field
+is hostile: a `.decimalPad` still reaches 1e22 by holding down a key, and paste
+ignores the keyboard entirely. Screen with `isFinite` and a range before
+converting (`toFrac32` in `ConversionTablesView`).
+
+**A save that is several round trips can half-succeed.** The project forms write
+the project, then every cut row, then every material. If the network drops in
+the middle, the sheet stays open on an error with some of it already on the
+server — and the obvious next move, tapping Save again, used to create a second
+copy of the project. So each form remembers the id it created
+(`createdProjectId` / `createdShaperId`) and stamps each row's `serverId` the
+moment it lands. Retrying resumes; it doesn't duplicate. Anything else that
+grows a multi-step save needs the same treatment.
+
+Relatedly, `SessionTokenProvider` refreshes through an actor
+(`SessionRefresher`). The app fans several requests out at once, and without
+coalescing each one that finds the token expired spends the *same* refresh
+token; a backend that rotates them answers the first and rejects the rest, and
+every loser clears the Keychain and signs the user out of a session that was
+fine. The unexpired path stays lock-free.
 
 ## The app icon
 
@@ -203,6 +299,37 @@ xcrun assetutil --info <build>/Workshop.app/Assets.car | grep -A2 AppIcon
 
 Expect `UIAppearanceDark` and `ISAppearanceTintable` renditions alongside the default.
 
+## The first board
+
+An empty board is the worst first impression this app can make — a departure
+board with no departures. So a brand-new account gets seeded once, on the first
+load that comes back genuinely empty (`StarterProjects` / `StarterSeeder`): four
+projects and three Shaper builds, all real records the user can edit or delete.
+The guard is marked **before** the writes, so a seed that half-fails can't come
+back on the next pull-to-refresh and duplicate what did land.
+
+A seed is only worth having if it looks like a project someone kept. The first
+version created bare `ProjectInput`s, which landed on the board reading PARTS 0
+and EST. COST $0.00 — teaching a new user that a Workshop project is an empty
+shell. So each starter carries a cut list, a costed material list, numbered
+build steps and a plan sheet. Those are four separate endpoints, so `seed` walks
+the projects one at a time (to keep "last updated" order matching the list
+order) and fans the children of each out concurrently — they don't depend on
+each other, and row order travels in `sortOrder`, not in insertion order. Every
+child write is individually non-fatal: a project missing one of its ten parts is
+still worth having.
+
+**The seed content is original, and has to stay that way.** Hotlinking photos
+and build steps from plans blogs into every new user's account is a copyright
+problem and a broken-link problem, and it's the kind of thing App Review reads
+as shipping someone else's content. So the prose is written for this app, and
+the drawings are generated by `Scripts/make-starter-plans.swift` — orthographic
+plan sheets in Martian Mono on steel, deliberately monochrome because the signal
+lamp is user-swappable and these bytes are baked at build time. `sourceUrl` is
+left empty on purpose: there is no original elsewhere to link to. The sheets are
+drawn from the same dimensions as the cut lists, so a part size changes in both
+places or in neither.
+
 ## Verifying a change
 
 There are no tests and no linter. Build with:
@@ -214,6 +341,60 @@ xcodebuild -project Workshop.xcodeproj -scheme Workshop \
 
 Re-run `xcodegen generate` after adding any `.swift` file, or the build will
 fail with "cannot find X in scope".
+
+**Close the project in Xcode before regenerating.** If Xcode has it open, it
+re-reads the rewritten `project.pbxproj` and re-resolves the package graph. If
+that resolve fails for any reason, Xcode keeps the *empty* graph and every
+target fails with *"Missing package product 'NintekKit'"* — a misleading error,
+since nothing is wrong with the local package and `xcodebuild` on the same file
+still succeeds off its cached resolution. Recover with:
+
+```
+xcodebuild -project Workshop.xcodeproj -scheme Workshop -resolvePackageDependencies
+```
+
+then close and reopen the project. Check that resolve prints a real path for
+NintekKit — `NintekKit: (null)` means the graph is broken.
+
+Package resolution needs the network, so builds must use the **default**
+DerivedData path. Passing `-derivedDataPath` forces a fresh MSAL resolve and
+fails with "Couldn't get the list of tags".
+
+SwiftPM keeps its mirrors as **bare** git repos under
+`SourcePackages/repositories`, so resolution breaks under
+`safe.bareRepository=explicit` with the same "Couldn't get the list of tags".
+Some sandboxed/agent shells inject that setting; if resolve fails there, unset
+it for the command rather than deleting `SourcePackages` — deleting it destroys
+a working resolution that can only be rebuilt online.
+
+## MSAL has no symbols of its own
+
+MSAL is a SwiftPM `.binaryTarget` — a prebuilt, stripped XCFramework Microsoft
+publishes as a zip. Nothing in this build compiles it, so nothing produces a
+dSYM for it, and every App Store upload used to come back with *"Upload Symbols
+Failed … did not include a dSYM for the MSAL.framework"*. The build is accepted
+either way; the cost is that crash reports with an MSAL frame arrive
+unsymbolicated.
+
+Microsoft does publish the symbols, as a separate release asset
+(`MSAL-iOS.framework.dSYM.zip`, or `MSAL-iOS-Sim…` for the simulator slice —
+they are separate builds with separate UUIDs). `Scripts/embed-msal-dsym.sh`
+runs as a post-build phase on the app target: it reads the version SwiftPM
+actually pinned from `Package.resolved` (not the floating `from:` in
+`project.yml`), fetches that release's dSYM into `.dsyms/` keyed by version and
+slice, checks its UUID against the binary being linked, and copies it into
+`DWARF_DSYM_FOLDER_PATH` so Xcode collects it into the archive.
+
+It gates on `DEBUG_INFORMATION_FORMAT = dwarf-with-dsym`, which is the real
+precondition — builds that produce no dSYMs at all skip it and never touch the
+network. **Every failure path warns and exits 0**: missing symbols cost
+symbolication, and that is never worth failing a release build over, least of
+all offline. A UUID mismatch is treated as a failure, because symbolicating
+MSAL frames against the wrong build is worse than not symbolicating them.
+
+This script is **shared verbatim with ShopKeep** (same filename, same contents
+apart from the `.xcodeproj` name). Both ports hit this identically, so fix it in
+one place and copy across rather than letting the two drift.
 
 To inspect a screen against real data without driving auth, the app reads these
 environment overrides (`WORKSHOP_START_*` are `#if DEBUG` only):

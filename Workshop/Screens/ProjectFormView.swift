@@ -45,6 +45,12 @@ struct ProjectFormView: View {
     @State private var loadError: String?
     @State private var saving = false
     @State private var saveError: String?
+    /// The id `save()` created before it failed part-way. A save is several
+    /// round trips (project, then every cut/material row), so a network blip
+    /// mid-run leaves the sheet open on an error with some of it already
+    /// written. Remembering the id here means "Save" again resumes that project
+    /// instead of creating a second copy of it.
+    @State private var createdProjectId: Int?
     @State private var analyzing = false
     @State private var analyzeError: String?
 
@@ -669,13 +675,18 @@ struct ProjectFormView: View {
                 woodTypes: csvToArr(woodInput), toolsNeeded: csvToArr(toolsInput)
             )
             let savedId: Int
-            if let projectId {
-                savedId = try await api.updateProject(id: projectId, input).id
+            if let existing = projectId ?? createdProjectId {
+                savedId = try await api.updateProject(id: existing, input).id
             } else {
                 savedId = try await api.createProject(input).id
+                createdProjectId = savedId
             }
 
-            for row in cutRows {
+            // Each row records its server id the moment it lands, so a failure
+            // half-way down the list doesn't re-create the rows above it on the
+            // next attempt.
+            for idx in cutRows.indices {
+                let row = cutRows[idx]
                 guard !row.partName.trimmingCharacters(in: .whitespaces).isEmpty else { continue }
                 let item = CutListInput(partName: row.partName, qty: row.qty,
                                         length: nilIfEmpty(row.length), width: nilIfEmpty(row.width),
@@ -683,17 +694,18 @@ struct ProjectFormView: View {
                 if let sid = row.serverId {
                     try await api.updateCutItem(id: sid, item)
                 } else {
-                    try await api.addCutItem(projectId: savedId, item)
+                    cutRows[idx].serverId = try await api.addCutItem(projectId: savedId, item).id
                 }
             }
-            for row in matRows {
+            for idx in matRows.indices {
+                let row = matRows[idx]
                 guard !row.name.trimmingCharacters(in: .whitespaces).isEmpty else { continue }
                 let item = MaterialInput(name: row.name, qtyLabel: nilIfEmpty(row.qtyLabel),
                                          cost: row.cost, purchased: row.purchased)
                 if let sid = row.serverId {
                     try await api.updateMaterial(id: sid, item)
                 } else {
-                    try await api.addMaterial(projectId: savedId, item)
+                    matRows[idx].serverId = try await api.addMaterial(projectId: savedId, item).id
                 }
             }
 

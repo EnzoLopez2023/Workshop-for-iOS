@@ -46,6 +46,15 @@ enum FinishReminderScheduler {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["finish-reminder-\(entry.id)"])
     }
 
+    /// Remove project-derived notifications when the signed-in account leaves
+    /// the device. Workshop only schedules finish reminders, so clearing the
+    /// app's pending and delivered notifications cannot affect another feature.
+    static func cancelAll() {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        center.removeAllDeliveredNotifications()
+    }
+
     /// The "Snooze 1 Day" notification action — reschedules the identifier
     /// 24h out rather than opening the app, since the data model has nothing
     /// to "mark done" against (a finish entry represents one application

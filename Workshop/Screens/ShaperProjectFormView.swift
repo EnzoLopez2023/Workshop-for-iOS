@@ -37,6 +37,10 @@ struct ShaperProjectFormView: View {
     @State private var loadError: String?
     @State private var saving = false
     @State private var saveError: String?
+    /// The id `save()` created before it failed part-way — see the matching
+    /// note in `ProjectFormView`. Retrying resumes that project rather than
+    /// creating a second copy of it.
+    @State private var createdShaperId: Int?
     @State private var analyzing = false
     @State private var analyzeError: String?
 
@@ -345,22 +349,28 @@ struct ShaperProjectFormView: View {
         )
         do {
             let savedId: Int
-            if let shaperId {
-                savedId = try await api.updateShaperProject(id: shaperId, input).id
+            if let existing = shaperId ?? createdShaperId {
+                savedId = try await api.updateShaperProject(id: existing, input).id
             } else {
                 savedId = try await api.createShaperProject(input).id
+                createdShaperId = savedId
             }
 
-            for data in queuedPhotos {
+            // Drain both queues as they land: a retry after a mid-save failure
+            // must not upload the photos that already made it a second time.
+            while let data = queuedPhotos.first {
                 let file = MultipartFile(filename: "photo-\(Int(Date().timeIntervalSince1970)).jpg",
                                         mimeType: "image/jpeg", data: data)
                 _ = try? await api.uploadShaperImage(shaperProjectId: savedId, file: file)
+                queuedPhotos.removeFirst()
             }
-            for url in queuedImageURLs {
+            while let url = queuedImageURLs.first {
                 _ = try? await api.addShaperImageURL(shaperProjectId: savedId, url: url)
+                queuedImageURLs.removeFirst()
             }
 
-            for row in cutRows {
+            for idx in cutRows.indices {
+                let row = cutRows[idx]
                 guard !row.partName.trimmingCharacters(in: .whitespaces).isEmpty else { continue }
                 let item = CutListInput(partName: row.partName, qty: Int(row.qty) ?? 1,
                                         length: nilIfEmpty(row.length), width: nilIfEmpty(row.width),
@@ -368,7 +378,7 @@ struct ShaperProjectFormView: View {
                 if let sid = row.serverId {
                     try await api.updateCutItem(id: sid, item)
                 } else {
-                    try await api.addShaperCutItem(shaperProjectId: savedId, item)
+                    cutRows[idx].serverId = try await api.addShaperCutItem(shaperProjectId: savedId, item).id
                 }
             }
 
