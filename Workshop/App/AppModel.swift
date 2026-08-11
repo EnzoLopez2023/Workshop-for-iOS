@@ -40,15 +40,16 @@ final class AppModel: ObservableObject {
         return msalAuth?.accountName
     }
 
-    /// The signed-in user's backend per-user key (Entra `oid` or `apple_<hash>`),
-    /// used to build auth-exempt `?oid=` image URLs. nil when signed out.
+    /// The signed-in user's backend per-user key (legacy Entra `oid`, namespaced
+    /// external Entra identity, or `apple_<hash>`), used to build auth-exempt
+    /// `?oid=` image URLs. nil when signed out.
     var userKey: String? {
         if isDemoMode { return DemoWorkshopData.userKey }
         if let session = AppleSessionStore.load() { return session.userKey }
         #if DEBUG
         if let dev = devUserKey { return dev }
         #endif
-        return msalAuth?.oid
+        return msalAuth?.userKey
     }
 
     #if DEBUG

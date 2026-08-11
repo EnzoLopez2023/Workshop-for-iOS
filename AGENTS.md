@@ -28,3 +28,15 @@ Consumed by this app, and home of the cut-plan optimiser (`CutPlan.swift`). A br
 2. **The cut-plan optimiser is duplicated.** NintekKit's `CutPlan.swift` is a direct port of the web app's `src/lib/cutPlan.ts` and is **unit-tested for exact-match layouts**.
 
    **Change one, change the other, re-run the parity tests.**
+
+## Microsoft identity
+
+- MSAL uses the `common` authority so the Workshop registration can accept any
+  Entra tenant and personal Microsoft accounts.
+- Preserve existing Nintek storage keys: the home tenant
+  `52188f12-db6b-46c6-88ff-08c802f0ed3b` uses bare `oid`.
+- Every external principal uses lowercase `<tid>_<oid>`. Keep this algorithm
+  identical to the Workshop backend whenever identity handling changes.
+- The Entra registration must support
+  `AzureADandPersonalMicrosoftAccount`, issue v2 access tokens, expose
+  `access_as_user`, and retain `msauth.com.nintek.workshop://auth`.

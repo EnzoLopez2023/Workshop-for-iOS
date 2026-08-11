@@ -64,6 +64,7 @@
 		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
 		980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */; };
 		9B002885CBE9E3B660708DAF /* SplitFlap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F75F91A9390BB731A7B898 /* SplitFlap.swift */; };
+		A2027D361874D49574CC618A /* EntraIdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E309222E1888B453A25F598 /* EntraIdentityTests.swift */; };
 		A4C48ED10A9FF674F7CE8AD7 /* plan-bread-box.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EFEA177EA1366D9CA438E41 /* plan-bread-box.png */; };
 		A83E97EDD6663A3D9BAF2FD3 /* InProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F44A4C06C5377AAB836619 /* InProgressWidget.swift */; };
 		A8EF05FAB2F336F6CBE2DB42 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2032375E9627FFA9498F242F /* RootView.swift */; };
@@ -115,6 +116,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0F7D2F14B5525D1CD37DB803;
 			remoteInfo = WorkshopShareExtension;
+		};
+		D02FF79FB2B5E1FA5885C347 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D9218788749F82EBA97C0A42 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0B3DC7823DC125C7DA3B73C;
+			remoteInfo = Workshop;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -185,6 +193,7 @@
 		959A62FB7DD2C32707610715 /* UploadProgressPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadProgressPanel.swift; sourceTree = "<group>"; };
 		99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Regular.ttf"; sourceTree = "<group>"; };
 		9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WorkshopWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E309222E1888B453A25F598 /* EntraIdentityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntraIdentityTests.swift; sourceTree = "<group>"; };
 		A1DF0B02AC91E3331A488880 /* ShoppingActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingActivityWidget.swift; sourceTree = "<group>"; };
 		A214C72A3C96318A6C630456 /* plan-clamping-squares.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-clamping-squares.png"; sourceTree = "<group>"; };
 		A2639F4CDB1184F249E025A9 /* WorkshopWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopWidgetBundle.swift; sourceTree = "<group>"; };
@@ -197,6 +206,7 @@
 		AFD1366C665EF510EA7A526B /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
 		B590F8759DA28124B7FFDF3C /* plan-dartboard-cabinet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-dartboard-cabinet.png"; sourceTree = "<group>"; };
 		B5FD7CAEE3EC59AB102C2447 /* DimensionScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimensionScannerView.swift; sourceTree = "<group>"; };
+		B867686283D49E289B9402A0 /* WorkshopTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WorkshopTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B88A2F381FC79622473BFD0A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSupport.swift; sourceTree = "<group>"; };
 		C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MartianMonoBoard-Bold.ttf"; sourceTree = "<group>"; };
@@ -260,6 +270,14 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		0C773C9E85E2EF89B7B03A23 /* WorkshopTests */ = {
+			isa = PBXGroup;
+			children = (
+				9E309222E1888B453A25F598 /* EntraIdentityTests.swift */,
+			);
+			path = WorkshopTests;
+			sourceTree = "<group>";
+		};
 		3548FEECF2FEFE8F0FAD1BFF /* WorkshopShareExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -276,6 +294,7 @@
 				D7414950DCE8EE8D5F614E7C /* Packages */,
 				839868694421DF70652EA9D8 /* Workshop */,
 				3548FEECF2FEFE8F0FAD1BFF /* WorkshopShareExtension */,
+				0C773C9E85E2EF89B7B03A23 /* WorkshopTests */,
 				D8AC1E10764C6B29F638774C /* WorkshopWidgets */,
 				8ABB469673BA690888B8AAE7 /* Products */,
 			);
@@ -370,6 +389,7 @@
 			children = (
 				70402D41911248F2517937B6 /* Workshop.app */,
 				93A9F8CE901174A0D021B607 /* WorkshopShareExtension.appex */,
+				B867686283D49E289B9402A0 /* WorkshopTests.xctest */,
 				9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */,
 			);
 			name = Products;
@@ -454,6 +474,24 @@
 			productReference = 93A9F8CE901174A0D021B607 /* WorkshopShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		32AA11E4E7D65C2040440C14 /* WorkshopTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 89F87942B05382B183C3C308 /* Build configuration list for PBXNativeTarget "WorkshopTests" */;
+			buildPhases = (
+				1A152615F85904BB87D2BA1A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9DF20159AB42597DA91C5D5A /* PBXTargetDependency */,
+			);
+			name = WorkshopTests;
+			packageProductDependencies = (
+			);
+			productName = WorkshopTests;
+			productReference = B867686283D49E289B9402A0 /* WorkshopTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C751734FD96A07E3BD0E374A /* WorkshopWidgetsExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7A01EC6E6E045FC8017D669C /* Build configuration list for PBXNativeTarget "WorkshopWidgetsExtension" */;
@@ -512,6 +550,10 @@
 						DevelopmentTeam = 3KB968X34U;
 						ProvisioningStyle = Automatic;
 					};
+					32AA11E4E7D65C2040440C14 = {
+						DevelopmentTeam = 3KB968X34U;
+						ProvisioningStyle = Automatic;
+					};
 					C751734FD96A07E3BD0E374A = {
 						DevelopmentTeam = 3KB968X34U;
 						ProvisioningStyle = Automatic;
@@ -543,6 +585,7 @@
 				E0B3DC7823DC125C7DA3B73C /* Workshop */,
 				C751734FD96A07E3BD0E374A /* WorkshopWidgetsExtension */,
 				0F7D2F14B5525D1CD37DB803 /* WorkshopShareExtension */,
+				32AA11E4E7D65C2040440C14 /* WorkshopTests */,
 			);
 		};
 /* End PBXProject section */
@@ -619,6 +662,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1A152615F85904BB87D2BA1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2027D361874D49574CC618A /* EntraIdentityTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		224A2068D6412314B3C562ED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -709,6 +760,11 @@
 			target = C751734FD96A07E3BD0E374A /* WorkshopWidgetsExtension */;
 			targetProxy = 630E40BF6632ADB764AE2BED /* PBXContainerItemProxy */;
 		};
+		9DF20159AB42597DA91C5D5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0B3DC7823DC125C7DA3B73C /* Workshop */;
+			targetProxy = D02FF79FB2B5E1FA5885C347 /* PBXContainerItemProxy */;
+		};
 		EF6B69ADD945D041705944CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0F7D2F14B5525D1CD37DB803 /* WorkshopShareExtension */;
@@ -722,7 +778,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -740,6 +796,27 @@
 			};
 			name = Release;
 		};
+		06DF5EE6542B5A5B4A912C93 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3KB968X34U;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Workshop.app/Workshop";
+			};
+			name = Debug;
+		};
 		07E454EAB594A5729A922873 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -747,7 +824,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -769,7 +846,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -784,6 +861,27 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		50138274BDA4F7126D16E380 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3KB968X34U;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Workshop.app/Workshop";
 			};
 			name = Release;
 		};
@@ -855,7 +953,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -878,7 +976,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -903,7 +1001,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -993,6 +1091,15 @@
 			buildConfigurations = (
 				9EE7C5AF355AD95EF3682EAD /* Debug */,
 				0648A5BF65239846B6EAD879 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		89F87942B05382B183C3C308 /* Build configuration list for PBXNativeTarget "WorkshopTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				06DF5EE6542B5A5B4A912C93 /* Debug */,
+				50138274BDA4F7126D16E380 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
