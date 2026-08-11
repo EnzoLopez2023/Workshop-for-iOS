@@ -1,13 +1,12 @@
 import SwiftUI
 import AuthenticationServices
 
-/// Sign-in gate. Carries the Concourse Board world — a steel plate above live
-/// flaps — and offers
-/// "Sign in with Microsoft" (Entra) and "Sign in with Apple" — both resolve to
-/// the same backend per-user data model. See AppleAuth.swift. There is no demo
-/// mode in native.
+/// Sign-in gate. Carries the Concourse Board world over a veiled technical-plan
+/// backdrop, with two account providers and a read-only local demo.
 struct SignInView: View {
     @EnvironmentObject private var model: AppModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     /// Which provider is mid-flight, so only that plate shows the busy state.
     @State private var signingIn: SignInProvider?
     @State private var appleSignIn = AppleSignInController()
@@ -15,88 +14,104 @@ struct SignInView: View {
     private var busy: Bool { signingIn != nil }
 
     var body: some View {
-        ZStack {
-            Theme.concourse.ignoresSafeArea()
-            VStack(spacing: 18) {
-                Spacer(minLength: 0)
+        GeometryReader { proxy in
+            ZStack {
+                WorkshopLoginBackdrop(
+                    reduceMotion: reduceMotion,
+                    reduceTransparency: reduceTransparency
+                )
 
-                // The board announces itself the way a concourse board does —
-                // a steel plate above the flaps, not a logo above a tagline.
-                VStack(spacing: 0) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "hammer.fill")
-                            .font(.system(size: 11))
-                            .foregroundStyle(Theme.accentFill)
-                        Text("THE WORKSHOP")
-                            .font(Theme.board(12, .bold, relativeTo: .caption))
-                            .tracking(1.6)
-                            .foregroundStyle(Theme.onSteel)
-                        Spacer(minLength: 0)
-                        Text("LIVE")
-                            .font(Theme.board(9.5, .bold, relativeTo: .caption2))
-                            .tracking(1.2)
-                            .foregroundStyle(Theme.accentFill)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(Theme.steelFace)
+                ScrollView {
+                    VStack(spacing: 30) {
+                        titleBoard
 
-                    VStack(spacing: 10) {
-                        SplitFlap("IN PROGRESS", size: 19, tone: .amber)
-                        SplitFlap("PLANNING", size: 19)
-                        SplitFlap("COMPLETE", size: 19, tone: .green)
+                        if let err = model.authError {
+                            Text(err)
+                                .font(Theme.ui(13))
+                                .foregroundStyle(Theme.red)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: 460)
+                        }
+
+                        VStack(spacing: 12) {
+                            SignInPlate(provider: .microsoft, busy: signingIn == .microsoft) {
+                                Task { await signInWithMicrosoft() }
+                            }
+                            .disabled(busy)
+
+                            SignInPlate(provider: .apple, busy: signingIn == .apple) {
+                                startAppleSignIn()
+                            }
+                            .disabled(busy)
+
+                            SignInPlate(provider: .demo, busy: false) {
+                                model.enterDemo()
+                            }
+                            .disabled(busy)
+                            .accessibilityHint("Opens seven complete starter projects without signing in")
+
+                            Text("DEMO IS READ-ONLY · NO ACCOUNT REQUIRED")
+                                .font(Theme.board(9, .semibold, relativeTo: .caption2))
+                                .tracking(1)
+                                .foregroundStyle(Theme.muted)
+                                .padding(.top, 4)
+                        }
+                        .frame(maxWidth: 460)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 22)
-                    .background(Theme.flapShade)
-
-                    Text("Every project, from first cut to final coat.")
-                        .font(Theme.ui(13))
-                        .foregroundStyle(Theme.onSteel.opacity(0.85))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 11)
-                        .background(Theme.steelFace)
+                    .frame(minHeight: proxy.size.height)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, max(26, (proxy.size.height - 570) / 2))
                 }
-                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-                .overlay(
-                    RoundedRectangle(cornerRadius: Theme.rPanel)
-                        .strokeBorder(Theme.line, lineWidth: 1)
-                )
-                .padding(.horizontal, 28)
-
-                if let err = model.authError {
-                    Text(err)
-                        .font(Theme.ui(13))
-                        .foregroundStyle(Theme.red)
-                        .multilineTextAlignment(.center).padding(.horizontal, 32)
-                }
-
-                Spacer(minLength: 24)
-                Spacer(minLength: 0)
-                // The two providers are one pair of plates: same lettering,
-                // same metrics, same square corners — only the fill and the
-                // mark tell them apart. A system SignInWithAppleButton owns its
-                // own type and height, so it can never join that pair; Apple's
-                // request is made directly instead and the plate is ours.
-                VStack(spacing: 12) {
-                    SignInPlate(provider: .microsoft, busy: signingIn == .microsoft) {
-                        Task { await signInWithMicrosoft() }
-                    }
-                    .disabled(busy)
-
-                    SignInPlate(provider: .apple, busy: signingIn == .apple) {
-                        startAppleSignIn()
-                    }
-                    .disabled(busy)
-                }
-                .padding(.horizontal, 28)
-                .padding(.bottom, 40)
             }
-            .contentColumn(420)
         }
+    }
+
+    private var titleBoard: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 8) {
+                Image(systemName: "hammer.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.accentFill)
+                Text("THE WORKSHOP")
+                    .font(Theme.board(13, .bold, relativeTo: .caption))
+                    .tracking(1.8)
+                    .foregroundStyle(Theme.onSteel)
+                Spacer(minLength: 0)
+                Text("LIVE")
+                    .font(Theme.board(10, .bold, relativeTo: .caption2))
+                    .tracking(1.2)
+                    .foregroundStyle(Theme.accentFill)
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 13)
+            .background(Theme.steelFace)
+
+            VStack(spacing: 13) {
+                SplitFlap("IN PROGRESS", size: 25, tone: .amber)
+                SplitFlap("PLANNING", size: 25)
+                SplitFlap("COMPLETE", size: 25, tone: .green)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 34)
+            .background(Theme.flapShade)
+
+            Text("Every project, from first cut to final coat.")
+                .font(Theme.ui(15, .regular, relativeTo: .subheadline))
+                .foregroundStyle(Theme.onSteel.opacity(0.9))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
+                .background(Theme.steelFace)
+        }
+        .frame(maxWidth: 660)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.rPanel)
+                .strokeBorder(Theme.line, lineWidth: 1)
+        )
     }
 
     private func signInWithMicrosoft() async {
@@ -145,7 +160,7 @@ struct SignInView: View {
 // MARK: - The plate pair
 
 private enum SignInProvider {
-    case microsoft, apple
+    case microsoft, apple, demo
 
     /// Board lettering, so both plates speak the concourse's caps. The wording
     /// itself is each provider's required phrase, unchanged.
@@ -153,6 +168,7 @@ private enum SignInProvider {
         switch self {
         case .microsoft: "SIGN IN WITH MICROSOFT"
         case .apple:     "SIGN IN WITH APPLE"
+        case .demo:      "BROWSE DEMO"
         }
     }
 
@@ -162,6 +178,7 @@ private enum SignInProvider {
         switch self {
         case .microsoft: Theme.accentFill
         case .apple:     Color(uiColor: UIColor(rgb: 0x14181A))
+        case .demo:      Theme.steelLight
         }
     }
 
@@ -169,6 +186,7 @@ private enum SignInProvider {
         switch self {
         case .microsoft: Theme.steelDark
         case .apple:     .white
+        case .demo:      Theme.onSteel
         }
     }
 }
@@ -220,6 +238,67 @@ private struct SignInPlate: View {
                 .font(.system(size: 16))
                 // The glyph sits high in its box; nudge it onto the cap line.
                 .offset(y: -1)
+        case .demo:
+            Image(systemName: "eye.fill")
+                .font(.system(size: 15, weight: .semibold))
+        }
+    }
+}
+
+private struct WorkshopLoginBackdrop: View {
+    let reduceMotion: Bool
+    let reduceTransparency: Bool
+    @State private var drift = false
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Theme.steel
+                if let file = Bundle.main.url(
+                    forResource: "plan-hand-tool-cabinet",
+                    withExtension: "png"
+                ), let image = UIImage(contentsOfFile: file.path) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: proxy.size.width + 100, height: proxy.size.height + 100)
+                        .scaleEffect(drift ? 1.1 : 1.02)
+                        .offset(x: drift ? -24 : 22, y: drift ? -16 : 18)
+                        .saturation(0.28)
+                        .contrast(1.15)
+                        .opacity(0.78)
+                        .clipped()
+                }
+
+                LinearGradient(
+                    colors: [
+                        Theme.concourse.opacity(reduceTransparency ? 0.96 : 0.82),
+                        Theme.concourse.opacity(reduceTransparency ? 0.90 : 0.66),
+                        Theme.concourse.opacity(reduceTransparency ? 0.96 : 0.86),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+
+                RadialGradient(
+                    colors: [
+                        Theme.concourse.opacity(reduceTransparency ? 0.08 : 0.02),
+                        Theme.concourse.opacity(reduceTransparency ? 0.78 : 0.50),
+                    ],
+                    center: .center,
+                    startRadius: 40,
+                    endRadius: max(proxy.size.width, proxy.size.height) * 0.7
+                )
+            }
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .clipped()
+        }
+        .ignoresSafeArea()
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(.easeInOut(duration: 18).repeatForever(autoreverses: true)) {
+                drift = true
+            }
         }
     }
 }

@@ -50,7 +50,9 @@ struct DashboardView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    if !pendingShares.isEmpty { sharedItemsBanner.padding(.bottom, 20) }
+                    if !model.isDemoMode, !pendingShares.isEmpty {
+                        sharedItemsBanner.padding(.bottom, 20)
+                    }
                     if loading {
                         LazyVGrid(columns: grid, spacing: 18) {
                             ForEach(0..<6, id: \.self) { _ in ProjectCardSkeletonView() }
@@ -75,12 +77,14 @@ struct DashboardView: View {
             // above it would be a second, emptier one.
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    BoardToolbarButton(symbol: "plus", label: "New Project", tone: .amber) {
-                        showNewProject = true
+                if !model.isDemoMode {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        BoardToolbarButton(symbol: "plus", label: "New Project", tone: .amber) {
+                            showNewProject = true
+                        }
                     }
+                    .boardToolbarItem()
                 }
-                .boardToolbarItem()
             }
             .navigationDestination(for: DashboardRoute.self) { route in
                 switch route {
@@ -111,7 +115,11 @@ struct DashboardView: View {
                 }
             }
             .task { await load() }
-            .task { pendingShares = ShareQueue.loadAll() }
+            .task {
+                if !model.isDemoMode {
+                    pendingShares = ShareQueue.loadAll()
+                }
+            }
             .refreshable { await load() }
             .onAppear { consumePendingProject(); consumeQuickAction() }
             .onChange(of: model.pendingProjectId) { _, _ in consumePendingProject() }
@@ -127,6 +135,7 @@ struct DashboardView: View {
     private func consumeQuickAction() {
         guard let action = intentRouter.requestedAction?.action else { return }
         intentRouter.requestedAction = nil
+        guard !model.isDemoMode else { return }
         switch action {
         case .newProject: showNewProject = true
         }
@@ -296,10 +305,12 @@ struct DashboardView: View {
     private var shaperSection: some View {
         VStack(alignment: .leading, spacing: 18) {
             Rail("Shaper Tools Hub — CNC", count: shaper.count) {
-                Button { showNewShaper = true } label: {
-                    Label("Add", systemImage: "plus")
-                        .font(Theme.board(10, .semibold, relativeTo: .caption2))
-                        .foregroundStyle(Theme.onSteel)
+                if !model.isDemoMode {
+                    Button { showNewShaper = true } label: {
+                        Label("Add", systemImage: "plus")
+                            .font(Theme.board(10, .semibold, relativeTo: .caption2))
+                            .foregroundStyle(Theme.onSteel)
+                    }
                 }
             }
             if shaper.isEmpty {
@@ -342,38 +353,40 @@ struct DashboardView: View {
                                 Text("\(t.difficulty.rawValue) · \(t.partsCount) part\(t.partsCount == 1 ? "" : "s")")
                                     .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                             }
-                            HStack(spacing: 8) {
-                                Button {
-                                    Task { await useTemplate(t) }
-                                } label: {
-                                    HStack(spacing: 5) {
-                                        Image(systemName: "doc.on.doc")
-                                        Text(cloningTemplateId == t.id ? "Creating…" : "Use Template")
+                            if !model.isDemoMode {
+                                HStack(spacing: 8) {
+                                    Button {
+                                        Task { await useTemplate(t) }
+                                    } label: {
+                                        HStack(spacing: 5) {
+                                            Image(systemName: "doc.on.doc")
+                                            Text(cloningTemplateId == t.id ? "Creating…" : "Use Template")
+                                        }
+                                        .font(Theme.ui(12, .medium))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 7)
                                     }
-                                    .font(Theme.ui(12, .medium))
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 7)
-                                }
-                                .disabled(cloningTemplateId == t.id)
-                                .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
-                                .foregroundStyle(Theme.concourse)
-                                .buttonStyle(.plain)
+                                    .disabled(cloningTemplateId == t.id)
+                                    .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
+                                    .foregroundStyle(Theme.concourse)
+                                    .buttonStyle(.plain)
 
-                                if confirmDeleteTemplateId == t.id {
-                                    Button("Cancel") { confirmDeleteTemplateId = nil }
-                                        .font(Theme.ui(12, .regular))
+                                    if confirmDeleteTemplateId == t.id {
+                                        Button("Cancel") { confirmDeleteTemplateId = nil }
+                                            .font(Theme.ui(12, .regular))
+                                            .minimumHitTarget()
+                                        Button { Task { await deleteTemplate(t) } } label: {
+                                            Image(systemName: "trash").foregroundStyle(Theme.red)
+                                        }
                                         .minimumHitTarget()
-                                    Button { Task { await deleteTemplate(t) } } label: {
-                                        Image(systemName: "trash").foregroundStyle(Theme.red)
+                                        .accessibilityLabel("Confirm delete \(t.templateName ?? t.title) template")
+                                    } else {
+                                        Button { confirmDeleteTemplateId = t.id } label: {
+                                            Image(systemName: "trash").foregroundStyle(Theme.muted)
+                                        }
+                                        .minimumHitTarget()
+                                        .accessibilityLabel("Delete \(t.templateName ?? t.title) template")
                                     }
-                                    .minimumHitTarget()
-                                    .accessibilityLabel("Confirm delete \(t.templateName ?? t.title) template")
-                                } else {
-                                    Button { confirmDeleteTemplateId = t.id } label: {
-                                        Image(systemName: "trash").foregroundStyle(Theme.muted)
-                                    }
-                                    .minimumHitTarget()
-                                    .accessibilityLabel("Delete \(t.templateName ?? t.title) template")
                                 }
                             }
                         }
@@ -458,21 +471,25 @@ struct DashboardView: View {
         // shopping Live Activity recorded while backgrounded (see
         // ToggleShoppingItemIntent / ToggleShoppingActivityItemIntent) —
         // neither can authenticate itself, so the real writes happen here.
-        for pendingId in WorkshopWidgetStore.consumePendingShoppingToggles() {
-            do { try await api.setPurchased(id: pendingId, purchased: true) }
-            catch { NSLog("[Workshop] Widget shopping-toggle reconciliation failed for id=%d: %@", pendingId, String(describing: error)) }
+        if !model.isDemoMode {
+            for pendingId in WorkshopWidgetStore.consumePendingShoppingToggles() {
+                do { try await api.setPurchased(id: pendingId, purchased: true) }
+                catch { NSLog("[Workshop] Widget shopping-toggle reconciliation failed for id=%d: %@", pendingId, String(describing: error)) }
+            }
         }
         do {
             async let p = api.listProjects()
             async let s = api.listShaperProjects()
             async let t = api.listTemplates()
             (projects, shaper, templates) = try await (p, s, t)
-            await seedStarterContentIfNeeded()
-            var snapshot = WorkshopWidgetSnapshot(projects: projects)
-            snapshot.shoppingItems = WorkshopWidgetStore.load()?.shoppingItems ?? []
-            WorkshopWidgetStore.save(snapshot)
-            WidgetCenter.shared.reloadAllTimelines()
-            SpotlightIndexer.index(projects: projects)
+            if !model.isDemoMode {
+                await seedStarterContentIfNeeded()
+                var snapshot = WorkshopWidgetSnapshot(projects: projects)
+                snapshot.shoppingItems = WorkshopWidgetStore.load()?.shoppingItems ?? []
+                WorkshopWidgetStore.save(snapshot)
+                WidgetCenter.shared.reloadAllTimelines()
+                SpotlightIndexer.index(projects: projects)
+            }
         } catch {
             loadError = error.localizedDescription
         }
@@ -484,6 +501,7 @@ struct DashboardView: View {
     /// even looks like. Fill it once, with builds they can edit or delete —
     /// ``StarterSeeder`` owns the once-only, empty-account-only guard.
     private func seedStarterContentIfNeeded() async {
+        guard !model.isDemoMode else { return }
         let userKey = model.userKey
         guard !StarterSeeder.hasRun(userKey: userKey) else { return }
         // Marked before the writes, not after: a seed that half-fails must not
@@ -504,6 +522,7 @@ struct DashboardView: View {
     }
 
     private func useTemplate(_ t: WSTemplate) async {
+        guard !model.isDemoMode else { return }
         cloningTemplateId = t.id
         do {
             let project = try await api.cloneTemplate(templateId: t.id)
@@ -516,6 +535,7 @@ struct DashboardView: View {
     }
 
     private func deleteTemplate(_ t: WSTemplate) async {
+        guard !model.isDemoMode else { return }
         confirmDeleteTemplateId = nil
         templates.removeAll { $0.id == t.id }
         do { try await api.deleteTemplate(id: t.id) }

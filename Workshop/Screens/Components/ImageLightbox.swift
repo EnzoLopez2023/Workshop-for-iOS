@@ -96,6 +96,14 @@ private struct ZoomableImage: View {
         if let cached = await ImageCache.shared.get(key), let img = UIImage(data: cached) {
             uiImage = img; return
         }
+        if DemoWorkshopData.isDemoURL(url) {
+            guard let data = DemoWorkshopData.imageData(for: url),
+                  let image = UIImage(data: data)
+            else { failed = true; return }
+            await ImageCache.shared.set(key, data)
+            uiImage = image
+            return
+        }
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {

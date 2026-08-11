@@ -36,22 +36,24 @@ struct MoreView: View {
                 .listRowBackground(Theme.flap)
                 .listRowSeparatorTint(Theme.line)
 
-                Section {
-                    Picker("Default Status", selection: defaultStatusBinding) {
-                        Text(ProjectStatus.idea.label).tag(ProjectStatus.idea)
-                        Text(ProjectStatus.planning.label).tag(ProjectStatus.planning)
-                        Text(ProjectStatus.inProgress.label).tag(ProjectStatus.inProgress)
+                if !model.isDemoMode {
+                    Section {
+                        Picker("Default Status", selection: defaultStatusBinding) {
+                            Text(ProjectStatus.idea.label).tag(ProjectStatus.idea)
+                            Text(ProjectStatus.planning.label).tag(ProjectStatus.planning)
+                            Text(ProjectStatus.inProgress.label).tag(ProjectStatus.inProgress)
+                        }
+                        Picker("Dashboard Sort", selection: dashboardSortBinding) {
+                            ForEach(DashboardSort.allCases) { s in Text(s.label).tag(s) }
+                        }
+                        Toggle("Show Completed by Default", isOn: $showCompletedByDefault)
+                            .toggleStyle(.flap)
+                    } header: {
+                        BoardCaps("Projects")
                     }
-                    Picker("Dashboard Sort", selection: dashboardSortBinding) {
-                        ForEach(DashboardSort.allCases) { s in Text(s.label).tag(s) }
-                    }
-                    Toggle("Show Completed by Default", isOn: $showCompletedByDefault)
-                        .toggleStyle(.flap)
-                } header: {
-                    BoardCaps("Projects")
+                    .listRowBackground(Theme.flap)
+                    .listRowSeparatorTint(Theme.line)
                 }
-                .listRowBackground(Theme.flap)
-                .listRowSeparatorTint(Theme.line)
 
                 Section {
                     NavigationLink {
@@ -76,45 +78,61 @@ struct MoreView: View {
                 } header: {
                     BoardCaps("Data")
                 } footer: {
-                    Text("Downloads all your projects and their metadata as a JSON file.")
+                    Text(model.isDemoMode
+                         ? "Downloads the demo starter-project metadata as a JSON file."
+                         : "Downloads all your projects and their metadata as a JSON file.")
                 }
                 .listRowBackground(Theme.flap)
                 .listRowSeparatorTint(Theme.line)
 
                 Section {
-                    if let name = model.userName {
-                        LabeledContent("Signed in as", value: name)
-                    }
-                    Button("Sign Out", role: .destructive) {
-                        Task { await model.signOut() }
-                    }
-                        .disabled(deletingAccount)
-                    Button(role: .destructive) {
-                        showingDeleteAccountConfirmation = true
-                    } label: {
-                        if deletingAccount {
-                            HStack(spacing: 10) {
-                                ProgressView()
-                                    .controlSize(.small)
-                                    .tint(Theme.red)
-                                Text("Deleting Account…")
+                    if model.isDemoMode {
+                        LabeledContent("Mode", value: "Demo · Read only")
+                        Text("You can explore every starter project. Sign in when you are ready to create and sync your own workshop.")
+                            .font(Theme.ui(13, .regular, relativeTo: .footnote))
+                            .foregroundStyle(Theme.muted)
+                        Button {
+                            model.exitDemo()
+                        } label: {
+                            Label("Sign In to Create Projects", systemImage: "person.crop.circle.badge.plus")
+                        }
+                    } else {
+                        if let name = model.userName {
+                            LabeledContent("Signed in as", value: name)
+                        }
+                        Button("Sign Out", role: .destructive) {
+                            Task { await model.signOut() }
+                        }
+                            .disabled(deletingAccount)
+                        Button(role: .destructive) {
+                            showingDeleteAccountConfirmation = true
+                        } label: {
+                            if deletingAccount {
+                                HStack(spacing: 10) {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                        .tint(Theme.red)
+                                    Text("Deleting Account…")
+                                        .foregroundStyle(Theme.red)
+                                }
+                            } else {
+                                Label("Delete Account", systemImage: "trash")
                                     .foregroundStyle(Theme.red)
                             }
-                        } else {
-                            Label("Delete Account", systemImage: "trash")
+                        }
+                        .disabled(deletingAccount)
+                        if let accountDeletionError {
+                            Text(accountDeletionError)
+                                .font(Theme.ui(13, .regular, relativeTo: .footnote))
                                 .foregroundStyle(Theme.red)
                         }
-                    }
-                    .disabled(deletingAccount)
-                    if let accountDeletionError {
-                        Text(accountDeletionError)
-                            .font(Theme.ui(13, .regular, relativeTo: .footnote))
-                            .foregroundStyle(Theme.red)
                     }
                 } header: {
                     BoardCaps("Account")
                 } footer: {
-                    Text("Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a project summary first if you want a reference copy.")
+                    Text(model.isDemoMode
+                         ? "Demo data stays on this device only for the current session."
+                         : "Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a project summary first if you want a reference copy.")
                 }
                 .listRowBackground(Theme.flap)
                 .listRowSeparatorTint(Theme.line)

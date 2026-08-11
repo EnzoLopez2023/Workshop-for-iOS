@@ -19,6 +19,7 @@
 		14BB0ADBE9656507E986CD65 /* CutListActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C773FCB81B7645605D4C47 /* CutListActivityController.swift */; };
 		158BEB63436FD55F1B45BDE6 /* MartianMonoBoard-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C0498C93881B686F3A95AED5 /* MartianMonoBoard-Bold.ttf */; };
 		164A4D406AD96A69ED1A354D /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */; };
+		1D294E009AC59AB5FE5295A3 /* DemoWorkshopData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D06BFB6DF6D8C5AF58E7459 /* DemoWorkshopData.swift */; };
 		20D15BDCF51BCE81D6FA337E /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
 		2595BA7B19D04C0AB9D96715 /* ArchivoWS-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F44FA2A83DD358C5F8F4616 /* ArchivoWS-Medium.ttf */; };
 		2C75E0EC30260C2B37F4C077 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */; };
@@ -147,6 +148,7 @@
 		2032375E9627FFA9498F242F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		237C9398DF9C4BDC9A70E9A0 /* plan-kapex-fence.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-kapex-fence.png"; sourceTree = "<group>"; };
 		2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
+		2D06BFB6DF6D8C5AF58E7459 /* DemoWorkshopData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoWorkshopData.swift; sourceTree = "<group>"; };
 		306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
 		3649EBAF123246F0A52AAD5C /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
 		3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionTablesView.swift; sourceTree = "<group>"; };
@@ -331,6 +333,7 @@
 				0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */,
 				55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */,
 				17C773FCB81B7645605D4C47 /* CutListActivityController.swift */,
+				2D06BFB6DF6D8C5AF58E7459 /* DemoWorkshopData.swift */,
 				78E5576C486C495D7EC2090C /* FinishReminderScheduler.swift */,
 				DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */,
 				EAF973223D615FA3E4ACEAFA /* Haptics.swift */,
@@ -658,6 +661,7 @@
 				8AAA8C440B3814C0498177DD /* CutPlanPDFExporter.swift in Sources */,
 				F20DFCBF63D1A41DB3749948 /* CutPlanSheetView.swift in Sources */,
 				FA516B0575697E740BF045DC /* DashboardView.swift in Sources */,
+				1D294E009AC59AB5FE5295A3 /* DemoWorkshopData.swift in Sources */,
 				0E3C09081BF8ECC93A8F3F33 /* DimensionScannerView.swift in Sources */,
 				8C11F01C336EF4FF38B76C78 /* FinishReminderScheduler.swift in Sources */,
 				4FD3C82AC2D8BEAC2E6C93E7 /* FlowLayout.swift in Sources */,
@@ -718,7 +722,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -743,7 +747,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -765,7 +769,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -851,7 +855,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -874,7 +878,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -899,7 +903,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

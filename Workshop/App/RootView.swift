@@ -51,10 +51,15 @@ struct RootView: View {
     var body: some View {
         Group {
             if model.isSignedIn {
-                if hSize == .regular {
-                    iPadLayout
-                } else {
-                    iPhoneLayout
+                VStack(spacing: 0) {
+                    if model.isDemoMode {
+                        DemoModeRail()
+                    }
+                    if hSize == .regular {
+                        iPadLayout
+                    } else {
+                        iPhoneLayout
+                    }
                 }
             } else {
                 SignInView()
@@ -70,6 +75,7 @@ struct RootView: View {
                 model.selectedTab = dest.rawValue
             }
         }
+
     }
 
     // MARK: iPhone — bottom tab bar, full-width stacked content
@@ -231,4 +237,43 @@ struct RootView: View {
     }
 
     private var current: AppDestination { AppDestination(rawValue: model.selectedTab) ?? .dashboard }
+}
+
+private struct DemoModeRail: View {
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        HStack(spacing: 9) {
+            RoundedRectangle(cornerRadius: 1)
+                .fill(Theme.accentFill)
+                .frame(width: 7, height: 7)
+                .accessibilityHidden(true)
+            Text("DEMO WORKSHOP")
+                .font(Theme.board(10, .bold, relativeTo: .caption2))
+                .tracking(1.2)
+            Text("READ ONLY")
+                .font(Theme.board(9, .semibold, relativeTo: .caption2))
+                .tracking(1)
+                .foregroundStyle(Theme.onSteel.opacity(0.7))
+            Spacer(minLength: 8)
+            Button("SIGN IN") {
+                model.exitDemo()
+            }
+            .font(Theme.board(9.5, .bold, relativeTo: .caption2))
+            .tracking(1)
+            .foregroundStyle(Theme.onSteel)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Theme.steelLight, in: RoundedRectangle(cornerRadius: Theme.rFlap))
+            .buttonStyle(.plain)
+            .accessibilityHint("Leaves the demo and returns to sign in")
+        }
+        .foregroundStyle(Theme.onSteel)
+        .padding(.horizontal, 14)
+        .frame(minHeight: 38)
+        .background(Theme.steelFace)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(Theme.line).frame(height: 1)
+        }
+    }
 }

@@ -18,6 +18,7 @@ final class AppModel: ObservableObject {
     private(set) var api: WorkshopAPI
 
     @Published var isSignedIn: Bool
+    @Published private(set) var isDemoMode = false
     @Published var authError: String?
     @Published var selectedTab = AppDestination.dashboard.rawValue
     /// Set by a deep link (`workshop://project/<id>`); the projects list consumes
@@ -34,6 +35,7 @@ final class AppModel: ObservableObject {
     @Published var pendingShowCutPlan = false
 
     var userName: String? {
+        if isDemoMode { return "Demo Workshop" }
         if let session = AppleSessionStore.load() { return session.displayName ?? "Apple user" }
         return msalAuth?.accountName
     }
@@ -41,6 +43,7 @@ final class AppModel: ObservableObject {
     /// The signed-in user's backend per-user key (Entra `oid` or `apple_<hash>`),
     /// used to build auth-exempt `?oid=` image URLs. nil when signed out.
     var userKey: String? {
+        if isDemoMode { return DemoWorkshopData.userKey }
         if let session = AppleSessionStore.load() { return session.userKey }
         #if DEBUG
         if let dev = devUserKey { return dev }
@@ -70,6 +73,13 @@ final class AppModel: ObservableObject {
         }
         if let id = env["WORKSHOP_START_SHAPER"].flatMap(Int.init) {
             self.pendingShaperId = id
+        }
+        if env["WORKSHOP_DEMO_MODE"] == "1" {
+            self.msalAuth = try? MSALAuth()
+            self.api = DemoWorkshopData.makeAPI()
+            self.isSignedIn = true
+            self.isDemoMode = true
+            return
         }
         #endif
 
@@ -111,6 +121,7 @@ final class AppModel: ObservableObject {
 
     func signInWithMicrosoft(presenting viewController: UIViewController) async {
         guard let msalAuth else { authError = "Microsoft sign-in is unavailable."; return }
+        isDemoMode = false
         do {
             try await msalAuth.signInInteractively(presenting: viewController)
             api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: MSALTokenProvider(auth: msalAuth))
@@ -138,6 +149,7 @@ final class AppModel: ObservableObject {
     /// Workshop session and switch the API client to it. A nil token means the
     /// authorization produced no usable token (or failed) — surfaced as an error.
     func signInWithApple(idToken: String?, authorizationCode: String?, name: String?) async {
+        isDemoMode = false
         guard let idToken, let authorizationCode else {
             authError = "Apple sign-in failed. Please try again."
             return
@@ -163,6 +175,9 @@ final class AppModel: ObservableObject {
     /// untouched if the server call fails, so a network error never masquerades
     /// as successful deletion.
     func deleteAccount() async throws {
+        guard !isDemoMode else {
+            throw APIError.http(status: 403, message: "Demo is read-only.")
+        }
         let deletedUserKey = userKey
         try await api.deleteAccount()
         StarterSeeder.clearRun(userKey: deletedUserKey)
@@ -170,6 +185,10 @@ final class AppModel: ObservableObject {
     }
 
     func signOut() async {
+        if isDemoMode {
+            exitDemo()
+            return
+        }
         // This flag is the backstop if MSAL's cache removal fails: relaunch must
         // stay signed out until the user explicitly chooses Microsoft again,
         // rather than silently recreating an account they just deleted.
@@ -197,6 +216,32 @@ final class AppModel: ObservableObject {
         WorkshopWidgetStore.clear()
         WidgetCenter.shared.reloadAllTimelines()
         SpotlightIndexer.clear()
+    }
+
+    func enterDemo() {
+        authError = nil
+        isDemoMode = true
+        isSignedIn = true
+        api = DemoWorkshopData.makeAPI()
+        selectedTab = AppDestination.dashboard.rawValue
+        pendingProjectId = nil
+        pendingShowCutPlan = false
+        #if DEBUG
+        pendingShaperId = nil
+        #endif
+    }
+
+    func exitDemo() {
+        guard isDemoMode else { return }
+        isDemoMode = false
+        isSignedIn = false
+        api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: StaticTokenProvider(nil))
+        selectedTab = AppDestination.dashboard.rawValue
+        pendingProjectId = nil
+        pendingShowCutPlan = false
+        #if DEBUG
+        pendingShaperId = nil
+        #endif
     }
 
     // MARK: - Deep links

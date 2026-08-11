@@ -46,7 +46,7 @@ enum BackgroundRefresh {
     @MainActor
     private static func refreshSnapshot() async {
         let model = AppModel()
-        guard model.isSignedIn else { return }
+        guard model.isSignedIn, !model.isDemoMode else { return }
         do {
             async let p = model.api.listProjects()
             async let s = model.api.shoppingList()

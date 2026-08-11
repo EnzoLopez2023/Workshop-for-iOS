@@ -93,7 +93,7 @@ struct ProjectDetailView: View {
         .navigationTitle(d?.title ?? "Project")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if d != nil {
+            if d != nil, !model.isDemoMode {
                 ToolbarItem(placement: .topBarTrailing) {
                     BoardToolbarButton(symbol: "pencil", label: "Edit", tone: .amber) { showEditForm = true }
                 }
@@ -138,7 +138,7 @@ struct ProjectDetailView: View {
                 Task { await load() }
             }
         }
-        .userActivity(HandoffActivity.viewingProject, isActive: d != nil) { activity in
+        .userActivity(HandoffActivity.viewingProject, isActive: d != nil && !model.isDemoMode) { activity in
             guard let d else { return }
             activity.title = d.title
             activity.userInfo = [HandoffActivity.projectIdKey: projectId]
@@ -293,23 +293,25 @@ struct ProjectDetailView: View {
                        trailing: AnyView(HStack(spacing: 10) {
                         Text("\(d.cutList.count) part\(d.cutList.count == 1 ? "" : "s")")
                             .font(Theme.ui(13, .regular)).foregroundStyle(Theme.muted)
-                        Button {
-                            Task {
-                                if trackingCuts {
-                                    await CutListActivityController.end()
-                                } else {
-                                    await CutListActivityController.start(projectId: d.id, projectTitle: d.title, cutList: d.cutList)
+                        if !model.isDemoMode {
+                            Button {
+                                Task {
+                                    if trackingCuts {
+                                        await CutListActivityController.end()
+                                    } else {
+                                        await CutListActivityController.start(projectId: d.id, projectTitle: d.title, cutList: d.cutList)
+                                    }
+                                    trackingCuts.toggle()
                                 }
-                                trackingCuts.toggle()
+                            } label: {
+                                Image(systemName: trackingCuts ? "checklist.checked" : "checklist").font(.system(size: 13))
                             }
-                        } label: {
-                            Image(systemName: trackingCuts ? "checklist.checked" : "checklist").font(.system(size: 13))
+                            .tint(trackingCuts ? Theme.accent : Theme.muted)
+                            .minimumHitTarget()
+                            .accessibilityLabel(trackingCuts ? "Stop tracking cuts" : "Track cuts")
+                            .accessibilityValue(trackingCuts ? "On" : "Off")
+                            .accessibilityAddTraits(trackingCuts ? .isSelected : [])
                         }
-                        .tint(trackingCuts ? Theme.accent : Theme.muted)
-                        .minimumHitTarget()
-                        .accessibilityLabel(trackingCuts ? "Stop tracking cuts" : "Track cuts")
-                        .accessibilityValue(trackingCuts ? "On" : "Off")
-                        .accessibilityAddTraits(trackingCuts ? .isSelected : [])
                         Button {
                             if let url = CSVExport.cutListCSV(d.cutList, projectTitle: d.title) {
                                 exportURL = IdentifiableURL(url: url)
@@ -359,7 +361,11 @@ struct ProjectDetailView: View {
                 }
             }
             if showCutPlan {
-                CutPlanOptimizerView(api: api, cutList: d.cutList, projectId: d.id)
+                CutPlanOptimizerView(
+                    api: api,
+                    cutList: d.cutList,
+                    projectId: model.isDemoMode ? nil : d.id
+                )
             }
         }
         .padding(.top, 36)
@@ -385,32 +391,7 @@ struct ProjectDetailView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(d.materials.enumerated()), id: \.element.id) { i, m in
                         if i > 0 { Divider().overlay(Theme.line) }
-                        Button { Task { await togglePurchased(m) } } label: {
-                            HStack(spacing: 14) {
-                                Image(systemName: m.purchased ? "checkmark.square.fill" : "square")
-                                    .foregroundStyle(m.purchased ? Theme.accent : Theme.muted)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(m.name).font(Theme.ui(15, .medium))
-                                        .foregroundStyle(m.purchased ? Theme.muted : Theme.ink)
-                                        .strikethrough(m.purchased)
-                                    if let q = m.qtyLabel, !q.isEmpty {
-                                        Text(q).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
-                                    }
-                                }
-                                Spacer()
-                                Text(money(m.cost)).font(Theme.board(14, .regular))
-                                    .foregroundStyle(m.purchased ? Theme.muted : Theme.ink).strikethrough(m.purchased)
-                            }
-                            .padding(.horizontal, 16).padding(.vertical, 13)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .sensoryFeedback(.selection, trigger: m.purchased)
-                        .disabled(materialMutationTokens[m.id] != nil)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityValue(m.purchased ? "Purchased" : "Not purchased")
-                        .accessibilityHint(m.purchased ? "Marks this material as not purchased" : "Marks this material as purchased")
-                        .accessibilityAddTraits(m.purchased ? [.isButton, .isSelected] : .isButton)
+                        materialRow(m)
                     }
                 }
                 .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
@@ -419,15 +400,57 @@ struct ProjectDetailView: View {
         }
     }
 
+    @ViewBuilder private func materialRow(_ material: WSMaterial) -> some View {
+        if model.isDemoMode {
+            materialRowContent(material)
+                .accessibilityElement(children: .combine)
+                .accessibilityValue(material.purchased ? "Purchased" : "Not purchased")
+                .accessibilityHint("Read-only demo")
+        } else {
+            Button { Task { await togglePurchased(material) } } label: {
+                materialRowContent(material)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.selection, trigger: material.purchased)
+            .disabled(materialMutationTokens[material.id] != nil)
+            .accessibilityElement(children: .combine)
+            .accessibilityValue(material.purchased ? "Purchased" : "Not purchased")
+            .accessibilityHint(material.purchased ? "Marks this material as not purchased" : "Marks this material as purchased")
+            .accessibilityAddTraits(material.purchased ? [.isButton, .isSelected] : .isButton)
+        }
+    }
+
+    private func materialRowContent(_ material: WSMaterial) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: material.purchased ? "checkmark.square.fill" : "square")
+                .foregroundStyle(material.purchased ? Theme.accent : Theme.muted)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(material.name).font(Theme.ui(15, .medium))
+                    .foregroundStyle(material.purchased ? Theme.muted : Theme.ink)
+                    .strikethrough(material.purchased)
+                if let quantity = material.qtyLabel, !quantity.isEmpty {
+                    Text(quantity).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                }
+            }
+            Spacer()
+            Text(money(material.cost)).font(Theme.board(14, .regular))
+                .foregroundStyle(material.purchased ? Theme.muted : Theme.ink)
+                .strikethrough(material.purchased)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
+    }
+
     // MARK: Finish log
 
     private static let finishTypes = ["Stain", "Oil", "Wax", "Varnish", "Lacquer", "Sealant", "Primer", "Paint", "Other"]
 
     @ViewBuilder private func finishLogSection(_ d: WSProjectDetail) -> some View {
         SectionBox(title: "Finish Log", icon: "drop.fill",
-                   trailing: AnyView(toggleButton(showFinishForm, "Add Entry") {
-                       if showFinishForm { finishForm = FinishFormState() }
-                       showFinishForm.toggle()
+                   trailing: model.isDemoMode ? nil : AnyView(toggleButton(showFinishForm, "Add Entry") {
+                    if showFinishForm { finishForm = FinishFormState() }
+                    showFinishForm.toggle()
                    })) {
             if showFinishForm {
                 finishAddForm()
@@ -448,11 +471,13 @@ struct ProjectDetailView: View {
                             }
                             Spacer()
                             Text(shortDate(e.appliedAt)).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
-                            Button { Task { await deleteFinishEntry(e) } } label: {
-                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                            if !model.isDemoMode {
+                                Button { Task { await deleteFinishEntry(e) } } label: {
+                                    Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                                }
+                                .minimumHitTarget()
+                                .accessibilityLabel("Delete \(e.productName) finish entry")
                             }
-                            .minimumHitTarget()
-                            .accessibilityLabel("Delete \(e.productName) finish entry")
                         }
                         .padding(.horizontal, 16).padding(.vertical, 13)
                     }
@@ -494,9 +519,9 @@ struct ProjectDetailView: View {
 
     @ViewBuilder private func buildLogSection(_ d: WSProjectDetail) -> some View {
         SectionBox(title: "Build Log", icon: "book.closed.fill",
-                   trailing: AnyView(toggleButton(showBuildForm, "Add Note") {
-                       if showBuildForm { buildNote = ""; buildPhotoData = nil; buildPhotoItem = nil }
-                       showBuildForm.toggle()
+                   trailing: model.isDemoMode ? nil : AnyView(toggleButton(showBuildForm, "Add Note") {
+                    if showBuildForm { buildNote = ""; buildPhotoData = nil; buildPhotoItem = nil }
+                    showBuildForm.toggle()
                    })) {
             if showBuildForm {
                 buildAddForm()
@@ -525,11 +550,13 @@ struct ProjectDetailView: View {
                                 }
                             }
                             Spacer(minLength: 0)
-                            Button { Task { await deleteBuildEntry(e) } } label: {
-                                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                            if !model.isDemoMode {
+                                Button { Task { await deleteBuildEntry(e) } } label: {
+                                    Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(Theme.muted)
+                                }
+                                .minimumHitTarget()
+                                .accessibilityLabel("Delete build entry from \(shortDate(e.createdAt))")
                             }
-                            .minimumHitTarget()
-                            .accessibilityLabel("Delete build entry from \(shortDate(e.createdAt))")
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -594,9 +621,9 @@ struct ProjectDetailView: View {
 
     @ViewBuilder private func linksSection(_ d: WSProjectDetail) -> some View {
         SectionBox(title: "Linked Projects", icon: "link",
-                   trailing: AnyView(toggleButton(showLinkForm, "Link Project") {
-                       showLinkForm.toggle()
-                       if showLinkForm { Task { await loadAllProjects() } }
+                   trailing: model.isDemoMode ? nil : AnyView(toggleButton(showLinkForm, "Link Project") {
+                    showLinkForm.toggle()
+                    if showLinkForm { Task { await loadAllProjects() } }
                    })) {
             if showLinkForm {
                 linkAddForm(d)
@@ -615,11 +642,13 @@ struct ProjectDetailView: View {
                                 .padding(.horizontal, 8).padding(.vertical, 3)
                                 .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
                             StatusBadge(status: link.linkedStatus)
-                            Button { Task { await removeLink(link) } } label: {
-                                Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.muted)
+                            if !model.isDemoMode {
+                                Button { Task { await removeLink(link) } } label: {
+                                    Image(systemName: "xmark").font(.system(size: 11)).foregroundStyle(Theme.muted)
+                                }
+                                .minimumHitTarget()
+                                .accessibilityLabel("Remove link to \(link.linkedTitle)")
                             }
-                            .minimumHitTarget()
-                            .accessibilityLabel("Remove link to \(link.linkedTitle)")
                         }
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
@@ -734,7 +763,7 @@ struct ProjectDetailView: View {
     /// (Phase 7.7) — cheap and idempotent (stable per-entry identifier), so
     /// it's simplest to just do this on every load rather than diff changes.
     private func rescheduleFinishReminders() {
-        guard let d else { return }
+        guard !model.isDemoMode, let d else { return }
         for entry in d.finishLog {
             FinishReminderScheduler.schedule(entry, projectTitle: d.title)
         }
@@ -743,7 +772,8 @@ struct ProjectDetailView: View {
     // MARK: Materials — optimistic purchased toggle
 
     private func togglePurchased(_ m: WSMaterial) async {
-        guard materialMutationTokens[m.id] == nil,
+        guard !model.isDemoMode,
+              materialMutationTokens[m.id] == nil,
               let idx = d?.materials.firstIndex(where: { $0.id == m.id })
         else { return }
         loadGeneration &+= 1
@@ -769,7 +799,7 @@ struct ProjectDetailView: View {
     // MARK: Save as template / delete
 
     private func saveAsTemplate() async {
-        guard let d else { return }
+        guard !model.isDemoMode, let d else { return }
         do {
             _ = try await api.saveAsTemplate(projectId: d.id, name: d.title)
             Haptics.success()
@@ -783,6 +813,7 @@ struct ProjectDetailView: View {
     }
 
     private func deleteProject() async {
+        guard !model.isDemoMode else { return }
         deleting = true
         do {
             try await api.deleteProject(id: projectId)
@@ -796,6 +827,7 @@ struct ProjectDetailView: View {
     // MARK: Finish log
 
     private func addFinishEntry() async {
+        guard !model.isDemoMode else { return }
         finishSaving = true
         let f = finishForm
         let dateStr = Self.ymdOutput.string(from: f.appliedAt)
@@ -822,6 +854,7 @@ struct ProjectDetailView: View {
     }
 
     private func deleteFinishEntry(_ e: FinishLogEntry) async {
+        guard !model.isDemoMode else { return }
         d?.finishLog.removeAll { $0.id == e.id }
         FinishReminderScheduler.cancel(e)
         do {
@@ -849,7 +882,7 @@ struct ProjectDetailView: View {
     #endif
 
     private func addBuildEntry() async {
-        guard let projectId = d?.id else { return }
+        guard !model.isDemoMode, let projectId = d?.id else { return }
         buildSaving = true
         do {
             let file = buildPhotoData.flatMap { data -> MultipartFile? in
@@ -872,6 +905,7 @@ struct ProjectDetailView: View {
     }
 
     private func deleteBuildEntry(_ e: BuildLogEntry) async {
+        guard !model.isDemoMode else { return }
         d?.buildLog.removeAll { $0.id == e.id }
         do {
             try await api.deleteBuildLogEntry(id: e.id)
@@ -887,7 +921,7 @@ struct ProjectDetailView: View {
     }
 
     private func addLink() async {
-        guard let linkProjectId, let projectId = d?.id else { return }
+        guard !model.isDemoMode, let linkProjectId, let projectId = d?.id else { return }
         linkSaving = true
         do {
             try await api.addProjectLink(projectId: projectId, linkedProjectId: linkProjectId, relationship: linkRelationship)
@@ -902,6 +936,7 @@ struct ProjectDetailView: View {
     }
 
     private func removeLink(_ link: ProjectLink) async {
+        guard !model.isDemoMode else { return }
         d?.links.removeAll { $0.id == link.id }
         do {
             try await api.removeProjectLink(id: link.id)

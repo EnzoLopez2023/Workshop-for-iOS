@@ -174,6 +174,21 @@ having replaced the first.
 its row to the full column. The lamp bar rides in an `.overlay(alignment:
 .leading)`, which never affects layout.
 
+## Signed-out demo
+
+The sign-in board sits over an enlarged, bundled cabinet-plan drawing with a
+strong concourse veil. The drawing drifts as one slow authored motion; Reduce
+Motion freezes it, and Reduce Transparency strengthens the veil. Microsoft
+remains the screen's one amber action, while Apple and Browse Demo use neutral
+plates with the same type and dimensions.
+
+Demo mode runs the production screens against `DemoWorkshopTransport`, which
+serves the seven complete starter projects locally and rejects every non-GET
+request. Write affordances are removed as well as blocked: no create, edit,
+delete, purchased toggle, log/link mutation, or saved cut-plan configuration.
+The persistent `DEMO WORKSHOP · READ ONLY` rail makes the mode explicit and
+returns directly to sign-in without writing widget, Spotlight, or seed state.
+
 ## Photos
 
 `AuthImage` uses `.fill`, which means it reports a size **larger** than the

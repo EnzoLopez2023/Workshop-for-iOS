@@ -54,7 +54,7 @@ struct ShaperDetailView: View {
         .navigationTitle(p?.title ?? "Shaper")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if p != nil {
+            if p != nil, !model.isDemoMode {
                 ToolbarItem(placement: .topBarTrailing) {
                     BoardToolbarButton(symbol: "pencil", label: "Edit", tone: .amber) { showEditForm = true }
                 }
@@ -206,7 +206,11 @@ struct ShaperDetailView: View {
                 }
             }
             if showCutPlan {
-                CutPlanOptimizerView(api: api, cutList: p.cutList, projectId: p.id)
+                CutPlanOptimizerView(
+                    api: api,
+                    cutList: p.cutList,
+                    projectId: model.isDemoMode ? nil : p.id
+                )
             }
         }
     }
@@ -243,6 +247,7 @@ struct ShaperDetailView: View {
     }
 
     private func deleteProject() async {
+        guard !model.isDemoMode else { return }
         deleting = true
         do {
             try await api.deleteShaperProject(id: shaperId)

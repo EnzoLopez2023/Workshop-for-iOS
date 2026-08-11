@@ -8,6 +8,7 @@ import NintekKit
 /// web's revert-on-failure pattern).
 struct ShoppingView: View {
     let api: WorkshopAPI
+    @EnvironmentObject private var model: AppModel
 
     @State private var items: [ShoppingItem] = []
     @State private var loading = true
@@ -45,26 +46,28 @@ struct ShoppingView: View {
             .navigationTitle("Shopping List")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    // Lock Screen / Dynamic Island checklist for a shopping
-                    // trip (Phase 7.9+) — mirrors ProjectDetailView's "Track
-                    // Cuts" toggle exactly, one Live Activity at a time.
-                    BoardToolbarButton(symbol: trackingShopping ? "checklist.checked" : "checklist",
-                                       label: "Track Shopping", tone: trackingShopping ? .amber : .steel) {
-                        Task {
-                            if trackingShopping {
-                                await ShoppingActivityController.end()
-                            } else {
-                                await ShoppingActivityController.start(items: items.filter { !$0.purchased })
+                if !model.isDemoMode {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        // Lock Screen / Dynamic Island checklist for a shopping
+                        // trip (Phase 7.9+) — mirrors ProjectDetailView's "Track
+                        // Cuts" toggle exactly, one Live Activity at a time.
+                        BoardToolbarButton(symbol: trackingShopping ? "checklist.checked" : "checklist",
+                                           label: "Track Shopping", tone: trackingShopping ? .amber : .steel) {
+                            Task {
+                                if trackingShopping {
+                                    await ShoppingActivityController.end()
+                                } else {
+                                    await ShoppingActivityController.start(items: items.filter { !$0.purchased })
+                                }
+                                trackingShopping.toggle()
                             }
-                            trackingShopping.toggle()
                         }
+                        .disabled(items.allSatisfy { $0.purchased })
+                        .accessibilityValue(trackingShopping ? "On" : "Off")
+                        .accessibilityAddTraits(trackingShopping ? .isSelected : [])
                     }
-                    .disabled(items.allSatisfy { $0.purchased })
-                    .accessibilityValue(trackingShopping ? "On" : "Off")
-                    .accessibilityAddTraits(trackingShopping ? .isSelected : [])
+                    .boardToolbarItem()
                 }
-                .boardToolbarItem()
                 ToolbarItem(placement: .topBarTrailing) {
                     BoardToolbarButton(symbol: "printer", label: "Print List", tone: .amber) {
                         if let url = ShoppingListPDFExporter.export(groups: grouped, allItems: items) {
@@ -148,35 +151,48 @@ struct ShoppingView: View {
         }
     }
 
-    private func itemRow(_ item: ShoppingItem) -> some View {
-        Button { Task { await togglePurchased(item) } } label: {
-            HStack(spacing: 14) {
-                Image(systemName: item.purchased ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(item.purchased ? Theme.accent : Theme.muted)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(item.name).font(Theme.ui(15, .medium))
-                        .foregroundStyle(item.purchased ? Theme.muted : Theme.ink)
-                        .strikethrough(item.purchased)
-                    if let q = item.qtyLabel, !q.isEmpty {
-                        Text(q).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
-                    }
-                }
-                Spacer()
-                if item.cost > 0 {
-                    Text(money(item.cost)).font(Theme.board(14, .regular))
-                        .foregroundStyle(item.purchased ? Theme.muted : Theme.ink).strikethrough(item.purchased)
+    @ViewBuilder private func itemRow(_ item: ShoppingItem) -> some View {
+        if model.isDemoMode {
+            itemRowContent(item)
+                .accessibilityElement(children: .combine)
+                .accessibilityValue(item.purchased ? "Purchased" : "Not purchased")
+                .accessibilityHint("Read-only demo")
+        } else {
+            Button { Task { await togglePurchased(item) } } label: {
+                itemRowContent(item)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.selection, trigger: item.purchased)
+            .disabled(mutationTokens[item.id] != nil)
+            .accessibilityElement(children: .combine)
+            .accessibilityValue(item.purchased ? "Purchased" : "Not purchased")
+            .accessibilityHint(item.purchased ? "Marks this item as not purchased" : "Marks this item as purchased")
+            .accessibilityAddTraits(item.purchased ? [.isButton, .isSelected] : .isButton)
+        }
+    }
+
+    private func itemRowContent(_ item: ShoppingItem) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: item.purchased ? "checkmark.square.fill" : "square")
+                .foregroundStyle(item.purchased ? Theme.accent : Theme.muted)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.name).font(Theme.ui(15, .medium))
+                    .foregroundStyle(item.purchased ? Theme.muted : Theme.ink)
+                    .strikethrough(item.purchased)
+                if let quantity = item.qtyLabel, !quantity.isEmpty {
+                    Text(quantity).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                 }
             }
-            .padding(.horizontal, 16).padding(.vertical, 13)
-            .contentShape(Rectangle())
+            Spacer()
+            if item.cost > 0 {
+                Text(money(item.cost)).font(Theme.board(14, .regular))
+                    .foregroundStyle(item.purchased ? Theme.muted : Theme.ink)
+                    .strikethrough(item.purchased)
+            }
         }
-        .buttonStyle(.plain)
-        .sensoryFeedback(.selection, trigger: item.purchased)
-        .disabled(mutationTokens[item.id] != nil)
-        .accessibilityElement(children: .combine)
-        .accessibilityValue(item.purchased ? "Purchased" : "Not purchased")
-        .accessibilityHint(item.purchased ? "Marks this item as not purchased" : "Marks this item as purchased")
-        .accessibilityAddTraits(item.purchased ? [.isButton, .isSelected] : .isButton)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
     }
 
     // MARK: States
@@ -216,7 +232,7 @@ struct ShoppingView: View {
                 }
             }
             items = refreshed
-            syncWidgetSnapshot()
+            if !model.isDemoMode { syncWidgetSnapshot() }
         } catch {
             guard generation == loadGeneration else { return }
             loadError = error.localizedDescription
@@ -225,7 +241,8 @@ struct ShoppingView: View {
     }
 
     private func togglePurchased(_ item: ShoppingItem) async {
-        guard mutationTokens[item.id] == nil,
+        guard !model.isDemoMode,
+              mutationTokens[item.id] == nil,
               let idx = items.firstIndex(where: { $0.id == item.id })
         else { return }
         loadGeneration &+= 1
@@ -254,6 +271,7 @@ struct ShoppingView: View {
     /// checkbox row (Phase 7.2) — merged in, not overwritten, so it doesn't
     /// clobber the project-stats half of the snapshot Dashboard writes.
     private func syncWidgetSnapshot() {
+        guard !model.isDemoMode else { return }
         let preview = items.filter { !$0.purchased }.prefix(5).map {
             WorkshopWidgetSnapshot.ShoppingPreviewItem(id: $0.id, name: $0.name, qtyLabel: $0.qtyLabel)
         }

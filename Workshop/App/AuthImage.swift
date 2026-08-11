@@ -81,6 +81,14 @@ struct AuthImage: View {
     private func load() async {
         uiImage = nil; failed = false
         guard let url else { return }
+        if DemoWorkshopData.isDemoURL(url) {
+            guard let data = DemoWorkshopData.imageData(for: url),
+                  let image = UIImage(data: data)
+            else { failed = true; return }
+            await ImageCache.shared.set(url.absoluteString, data)
+            uiImage = image
+            return
+        }
         let key = url.absoluteString
         if let cached = await ImageCache.shared.get(key), let img = UIImage(data: cached) {
             uiImage = img; return
