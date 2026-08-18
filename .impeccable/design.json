@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-18T17:54:39.960Z",
+  "title": "Design System: Workshop for iOS",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Cool Vellum Canvas",
+        "tonalRamp": ["oklch(15% 0.025 165)", "oklch(27% 0.025 165)", "oklch(39% 0.025 165)", "oklch(51% 0.025 165)", "oklch(63% 0.025 165)", "oklch(75% 0.025 165)", "oklch(87% 0.025 165)", "oklch(95% 0.025 165)"]
+      },
+      "layer-recessed": {
+        "role": "neutral",
+        "displayName": "Recessed Vellum",
+        "tonalRamp": ["oklch(15% 0.03 165)", "oklch(27% 0.03 165)", "oklch(39% 0.03 165)", "oklch(51% 0.03 165)", "oklch(63% 0.03 165)", "oklch(75% 0.03 165)", "oklch(87% 0.03 165)", "oklch(95% 0.03 165)"]
+      },
+      "layer-raised": {
+        "role": "neutral",
+        "displayName": "Raised Tracing Sheet",
+        "tonalRamp": ["oklch(15% 0.02 165)", "oklch(27% 0.02 165)", "oklch(39% 0.02 165)", "oklch(51% 0.02 165)", "oklch(63% 0.02 165)", "oklch(75% 0.02 165)", "oklch(87% 0.02 165)", "oklch(95% 0.02 165)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Spruce Ink",
+        "tonalRamp": ["oklch(15% 0.045 165)", "oklch(27% 0.045 165)", "oklch(39% 0.045 165)", "oklch(51% 0.045 165)", "oklch(63% 0.045 165)", "oklch(75% 0.045 165)", "oklch(87% 0.045 165)", "oklch(95% 0.045 165)"]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Muted Drafting Ink",
+        "tonalRamp": ["oklch(15% 0.035 165)", "oklch(27% 0.035 165)", "oklch(39% 0.035 165)", "oklch(51% 0.035 165)", "oklch(63% 0.035 165)", "oklch(75% 0.035 165)", "oklch(87% 0.035 165)", "oklch(95% 0.035 165)"]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Plan Hairline",
+        "tonalRamp": ["oklch(15% 0.025 165)", "oklch(27% 0.025 165)", "oklch(39% 0.025 165)", "oklch(51% 0.025 165)", "oklch(63% 0.025 165)", "oklch(75% 0.025 165)", "oklch(87% 0.025 165)", "oklch(95% 0.025 165)"]
+      },
+      "navigation-material": {
+        "role": "neutral",
+        "displayName": "Frosted Navigation",
+        "tonalRamp": ["oklch(15% 0.03 165)", "oklch(27% 0.03 165)", "oklch(39% 0.03 165)", "oklch(51% 0.03 165)", "oklch(63% 0.03 165)", "oklch(75% 0.03 165)", "oklch(87% 0.03 165)", "oklch(95% 0.03 165)"]
+      },
+      "navigation-deep": {
+        "role": "neutral",
+        "displayName": "Navigation Depth",
+        "tonalRamp": ["oklch(15% 0.045 165)", "oklch(27% 0.045 165)", "oklch(39% 0.045 165)", "oklch(51% 0.045 165)", "oklch(63% 0.045 165)", "oklch(75% 0.045 165)", "oklch(87% 0.045 165)", "oklch(95% 0.045 165)"]
+      },
+      "navigation-highlight": {
+        "role": "neutral",
+        "displayName": "Navigation Highlight",
+        "tonalRamp": ["oklch(15% 0.01 165)", "oklch(27% 0.01 165)", "oklch(39% 0.01 165)", "oklch(51% 0.01 165)", "oklch(63% 0.01 165)", "oklch(75% 0.01 165)", "oklch(87% 0.01 165)", "oklch(95% 0.01 165)"]
+      },
+      "on-navigation": {
+        "role": "neutral",
+        "displayName": "On-Navigation Ink",
+        "tonalRamp": ["oklch(15% 0.045 165)", "oklch(27% 0.045 165)", "oklch(39% 0.045 165)", "oklch(51% 0.045 165)", "oklch(63% 0.045 165)", "oklch(75% 0.045 165)", "oklch(87% 0.045 165)", "oklch(95% 0.045 165)"]
+      },
+      "metric-face": {
+        "role": "neutral",
+        "displayName": "Metric Face",
+        "tonalRamp": ["oklch(15% 0.025 165)", "oklch(27% 0.025 165)", "oklch(39% 0.025 165)", "oklch(51% 0.025 165)", "oklch(63% 0.025 165)", "oklch(75% 0.025 165)", "oklch(87% 0.025 165)", "oklch(95% 0.025 165)"]
+      },
+      "metric-face-low": {
+        "role": "neutral",
+        "displayName": "Metric Face Low",
+        "tonalRamp": ["oklch(15% 0.03 165)", "oklch(27% 0.03 165)", "oklch(39% 0.03 165)", "oklch(51% 0.03 165)", "oklch(63% 0.03 165)", "oklch(75% 0.03 165)", "oklch(87% 0.03 165)", "oklch(95% 0.03 165)"]
+      },
+      "metric-ink": {
+        "role": "neutral",
+        "displayName": "Metric Ink",
+        "tonalRamp": ["oklch(15% 0.045 165)", "oklch(27% 0.045 165)", "oklch(39% 0.045 165)", "oklch(51% 0.045 165)", "oklch(63% 0.045 165)", "oklch(75% 0.045 165)", "oklch(87% 0.045 165)", "oklch(95% 0.045 165)"]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Completion Green",
+        "tonalRamp": ["oklch(15% 0.10 155)", "oklch(27% 0.10 155)", "oklch(39% 0.10 155)", "oklch(51% 0.10 155)", "oklch(63% 0.10 155)", "oklch(75% 0.10 155)", "oklch(87% 0.10 155)", "oklch(95% 0.10 155)"]
+      },
+      "success-fill": {
+        "role": "tertiary",
+        "displayName": "Completion Fill",
+        "tonalRamp": ["oklch(15% 0.11 155)", "oklch(27% 0.11 155)", "oklch(39% 0.11 155)", "oklch(51% 0.11 155)", "oklch(63% 0.11 155)", "oklch(75% 0.11 155)", "oklch(87% 0.11 155)", "oklch(95% 0.11 155)"]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Destructive Red",
+        "tonalRamp": ["oklch(15% 0.14 25)", "oklch(27% 0.14 25)", "oklch(39% 0.14 25)", "oklch(51% 0.14 25)", "oklch(63% 0.14 25)", "oklch(75% 0.14 25)", "oklch(87% 0.14 25)", "oklch(95% 0.14 25)"]
+      },
+      "danger-fill": {
+        "role": "tertiary",
+        "displayName": "Destructive Fill",
+        "tonalRamp": ["oklch(15% 0.15 25)", "oklch(27% 0.15 25)", "oklch(39% 0.15 25)", "oklch(51% 0.15 25)", "oklch(63% 0.15 25)", "oklch(75% 0.15 25)", "oklch(87% 0.15 25)", "oklch(95% 0.15 25)"]
+      },
+      "spruce-annotation": {
+        "role": "primary",
+        "displayName": "Spruce Annotation",
+        "tonalRamp": ["oklch(15% 0.10 165)", "oklch(27% 0.10 165)", "oklch(39% 0.10 165)", "oklch(51% 0.10 165)", "oklch(63% 0.10 165)", "oklch(75% 0.10 165)", "oklch(87% 0.10 165)", "oklch(95% 0.10 165)"]
+      },
+      "spruce-action": {
+        "role": "primary",
+        "displayName": "Spruce Action",
+        "tonalRamp": ["oklch(15% 0.11 165)", "oklch(27% 0.11 165)", "oklch(39% 0.11 165)", "oklch(51% 0.11 165)", "oklch(63% 0.11 165)", "oklch(75% 0.11 165)", "oklch(87% 0.11 165)", "oklch(95% 0.11 165)"]
+      },
+      "spruce-fill": {
+        "role": "primary",
+        "displayName": "Spruce Fill",
+        "tonalRamp": ["oklch(15% 0.12 165)", "oklch(27% 0.12 165)", "oklch(39% 0.12 165)", "oklch(51% 0.12 165)", "oklch(63% 0.12 165)", "oklch(75% 0.12 165)", "oklch(87% 0.12 165)", "oklch(95% 0.12 165)"]
+      },
+      "clay-annotation": {
+        "role": "secondary",
+        "displayName": "Clay Annotation",
+        "tonalRamp": ["oklch(15% 0.10 40)", "oklch(27% 0.10 40)", "oklch(39% 0.10 40)", "oklch(51% 0.10 40)", "oklch(63% 0.10 40)", "oklch(75% 0.10 40)", "oklch(87% 0.10 40)", "oklch(95% 0.10 40)"]
+      },
+      "clay-action": {
+        "role": "secondary",
+        "displayName": "Clay Action",
+        "tonalRamp": ["oklch(15% 0.11 40)", "oklch(27% 0.11 40)", "oklch(39% 0.11 40)", "oklch(51% 0.11 40)", "oklch(63% 0.11 40)", "oklch(75% 0.11 40)", "oklch(87% 0.11 40)", "oklch(95% 0.11 40)"]
+      },
+      "clay-fill": {
+        "role": "secondary",
+        "displayName": "Clay Fill",
+        "tonalRamp": ["oklch(15% 0.12 40)", "oklch(27% 0.12 40)", "oklch(39% 0.12 40)", "oklch(51% 0.12 40)", "oklch(63% 0.12 40)", "oklch(75% 0.12 40)", "oklch(87% 0.12 40)", "oklch(95% 0.12 40)"]
+      },
+      "moss-annotation": {
+        "role": "secondary",
+        "displayName": "Moss Annotation",
+        "tonalRamp": ["oklch(15% 0.09 130)", "oklch(27% 0.09 130)", "oklch(39% 0.09 130)", "oklch(51% 0.09 130)", "oklch(63% 0.09 130)", "oklch(75% 0.09 130)", "oklch(87% 0.09 130)", "oklch(95% 0.09 130)"]
+      },
+      "moss-action": {
+        "role": "secondary",
+        "displayName": "Moss Action",
+        "tonalRamp": ["oklch(15% 0.10 130)", "oklch(27% 0.10 130)", "oklch(39% 0.10 130)", "oklch(51% 0.10 130)", "oklch(63% 0.10 130)", "oklch(75% 0.10 130)", "oklch(87% 0.10 130)", "oklch(95% 0.10 130)"]
+      },
+      "moss-fill": {
+        "role": "secondary",
+        "displayName": "Moss Fill",
+        "tonalRamp": ["oklch(15% 0.11 130)", "oklch(27% 0.11 130)", "oklch(39% 0.11 130)", "oklch(51% 0.11 130)", "oklch(63% 0.11 130)", "oklch(75% 0.11 130)", "oklch(87% 0.11 130)", "oklch(95% 0.11 130)"]
+      },
+      "pencil-blue-annotation": {
+        "role": "secondary",
+        "displayName": "Pencil Blue Annotation",
+        "tonalRamp": ["oklch(15% 0.10 230)", "oklch(27% 0.10 230)", "oklch(39% 0.10 230)", "oklch(51% 0.10 230)", "oklch(63% 0.10 230)", "oklch(75% 0.10 230)", "oklch(87% 0.10 230)", "oklch(95% 0.10 230)"]
+      },
+      "pencil-blue-action": {
+        "role": "secondary",
+        "displayName": "Pencil Blue Action",
+        "tonalRamp": ["oklch(15% 0.11 230)", "oklch(27% 0.11 230)", "oklch(39% 0.11 230)", "oklch(51% 0.11 230)", "oklch(63% 0.11 230)", "oklch(75% 0.11 230)", "oklch(87% 0.11 230)", "oklch(95% 0.11 230)"]
+      },
+      "pencil-blue-fill": {
+        "role": "secondary",
+        "displayName": "Pencil Blue Fill",
+        "tonalRamp": ["oklch(15% 0.12 230)", "oklch(27% 0.12 230)", "oklch(39% 0.12 230)", "oklch(51% 0.12 230)", "oklch(63% 0.12 230)", "oklch(75% 0.12 230)", "oklch(87% 0.12 230)", "oklch(95% 0.12 230)"]
+      },
+      "iris-annotation": {
+        "role": "secondary",
+        "displayName": "Iris Annotation",
+        "tonalRamp": ["oklch(15% 0.10 300)", "oklch(27% 0.10 300)", "oklch(39% 0.10 300)", "oklch(51% 0.10 300)", "oklch(63% 0.10 300)", "oklch(75% 0.10 300)", "oklch(87% 0.10 300)", "oklch(95% 0.10 300)"]
+      },
+      "iris-action": {
+        "role": "secondary",
+        "displayName": "Iris Action",
+        "tonalRamp": ["oklch(15% 0.11 300)", "oklch(27% 0.11 300)", "oklch(39% 0.11 300)", "oklch(51% 0.11 300)", "oklch(63% 0.11 300)", "oklch(75% 0.11 300)", "oklch(87% 0.11 300)", "oklch(95% 0.11 300)"]
+      },
+      "iris-fill": {
+        "role": "secondary",
+        "displayName": "Iris Fill",
+        "tonalRamp": ["oklch(15% 0.12 300)", "oklch(27% 0.12 300)", "oklch(39% 0.12 300)", "oklch(51% 0.12 300)", "oklch(63% 0.12 300)", "oklch(75% 0.12 300)", "oklch(87% 0.12 300)", "oklch(95% 0.12 300)"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "SF Rounded Display",
+        "purpose": "Large project titles and singular focal promises; Dynamic Type scales from the 34pt base."
+      },
+      "headline": {
+        "displayName": "SF Rounded Headline",
+        "purpose": "Next actions and major content emphasis."
+      },
+      "title": {
+        "displayName": "SF Rounded Title",
+        "purpose": "Navigation, rails, card titles, and primary actions."
+      },
+      "body": {
+        "displayName": "SF Pro Body",
+        "purpose": "Instructions, fields, and ordinary reading."
+      },
+      "label": {
+        "displayName": "SF Rounded Label",
+        "purpose": "Status, metadata, stages, and compact annotations."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tracing-layer",
+        "value": "0 8pt 16pt rgb(9 17 15 / 12%)",
+        "purpose": "Standard elevated plan glass."
+      },
+      {
+        "name": "library-sheet",
+        "value": "0 7pt 14pt rgb(9 17 15 / 10%)",
+        "purpose": "Image-forward project cards."
+      },
+      {
+        "name": "hero-plan",
+        "value": "0 10pt 22pt rgb(9 17 15 / 14%)",
+        "purpose": "The single active-project composition."
+      },
+      {
+        "name": "sidebar-rail",
+        "value": "0 8pt 18pt rgb(9 17 15 / 12%)",
+        "purpose": "The persistent iPad workbench rail."
+      }
+    ],
+    "motion": [
+      {
+        "name": "press-feedback",
+        "value": "160ms ease-in-out",
+        "purpose": "Scale a pressed action to 97% and fade it to 82%."
+      },
+      {
+        "name": "selection-feedback",
+        "value": "200ms ease-in-out",
+        "purpose": "Annotation selection and pointer-hover transitions."
+      },
+      {
+        "name": "active-layer-change",
+        "value": "220ms ease-out",
+        "purpose": "Active-project layer changes; removed when Reduce Motion is enabled."
+      },
+      {
+        "name": "sign-in-plan-drift",
+        "value": "18s ease-in-out, autoreverse, repeat",
+        "purpose": "Slow authored backdrop drift; frozen when Reduce Motion is enabled."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "iphone-shell",
+        "value": "userInterfaceIdiom.phone",
+        "purpose": "Portrait-only native four-tab shell."
+      },
+      {
+        "name": "ipad-compact-shell",
+        "value": "userInterfaceIdiom.pad + horizontalSizeClass.compact",
+        "purpose": "Tab shell for narrow split and Slide Over."
+      },
+      {
+        "name": "ipad-regular-shell",
+        "value": "userInterfaceIdiom.pad + horizontalSizeClass.regular",
+        "purpose": "Balanced split view with persistent 216–272pt sidebar."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action",
+      "kind": "button",
+      "refersTo": "action-primary",
+      "description": "The filled annotation action used for the next useful move.",
+      "html": "<button class=\"ds-action-primary\">Open Project <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-action-primary { color-scheme: light dark; display:flex; align-items:center; justify-content:space-between; width:100%; min-height:48px; padding:0 16px; border:0; border-radius:14px; background:light-dark(#125447,#8AD8C5); color:#fff; font:600 17px/1.2 system-ui; transition:transform 160ms ease-in-out,opacity 160ms ease-in-out; } .ds-action-primary:hover { filter:brightness(1.04); } .ds-action-primary:active { transform:scale(.97); opacity:.82; } .ds-action-primary:focus-visible { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:3px; }"
+    },
+    {
+      "name": "Glass Project Card",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "An image-forward project sheet over the plan canvas.",
+      "html": "<article class=\"ds-project-card\"><div class=\"ds-project-image\" aria-hidden=\"true\"></div><div class=\"ds-project-body\"><strong>Hand Tool Storage Cabinet</strong><p>26 parts · 16h</p></div></article>",
+      "css": ".ds-project-card { color-scheme:light dark; overflow:hidden; border:1px solid light-dark(rgb(201 218 213 / 62%),rgb(42 66 60 / 62%)); border-radius:14px; background:light-dark(rgb(250 252 251 / 78%),rgb(24 40 35 / 78%)); color:light-dark(#15332E,#F3F8F6); box-shadow:0 7px 14px light-dark(rgb(9 17 15 / 10%),rgb(9 17 15 / 20%)); font-family:system-ui; transition:filter 200ms ease-in-out; } .ds-project-card:hover { filter:brightness(1.025); } .ds-project-card:focus-within { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:3px; } .ds-project-image { aspect-ratio:16/9; background:linear-gradient(135deg,light-dark(#EEF4F2,#0C1513),light-dark(#E0EBE7,#12201D)); } .ds-project-body { padding:16px; } .ds-project-body strong { font-size:17px; } .ds-project-body p { margin:8px 0 0; color:light-dark(#58716B,#9CB2AC); font-size:12px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "A non-elevated glass search field for projects and materials.",
+      "html": "<label class=\"ds-search\"><span aria-hidden=\"true\">⌕</span><input type=\"search\" placeholder=\"Search projects, wood types…\"></label>",
+      "css": ".ds-search { color-scheme:light dark; display:flex; align-items:center; gap:8px; min-height:50px; padding:0 14px; border:1px solid light-dark(rgb(201 218 213 / 62%),rgb(42 66 60 / 62%)); border-radius:14px; background:light-dark(rgb(250 252 251 / 78%),rgb(24 40 35 / 78%)); color:light-dark(#58716B,#9CB2AC); font:400 17px/1.2 system-ui; } .ds-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:light-dark(#15332E,#F3F8F6); font:inherit; } .ds-search:focus-within { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:2px; }"
+    },
+    {
+      "name": "Status Capsule",
+      "kind": "chip",
+      "refersTo": "status-capsule",
+      "description": "A semantic state label that never relies on color alone.",
+      "html": "<span class=\"ds-status\"><span aria-hidden=\"true\">●</span> In Progress</span>",
+      "css": ".ds-status { color-scheme:light dark; display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:light-dark(#125447,#8AD8C5); color:#fff; font:600 12px/1 system-ui; } .ds-status:focus-visible { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:2px; }"
+    },
+    {
+      "name": "Project Stage Track",
+      "kind": "custom",
+      "description": "The four-stage Idea, Plan, Build, Done progress explanation.",
+      "html": "<div class=\"ds-stage-track\" aria-label=\"Project stage: Build\"><span class=\"ds-stage ds-complete\">✓<small>Idea</small></span><i></i><span class=\"ds-stage ds-complete\">✓<small>Plan</small></span><i></i><span class=\"ds-stage ds-current\">•<small>Build</small></span><i></i><span class=\"ds-stage\"> <small>Done</small></span></div>",
+      "css": ".ds-stage-track { color-scheme:light dark; display:flex; align-items:flex-start; color:light-dark(#58716B,#9CB2AC); font:500 11px/1 system-ui; } .ds-stage-track i { flex:1; height:2px; margin-top:8px; background:light-dark(#C9DAD5,#2A423C); } .ds-stage { display:grid; place-items:center; width:18px; height:18px; border-radius:50%; background:light-dark(#E0EBE7,#12201D); color:transparent; } .ds-stage small { margin-top:8px; color:light-dark(#58716B,#9CB2AC); white-space:nowrap; } .ds-stage.ds-complete,.ds-stage.ds-current { background:light-dark(#125447,#8AD8C5); color:#fff; } .ds-stage.ds-current small { color:light-dark(#15332E,#F3F8F6); }"
+    },
+    {
+      "name": "Sidebar Destination",
+      "kind": "nav",
+      "refersTo": "sidebar-destination",
+      "description": "A 48pt iPad destination row with persistent selected state.",
+      "html": "<button class=\"ds-sidebar-destination\" aria-current=\"page\"><span aria-hidden=\"true\">▦</span> Dashboard</button>",
+      "css": ".ds-sidebar-destination { color-scheme:light dark; display:flex; align-items:center; gap:12px; width:100%; min-height:48px; padding:0 13px; border:0; border-radius:14px; background:light-dark(rgb(23 107 91 / 11%),rgb(104 199 176 / 11%)); color:light-dark(#125447,#8AD8C5); font:600 17px/1.2 system-ui; text-align:left; transition:background 200ms ease-in-out; } .ds-sidebar-destination:hover { background:light-dark(rgb(23 107 91 / 16%),rgb(104 199 176 / 16%)); } .ds-sidebar-destination:focus-visible { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:2px; }"
+    },
+    {
+      "name": "Active Project Layer",
+      "kind": "custom",
+      "description": "The signature plan/photo hero with a floating next-action tracing sheet.",
+      "html": "<article class=\"ds-active-project\"><div class=\"ds-active-plan\"><small>Active build</small><h2>Hand Tool Storage Cabinet</h2></div><section class=\"ds-next-action\"><strong>Next action</strong><h3>Continue the build</h3><p>Open the project, review the plan, and record the work you complete next.</p><button>Open Project →</button></section></article>",
+      "css": ".ds-active-project { color-scheme:light dark; position:relative; min-height:380px; overflow:hidden; border:1px solid light-dark(rgb(201 218 213 / 65%),rgb(42 66 60 / 65%)); border-radius:24px; background:linear-gradient(135deg,light-dark(#E0EBE7,#12201D),light-dark(#EEF4F2,#0C1513)); box-shadow:0 10px 22px light-dark(rgb(9 17 15 / 14%),rgb(9 17 15 / 24%)); color:light-dark(#15332E,#F3F8F6); font-family:system-ui; } .ds-active-plan { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:28px; background:linear-gradient(transparent 45%,rgb(9 17 15 / 78%)); color:#fff; } .ds-active-plan h2 { max-width:58%; margin:8px 0; font-size:34px; } .ds-next-action { position:absolute; top:28px; right:28px; bottom:28px; width:min(340px,42%); padding:20px; border:1px solid light-dark(rgb(201 218 213 / 62%),rgb(42 66 60 / 62%)); border-radius:14px; background:light-dark(rgb(250 252 251 / 82%),rgb(24 40 35 / 82%)); box-shadow:0 8px 16px rgb(9 17 15 / 12%); backdrop-filter:blur(20px); } .ds-next-action h3 { margin:16px 0 6px; font-size:20px; } .ds-next-action p { color:light-dark(#58716B,#9CB2AC); font-size:15px; } .ds-next-action button { position:absolute; right:20px; bottom:20px; left:20px; min-height:48px; border:0; border-radius:14px; background:light-dark(#125447,#8AD8C5); color:#fff; font:600 17px system-ui; } .ds-next-action button:hover { filter:brightness(1.04); } .ds-next-action button:focus-visible { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Living Plan Table",
+    "overview": "Workshop is a cool, native drafting surface rather than a dashboard of summaries. A project is treated as one living plan: its drawing or photograph establishes context, its current stage explains progress, and a translucent action sheet puts the next useful move physically on top. The visual character comes from vellum, spruce drawing ink, pencil annotations, restrained frosted layers, and Apple system geometry.\n\nThis is an Operate system. Native navigation, controls, gestures, Dynamic Type, and accessibility settings outrank visual expression. Brand lives in the plan grid, the layered-project composition, the hammer mark, the adaptive annotation palette, and the disciplined 14-point squircle—not in replacement platform chrome.",
+    "keyCharacteristics": [
+      "Cool adaptive vellum surfaces with deep spruce ink.",
+      "A 24-point drafting grid behind content, never a decorative card texture.",
+      "SF Rounded for focal titles and compact data; SF Pro for reading and controls.",
+      "Native material used only where a physical tracing or chrome layer is needed.",
+      "One active project leads; the rest of the workshop follows as a browsable library.",
+      "Continuous geometry, 44-point minimum targets, and semantic labels throughout."
+    ],
+    "rules": [
+      {
+        "name": "The Shipped Artifact Rule",
+        "body": "Compatibility names left from an earlier implementation carry no visual authority. New work follows the values and behavior they now resolve to.",
+        "section": "overview"
+      },
+      {
+        "name": "The Independent Axes Rule",
+        "body": "Appearance and annotation selection are independent. Switching to dark mode never changes the selected annotation family, and switching annotation never recolors structural surfaces.",
+        "section": "colors"
+      },
+      {
+        "name": "The Annotation, Not Wallpaper Rule",
+        "body": "Annotation color marks actions, current stages, counts, and drafting notes. It does not flood the plan canvas or replace semantic success and danger.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast Has a Companion Rule",
+        "body": "Use each preset's action token for control tint and text emphasis, and its fill token for compact solid marks. Do not assume the base annotation is legible as filled-control text.",
+        "section": "colors"
+      },
+      {
+        "name": "The System Scale Rule",
+        "body": "Use semantic SwiftUI text styles first. When an exact base size is necessary, route it through `Theme` so `UIFontMetrics` scales it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Rounded Focus Rule",
+        "body": "SF Rounded belongs to project names, section rails, status, compact data, and actions; prose and form content stay in default SF Pro.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Display Font Rule",
+        "body": "Do not restore bundled condensed or custom display faces to the interface. The shipped visual system is native SF typography.",
+        "section": "typography"
+      },
+      {
+        "name": "The Active Layer Rule",
+        "body": "The first useful viewport belongs to the active project and its next action. Counts, search, remaining projects, Shaper work, templates, and inspiration follow rather than competing above it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Platform Shell Rule",
+        "body": "Device idiom and size class select the shell. Do not infer iPad behavior from orientation or let an iPhone replace its navigation tree during rotation.",
+        "section": "layout"
+      },
+      {
+        "name": "The Native Glass Rule",
+        "body": "Use Apple material for layers that must visibly sit above content. Use adaptive solid fallbacks when transparency is reduced.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Hero Rule",
+        "body": "Only the active project earns hero depth and 24pt clipping. Ordinary cards use the standard 14pt system.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Fourteen-Point Default Rule",
+        "body": "Begin every interactive surface and ordinary card at a 14pt continuous radius. Depart only for a documented compact well, capsule state, or the singular hero.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Visible Bounds Rule",
+        "body": "Clipping an image is not enough. Its hit shape must match the visible card, and the image itself is noninteractive inside a larger navigation target.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Static Extension Rule",
+        "body": "Widgets preserve the visual language at rest. They compress hierarchy by family and use native links/intents; they do not reproduce app-only animation or runtime palette switching.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do start with `Palette.swift` and `Theme.swift`; reuse adaptive roles rather than embedding new light-only colors.",
+      "Do keep the active plan/photo and next-action layer dominant before search and library content.",
+      "Do use semantic SwiftUI type styles or the `Theme` helpers so `UIFontMetrics` and Dynamic Type remain active.",
+      "Do use native material only for an actual raised layer and provide the shipped Reduce Transparency behavior.",
+      "Do preserve the 14pt default geometry, 44pt targets, native navigation, VoiceOver summaries, and pointer-as-enhancement behavior.",
+      "Do adapt widget density to family while retaining equal row structure and the default Spruce annotation.",
+      "Do treat the packaged app-icon and starter-plan assets as visual evidence; preserve their variant and no-alpha requirements."
+    ],
+    "donts": [
+      "Don't revive the former board metaphor, condensed display type, tiny radii, steel bands, split-flap decoration, or summary-metric wall.",
+      "Don't let annotation color become a full-screen brand wash or substitute for semantic success and danger.",
+      "Don't stack ornamental glass layers; every blur must explain chrome, tracing, selection, or containment.",
+      "Don't use hover to disclose required controls, replace native back/tab/sheet behavior, or key responsive structure to orientation alone.",
+      "Don't use fixed custom font sizes without `UIFontMetrics`, hide state in color alone, or ship a custom control below 44pt.",
+      "Don't treat legacy helper names or stale generator prose as permission to reintroduce a retired visual device."
+    ]
+  }
+}

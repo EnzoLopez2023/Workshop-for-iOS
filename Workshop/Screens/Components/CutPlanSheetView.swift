@@ -25,8 +25,11 @@ struct CutPlanSheetView: View {
             Canvas { context, size in draw(context: context, size: size) }
                 .aspectRatio(layout.sheetLength / max(layout.sheetWidth, 1), contentMode: .fit)
                 .frame(maxHeight: 420)
-                .clipShape(RoundedRectangle(cornerRadius: 3))
-                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1.5))
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                        .strokeBorder(Theme.line, lineWidth: 1.5)
+                )
         }
     }
 

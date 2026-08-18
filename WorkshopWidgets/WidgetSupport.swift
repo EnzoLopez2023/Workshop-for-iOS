@@ -4,61 +4,57 @@ import NintekKit
 
 // MARK: - Palette
 
-/// The Concourse Board world, hardcoded for the widget process. The extension
+/// Living Plan Table, hardcoded for the widget process. The extension
 /// can't reach the app's `ThemeManager` (palettes live in the app target and are
-/// user-selectable at runtime), so the widget always ships the default amber
-/// lamp. Values mirror `Palette.amber` — see DESIGN.md.
+/// user-selectable at runtime), so widgets use the default spruce annotation.
 enum WSWidget {
-    static let concourse = wsAdaptive(0xDDE3E0, 0x0C0F10)  // the hall
-    static let flap      = wsAdaptive(0xF7F9F6, 0x171B1D)  // a flap face at rest
-    static let flapShade = wsAdaptive(0xE5EAE6, 0x101415)  // recessed
-    static let ink       = wsAdaptive(0x14181A, 0xEFF2ED)
-    static let subtle    = wsAdaptive(0x59686A, 0x8B9794)
-    static let line      = wsAdaptive(0xC0CAC6, 0x2C3335)
-    /// Steel lifts in the dark rendition rather than darkening — a real board
-    /// does the same when the hall lights go down.
-    static let steel     = wsAdaptive(0x2B3238, 0x39434A)
-    static let onSteel   = wsAdaptive(0xEDF1EE, 0xEDF1EE)
+    static let concourse = wsAdaptive(0xEEF4F2, 0x0C1513)
+    static let flap      = wsAdaptive(0xFAFCFB, 0x182823)
+    static let flapShade = wsAdaptive(0xE0EBE7, 0x12201D)
+    static let ink       = wsAdaptive(0x15332E, 0xF3F8F6)
+    static let subtle    = wsAdaptive(0x58716B, 0x9CB2AC)
+    static let line      = wsAdaptive(0xC9DAD5, 0x2A423C)
+    static let steel     = wsAdaptive(0xE7F0ED, 0x172923)
+    static let onSteel   = wsAdaptive(0x15332E, 0xF3F8F6)
 
-    static let accent    = wsAdaptive(0x8A4F00, 0xFFB400)  // amber ink
-    static let accentFill = wsAdaptive(0xFFB400, 0xFFB400) // the lamp glass
-    static let green     = wsAdaptive(0x2E7148, 0x46A46A)
-    static let red       = wsAdaptive(0xB3271F, 0xD3392F)
+    static let accent     = wsAdaptive(0x176B5B, 0x68C7B0)
+    static let accentFill = wsAdaptive(0x1E7666, 0x2A927E)
+    static let green      = wsAdaptive(0x2F7657, 0x76CFA5)
+    static let red        = wsAdaptive(0xA64139, 0xF28A80)
 
-    /// Flap modules are dark hardware in both renditions.
-    static let flapFace   = Color(hex: 0x2E363B)
-    static let flapFaceLo = Color(hex: 0x232A2E)
-    static let flapLetter = Color(hex: 0xF2F4F1)
+    static let flapFace   = wsAdaptive(0xF7FAF9, 0x1A2B26)
+    static let flapFaceLo = wsAdaptive(0xE5EFEC, 0x12201D)
+    static let flapLetter = wsAdaptive(0x15332E, 0xF2F8F6)
 
-    static let rFlap: CGFloat = 2
-    static let rPanel: CGFloat = 3
+    static let rFlap: CGFloat = 10
+    static let rPanel: CGFloat = 14
 
-    /// Martian Mono, condensed — board caps and every datum.
+    /// SF Rounded for compact labels and data.
     static func board(_ size: CGFloat, _ weight: BoardWeight = .regular) -> Font {
-        .custom(weight.psName, size: size)
+        .system(size: size, weight: weight.fontWeight, design: .rounded)
     }
-    /// Archivo — UI labels and body copy.
+    /// SF Pro for body copy.
     static func ui(_ size: CGFloat, _ weight: UIWeight = .regular) -> Font {
-        .custom(weight.psName, size: size)
+        .system(size: size, weight: weight.fontWeight)
     }
 
     enum BoardWeight {
         case regular, semibold, bold
-        var psName: String {
+        var fontWeight: Font.Weight {
             switch self {
-            case .regular:  "MartianMonoBoard-Regular"
-            case .semibold: "MartianMonoBoard-SemiBold"
-            case .bold:     "MartianMonoBoard-Bold"
+            case .regular:  .regular
+            case .semibold: .semibold
+            case .bold:     .bold
             }
         }
     }
     enum UIWeight {
         case regular, medium, bold
-        var psName: String {
+        var fontWeight: Font.Weight {
             switch self {
-            case .regular: "ArchivoWS-Regular"
-            case .medium:  "ArchivoWS-Medium"
-            case .bold:    "ArchivoWS-Bold"
+            case .regular: .regular
+            case .medium:  .medium
+            case .bold:    .bold
             }
         }
     }
@@ -99,7 +95,7 @@ extension Color {
     }
 }
 
-/// Tracked caps on the board's own face — the widget's structural label.
+/// Compact semantic label.
 struct WSCaps: View {
     let text: String
     var size: CGFloat = 9.5
@@ -108,17 +104,15 @@ struct WSCaps: View {
         self.text = text; self.size = size; self.color = color
     }
     var body: some View {
-        Text(text.uppercased())
+        Text(text)
             .font(WSWidget.board(size, .semibold))
-            .tracking(1.0)
             .foregroundStyle(color)
             .lineLimit(1)
             .minimumScaleFactor(0.75)
     }
 }
 
-/// A single flap module carrying one character. Static here — a widget gets no
-/// animation budget, and the board has to read as a board at rest anyway.
+/// Source-compatible single character without the retired split-flap hardware.
 struct WSFlap: View {
     let char: String
     var size: CGFloat = 15
@@ -127,27 +121,20 @@ struct WSFlap: View {
         Text(char)
             .font(WSWidget.board(size, .bold))
             .foregroundStyle(tone)
-            .frame(width: size * 0.86, height: size * 1.5)
-            .background(
-                LinearGradient(colors: [WSWidget.flapFace, WSWidget.flapFaceLo],
-                               startPoint: .top, endPoint: .bottom)
-            )
-            .overlay(Rectangle().fill(.black.opacity(0.55)).frame(height: 1))
-            .clipShape(RoundedRectangle(cornerRadius: WSWidget.rFlap))
+            .monospacedDigit()
     }
 }
 
-/// A number rendered as a row of flap modules, zero-padded so no cell reads dead.
+/// A compact tabular metric.
 struct WSFlapNumber: View {
     let value: String
     var size: CGFloat = 15
     var tone: Color = WSWidget.flapLetter
     var body: some View {
-        HStack(spacing: 2) {
-            ForEach(Array(value.enumerated()), id: \.offset) { _, c in
-                WSFlap(char: String(c), size: size, tone: tone)
-            }
-        }
+        Text(value)
+            .font(WSWidget.board(size, .bold))
+            .foregroundStyle(tone)
+            .monospacedDigit()
     }
 }
 
@@ -213,8 +200,7 @@ struct SignedOutView: View {
     }
 }
 
-/// The steel header band every widget wears — the board's frame, carried across
-/// surfaces exactly as it is in the app.
+/// Plan-layer header shared by every widget.
 struct WSHeader: View {
     let title: String
     var trailing: String? = nil
@@ -223,18 +209,18 @@ struct WSHeader: View {
             Image(systemName: "hammer.fill")
                 .font(.system(size: 8))
                 .foregroundStyle(WSWidget.accentFill)
-            WSCaps(title, size: 9, color: WSWidget.onSteel)
+            WSCaps(title, size: 9, color: WSWidget.ink)
             Spacer(minLength: 4)
             if let trailing {
-                WSCaps(trailing, size: 8, color: WSWidget.accentFill)
+                WSCaps(trailing, size: 8, color: WSWidget.accent)
             }
         }
         .padding(.horizontal, 9)
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(colors: [Color(hex: 0x3A434A), Color(hex: 0x232A2F)],
-                           startPoint: .top, endPoint: .bottom)
-        )
+        .background(WSWidget.steel.opacity(0.86))
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(WSWidget.line.opacity(0.7)).frame(height: 0.5)
+        }
     }
 }

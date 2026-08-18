@@ -38,7 +38,7 @@ private struct StatsWidgetView: View {
 
     private var small: some View {
         VStack(alignment: .leading, spacing: 0) {
-            WSCaps("Shop Board")
+            WSCaps("Workshop")
             Spacer(minLength: 6)
             WSFlapNumber(value: wsPad(snapshot.inProgressCount),
                          size: 24, tone: WSWidget.accentFill)
@@ -72,7 +72,7 @@ private struct StatsWidgetView: View {
 
     private var medium: some View {
         VStack(spacing: 0) {
-            WSHeader(title: "Shop Board",
+            WSHeader(title: "Workshop",
                      trailing: snapshot.updatedAt.formatted(date: .omitted, time: .shortened))
             HStack(spacing: 0) {
                 Link(destination: WSDeepLink.dashboard) {
@@ -122,4 +122,3 @@ private struct StatsWidgetView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
-

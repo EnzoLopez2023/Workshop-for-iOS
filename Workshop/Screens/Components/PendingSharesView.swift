@@ -58,7 +58,10 @@ struct PendingSharesView: View {
                 HStack(spacing: 10) {
                     if let data = ShareQueue.imageData(for: item), let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage).resizable().aspectRatio(contentMode: .fill)
-                            .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 3))
+                            .frame(width: 56, height: 56)
+                            .clipShape(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            )
                     }
                     Text("Shared Photo").font(Theme.ui(14, .medium))
                     Spacer()

@@ -90,20 +90,32 @@ struct ShoppingView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 12) {
                 Image(systemName: "cart.fill")
-                    .font(.system(size: 16, weight: .medium)).foregroundStyle(Theme.onSteel)
-                    .frame(width: 36, height: 36)
-                    .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(Theme.accentDeep)
+                    .frame(width: 40, height: 40)
+                    .background(
+                        Theme.tint(Theme.accent),
+                        in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    )
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Shopping List").font(Theme.display(21)).foregroundStyle(Theme.ink)
+                    Text("Shopping List")
+                        .font(.system(.title2, design: .rounded, weight: .bold))
+                        .foregroundStyle(Theme.ink)
                     Text(summaryText)
-                        .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.muted)
                 }
             }
 
             Toggle(isOn: $showPurchased) {
-                Text("Show purchased").font(Theme.ui(14, .regular)).foregroundStyle(Theme.ink)
+                Text("Show purchased")
+                    .font(.body)
+                    .foregroundStyle(Theme.ink)
             }
-                .toggleStyle(.flap)
+            .toggleStyle(.switch)
+            .tint(Theme.accentDeep)
+            .padding(16)
+            .planGlass(elevated: false)
         }
     }
 
@@ -138,16 +150,21 @@ struct ShoppingView: View {
 
     private func projectGroup(_ group: ProjectGroup) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(group.title.uppercased())
-                .font(Theme.ui(11, .bold)).tracking(1.2).foregroundStyle(Theme.muted)
+            Text(group.title)
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(Theme.ink)
             VStack(spacing: 0) {
                 ForEach(Array(group.items.enumerated()), id: \.element.id) { i, item in
                     if i > 0 { Divider().overlay(Theme.line) }
                     itemRow(item)
                 }
             }
-            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+            )
         }
     }
 
@@ -174,19 +191,25 @@ struct ShoppingView: View {
 
     private func itemRowContent(_ item: ShoppingItem) -> some View {
         HStack(spacing: 14) {
-            Image(systemName: item.purchased ? "checkmark.square.fill" : "square")
-                .foregroundStyle(item.purchased ? Theme.accent : Theme.muted)
+            Image(systemName: item.purchased ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 21, weight: .medium))
+                .foregroundStyle(item.purchased ? Theme.accentDeep : Theme.muted)
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.name).font(Theme.ui(15, .medium))
+                Text(item.name)
+                    .font(.body.weight(.medium))
                     .foregroundStyle(item.purchased ? Theme.muted : Theme.ink)
                     .strikethrough(item.purchased)
                 if let quantity = item.qtyLabel, !quantity.isEmpty {
-                    Text(quantity).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                    Text(quantity)
+                        .font(.caption)
+                        .foregroundStyle(Theme.muted)
                 }
             }
             Spacer()
             if item.cost > 0 {
-                Text(money(item.cost)).font(Theme.board(14, .regular))
+                Text(money(item.cost))
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .monospacedDigit()
                     .foregroundStyle(item.purchased ? Theme.muted : Theme.ink)
                     .strikethrough(item.purchased)
             }

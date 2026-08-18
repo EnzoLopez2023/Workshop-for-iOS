@@ -11,7 +11,6 @@ struct MoreView: View {
     @EnvironmentObject private var theme: ThemeManager
 
     @AppStorage("ws.appearance") private var appearanceRaw = Appearance.system.rawValue
-    @AppStorage(SettingsKeys.textSize) private var textSizeRaw = TextSize.standard.rawValue
     @AppStorage(SettingsKeys.defaultProjectStatus) private var defaultStatusRaw = ProjectStatus.idea.rawValue
     @AppStorage(SettingsKeys.dashboardSort) private var dashboardSortRaw = DashboardSort.updated.rawValue
     @AppStorage(SettingsKeys.showCompletedByDefault) private var showCompletedByDefault = false
@@ -26,14 +25,14 @@ struct MoreView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: BoardCaps("Appearance")) {
+                Section("Appearance") {
                     Picker("Theme", selection: appearanceBinding) {
                         ForEach(Appearance.allCases) { a in Text(a.label).tag(a) }
                     }
                     lampPicker
-                    textSizePicker
+                    LabeledContent("Text Size", value: "Follows iOS Settings")
                 }
-                .listRowBackground(Theme.flap)
+                .listRowBackground(Theme.flap.opacity(0.72))
                 .listRowSeparatorTint(Theme.line)
 
                 if !model.isDemoMode {
@@ -47,11 +46,12 @@ struct MoreView: View {
                             ForEach(DashboardSort.allCases) { s in Text(s.label).tag(s) }
                         }
                         Toggle("Show Completed by Default", isOn: $showCompletedByDefault)
-                            .toggleStyle(.flap)
+                            .toggleStyle(.switch)
+                            .tint(Theme.accentDeep)
                     } header: {
-                        BoardCaps("Projects")
+                        Text("Projects")
                     }
-                    .listRowBackground(Theme.flap)
+                    .listRowBackground(Theme.flap.opacity(0.72))
                     .listRowSeparatorTint(Theme.line)
                 }
 
@@ -62,7 +62,7 @@ struct MoreView: View {
                         Label("Insights", systemImage: "chart.bar.xaxis")
                     }
                 }
-                .listRowBackground(Theme.flap)
+                .listRowBackground(Theme.flap.opacity(0.72))
                 .listRowSeparatorTint(Theme.line)
 
                 Section {
@@ -76,13 +76,13 @@ struct MoreView: View {
                         Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
                     }
                 } header: {
-                    BoardCaps("Data")
+                    Text("Data")
                 } footer: {
                     Text(model.isDemoMode
                          ? "Downloads the demo starter-project metadata as a JSON file."
                          : "Downloads all your projects and their metadata as a JSON file.")
                 }
-                .listRowBackground(Theme.flap)
+                .listRowBackground(Theme.flap.opacity(0.72))
                 .listRowSeparatorTint(Theme.line)
 
                 Section {
@@ -128,27 +128,24 @@ struct MoreView: View {
                         }
                     }
                 } header: {
-                    BoardCaps("Account")
+                    Text("Account")
                 } footer: {
                     Text(model.isDemoMode
                          ? "Demo data stays on this device only for the current session."
                          : "Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a project summary first if you want a reference copy.")
                 }
-                .listRowBackground(Theme.flap)
+                .listRowBackground(Theme.flap.opacity(0.72))
                 .listRowSeparatorTint(Theme.line)
                 Section {
                     LabeledContent("Version", value: AppInfo.version)
                 }
-                .listRowBackground(Theme.flap)
+                .listRowBackground(Theme.flap.opacity(0.72))
                 .listRowSeparatorTint(Theme.line)
             }
-            // The system inset-grouped list draws pure-white rows on a 20pt
-            // radius; the board has neither. Flap faces on the concourse, with
-            // the frame drawn by the row separators.
-            .listStyle(.plain)
+            .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
-            .background(Theme.concourse)
-            .environment(\.defaultMinListRowHeight, 46)
+            .background(PlanCanvasBackground())
+            .environment(\.defaultMinListRowHeight, 50)
             .navigationTitle("More")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
@@ -163,45 +160,37 @@ struct MoreView: View {
         }
     }
 
-    /// The signal lamps, shown lit rather than named. Picking an accent by
-    /// reading the word "Amber" is worse than picking it by seeing amber, and
-    /// the lamp is the one place this app spends colour.
+    /// Annotation colors shown directly as clean material swatches.
     private var lampPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Signal Lamp")
+                Text("Annotation Color")
                 Spacer()
-                Text((Palette.all.first { $0.id == theme.selection }?.name ?? "").uppercased())
-                    .font(Theme.board(9.5, .semibold, relativeTo: .caption2))
-                    .tracking(1.1)
+                Text(Palette.all.first { $0.id == theme.selection }?.name ?? "")
+                    .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.muted)
             }
             HStack(spacing: 8) {
                 ForEach(Palette.all) { p in
                     let on = p.id == theme.selection
                     Button { theme.selection = p.id } label: {
-                        // A lamp behind glass, not a paint chip: the dark flap
-                        // face stays, the colour is the light coming through it.
                         ZStack {
-                            RoundedRectangle(cornerRadius: Theme.rFlap)
-                                .fill(Theme.flapFaceGradient)
-                            RoundedRectangle(cornerRadius: 1)
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
                                 .fill(p.accentFill.color)
-                                .frame(height: 10)
-                                .padding(.horizontal, 9)
-                                .shadow(color: p.accentFill.color.opacity(on ? 0.85 : 0),
-                                        radius: 5)
-                                .opacity(on ? 1 : 0.4)
-                            Rectangle()
-                                .fill(Color.black.opacity(0.55))
-                                .frame(height: 1)
+                            if on {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(.white)
+                            }
                         }
-                        .frame(height: 30)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.rFlap))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
                         .overlay(
-                            RoundedRectangle(cornerRadius: Theme.rFlap)
-                                .strokeBorder(on ? Theme.ink : Color.black.opacity(0.35),
-                                              lineWidth: on ? 2 : 1)
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .strokeBorder(
+                                    on ? Theme.ink : Theme.line.opacity(0.7),
+                                    lineWidth: on ? 2 : 1
+                                )
                         )
                     }
                     .buttonStyle(.plain)
@@ -212,57 +201,6 @@ struct MoreView: View {
         }
         .padding(.vertical, 4)
     }
-
-    /// Text size as five flap cells, each showing the letter at the size it
-    /// sets. The old control was a switch labelled "Large Text", which asked
-    /// the user to imagine the result; this shows it, the same way the lamp row
-    /// above shows colour instead of naming it.
-    private var textSizePicker: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("Text Size")
-                Spacer()
-                Text("\(selectedTextSize.rawValue) OF \(TextSize.allCases.count)")
-                    .font(Theme.board(9.5, .semibold, relativeTo: .caption2))
-                    .tracking(1.1)
-                    .foregroundStyle(Theme.muted)
-                    .monospacedDigit()
-            }
-            HStack(spacing: 8) {
-                ForEach(TextSize.allCases) { size in
-                    let on = size == selectedTextSize
-                    Button { textSizeRaw = size.rawValue } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: Theme.rFlap)
-                                .fill(Theme.flapFaceGradient)
-                            // Fixed, not Dynamic-Type-relative: the sample has
-                            // to hold still while it's being chosen, or every
-                            // cell restates the size that's already selected.
-                            Text("A")
-                                .font(Theme.boardFixed(size.sampleSize, .bold))
-                                .foregroundStyle(on ? Theme.accentFill : Theme.flapLetter.opacity(0.6))
-                            Rectangle()
-                                .fill(Color.black.opacity(0.55))
-                                .frame(height: 1)
-                        }
-                        .frame(height: 38)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.rFlap))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.rFlap)
-                                .strokeBorder(on ? Theme.ink : Color.black.opacity(0.35),
-                                              lineWidth: on ? 2 : 1)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Text size \(size.rawValue) of \(TextSize.allCases.count)")
-                    .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
-                }
-            }
-        }
-        .padding(.vertical, 4)
-    }
-
-    private var selectedTextSize: TextSize { TextSize(rawValue: textSizeRaw) ?? .standard }
 
     private var appearanceBinding: Binding<Appearance> {
         Binding(get: { Appearance(rawValue: appearanceRaw) ?? .system },

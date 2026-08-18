@@ -88,16 +88,20 @@ struct ShaperDetailView: View {
             Rectangle().fill(Theme.flapShade)
                 .aspectRatio(16.0 / 10.0, contentMode: .fit)
                 .overlay { AuthImage(url: url, contentMode: .fill, placeholderSymbol: "cpu") }
-                .clipShape(RoundedRectangle(cornerRadius: 3))
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous))
         }
     }
 
     private func titleRow(_ p: ShaperProject) -> some View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: "cpu")
-                .font(.system(size: 18, weight: .medium)).foregroundStyle(Theme.onSteel)
-                .frame(width: 38, height: 38)
-                .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(Theme.accentDeep)
+                .frame(width: 42, height: 42)
+                .background(
+                    Theme.tint(Theme.accent),
+                    in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                )
             VStack(alignment: .leading, spacing: 6) {
                 Text(p.title).font(Theme.display(24)).foregroundStyle(Theme.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -129,8 +133,12 @@ struct ShaperDetailView: View {
                     .padding(.horizontal, 16).padding(.vertical, 12)
                 }
             }
-            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+            )
         }
     }
 
@@ -140,8 +148,7 @@ struct ShaperDetailView: View {
                 .lineSpacing(4).fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(18)
-                .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                .planGlass(elevated: false)
         }
     }
 
@@ -159,7 +166,12 @@ struct ShaperDetailView: View {
                             Color.clear
                                 .aspectRatio(4.0 / 3.0, contentMode: .fit)
                                 .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
-                                .clipShape(RoundedRectangle(cornerRadius: 3))
+                                .clipShape(
+                                    RoundedRectangle(
+                                        cornerRadius: Theme.rPanel,
+                                        style: .continuous
+                                    )
+                                )
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Open Shaper project photo \(index + 1)")
@@ -178,12 +190,20 @@ struct ShaperDetailView: View {
                         HStack(alignment: .firstTextBaseline) {
                             Text(c.partName).font(Theme.ui(15, .medium)).foregroundStyle(Theme.ink)
                             Spacer(minLength: 8)
-                            Text("×\(c.qty)").font(Theme.board(14, .semibold)).foregroundStyle(Theme.muted)
+                            Text("×\(c.qty)")
+                                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                .monospacedDigit()
+                                .foregroundStyle(Theme.muted)
                         }
                         HStack(spacing: 6) {
-                            Text(dims(c)).font(Theme.board(13, .regular)).foregroundStyle(Theme.muted)
+                            Text(dims(c))
+                                .font(.system(.subheadline, design: .rounded))
+                                .monospacedDigit()
+                                .foregroundStyle(Theme.muted)
                             if let m = c.material, !m.isEmpty {
-                                Text("· \(m)").font(Theme.ui(13, .medium)).foregroundStyle(Theme.accent)
+                                Text("· \(m)")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(Theme.accentDeep)
                             }
                         }
                     }
@@ -191,8 +211,12 @@ struct ShaperDetailView: View {
                     .padding(.horizontal, 16).padding(.vertical, 12)
                 }
             }
-            .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-            .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+            )
         }
     }
 
@@ -201,8 +225,8 @@ struct ShaperDetailView: View {
             Rail("Cut Plan Optimizer") {
                 Button { showCutPlan.toggle() } label: {
                     Label(showCutPlan ? "Hide" : "Plan Cuts", systemImage: "scissors")
-                        .font(Theme.board(10, .semibold, relativeTo: .caption2))
-                        .foregroundStyle(Theme.onSteel)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.accentDeep)
                 }
             }
             if showCutPlan {

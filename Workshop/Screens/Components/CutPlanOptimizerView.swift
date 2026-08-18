@@ -54,7 +54,9 @@ struct CutPlanOptimizerView: View {
 
     private var stockPanel: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("AVAILABLE STOCK PANELS").font(Theme.ui(11, .bold)).tracking(1).foregroundStyle(Theme.muted)
+            Text("Available Stock Panels")
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(Theme.ink)
 
             VStack(spacing: 8) {
                 ForEach($stockRows) { $row in
@@ -72,8 +74,17 @@ struct CutPlanOptimizerView: View {
                     }
                     .font(Theme.ui(12, .regular))
                     .padding(.horizontal, 10).padding(.vertical, 5)
-                    .background(Theme.flap, in: RoundedRectangle(cornerRadius: Theme.rFlap))
-                    .overlay(RoundedRectangle(cornerRadius: Theme.rFlap).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [3, 2])).foregroundStyle(Theme.line))
+                    .background(
+                        Theme.flap,
+                        in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .strokeBorder(
+                                style: StrokeStyle(lineWidth: 1, dash: [3, 2])
+                            )
+                            .foregroundStyle(Theme.line)
+                    )
                 }
                 if hasSavedConfig {
                     Spacer()
@@ -82,7 +93,7 @@ struct CutPlanOptimizerView: View {
             }
         }
         .padding(16)
-        .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
+        .planGlass(elevated: false)
     }
 
     private func stockRowEditor(row: Binding<StockRow>) -> some View {
@@ -108,8 +119,14 @@ struct CutPlanOptimizerView: View {
         .textFieldStyle(.roundedBorder)
         .font(Theme.ui(13, .regular))
         .padding(10)
-        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .background(
+            Theme.flap,
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+        )
     }
 
     // MARK: Kerf + generate
@@ -132,8 +149,11 @@ struct CutPlanOptimizerView: View {
                     .font(Theme.ui(14, .medium))
                     .padding(.horizontal, 14).padding(.vertical, 9)
             }
-            .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
-            .foregroundStyle(Theme.concourse)
+            .background(
+                Theme.accentDeep,
+                in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+            )
+            .foregroundStyle(.white)
             .buttonStyle(.plain)
         }
     }
@@ -142,7 +162,10 @@ struct CutPlanOptimizerView: View {
 
     @ViewBuilder private func resultsSection(_ result: CutPlanResult) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 16) {
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 120), spacing: 10)],
+                spacing: 10
+            ) {
                 PlanStat(label: "Sheets Used", value: "\(result.totalSheets)")
                 PlanStat(label: "Overall Yield", value: String(format: "%.1f%%", result.overallYieldPercent))
                 PlanStat(label: "Pieces Placed", value: "\(result.layouts.reduce(0) { $0 + $1.placed.count })")
@@ -175,8 +198,7 @@ struct CutPlanOptimizerView: View {
                     CutPlanSheetView(layout: layout, sheetNumber: layout.sheetIndex + 1, totalSheets: result.totalSheets,
                                      colorMap: colorMap, stockLabel: formatStockLabel(stockRow(for: layout.stockId)))
                         .padding(16)
-                        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-                        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                        .planGlass(elevated: false)
                 }
             }
 
@@ -189,12 +211,19 @@ struct CutPlanOptimizerView: View {
 
             if !colorMap.isEmpty {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("LEGEND").font(Theme.ui(11, .bold)).tracking(1).foregroundStyle(Theme.muted)
+                    Text("Legend")
+                        .font(.system(.headline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(Theme.ink)
                     FlowLayout(spacing: 14) {
                         ForEach(colorMap.sorted(by: { $0.key < $1.key }), id: \.key) { name, hex in
                             HStack(spacing: 6) {
-                                RoundedRectangle(cornerRadius: 2).fill(Color(hex: hex)).frame(width: 14, height: 14)
-                                    .overlay(RoundedRectangle(cornerRadius: 2).strokeBorder(.black.opacity(0.1), lineWidth: 1))
+                                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                    .fill(Color(hex: hex))
+                                    .frame(width: 14, height: 14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                            .strokeBorder(.black.opacity(0.1), lineWidth: 1)
+                                    )
                                 Text(name).font(Theme.ui(13, .regular)).foregroundStyle(Theme.ink)
                             }
                         }
@@ -213,8 +242,14 @@ struct CutPlanOptimizerView: View {
         }
         .foregroundStyle(color)
         .padding(.horizontal, 14).padding(.vertical, 10)
-        .background(bg, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(color, lineWidth: 1))
+        .background(
+            bg,
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(color.opacity(0.7), lineWidth: 1)
+        )
     }
 
     private func visibleLayouts(_ result: CutPlanResult) -> [SheetLayout] {
@@ -318,9 +353,19 @@ private struct PlanStat: View {
     let label: String, value: String
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(label.uppercased()).font(Theme.ui(10, .medium)).tracking(0.5).foregroundStyle(Theme.muted)
-            Text(value).font(Theme.ui(20, .bold)).foregroundStyle(Theme.ink)
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(Theme.muted)
+            Text(value)
+                .font(.system(.title3, design: .rounded, weight: .bold))
+                .monospacedDigit()
+                .foregroundStyle(Theme.ink)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(
+            Theme.flapShade.opacity(0.72),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
     }
 }

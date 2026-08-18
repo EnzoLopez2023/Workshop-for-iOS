@@ -6,7 +6,7 @@ import SwiftUI
 struct SkeletonBlock: View {
     var height: CGFloat = 16
     var width: CGFloat? = nil
-    var cornerRadius: CGFloat = 8
+    var cornerRadius: CGFloat = 10
 
     @State private var pulse = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -31,22 +31,26 @@ struct SkeletonBlock: View {
 struct ProjectCardSkeletonView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SkeletonBlock(height: 140, cornerRadius: 0)
+            SkeletonBlock(height: 170, cornerRadius: 0)
             VStack(alignment: .leading, spacing: 8) {
-                SkeletonBlock(height: 10, width: 70, cornerRadius: 3)
+                SkeletonBlock(height: 10, width: 70)
                 SkeletonBlock(height: 18, width: 130)
                 SkeletonBlock(height: 13, width: 170)
                 SkeletonBlock(height: 13, width: 110)
                 HStack(spacing: 8) {
-                    SkeletonBlock(height: 22, width: 60, cornerRadius: 3)
-                    SkeletonBlock(height: 22, width: 76, cornerRadius: 3)
+                    SkeletonBlock(height: 26, width: 72)
+                    SkeletonBlock(height: 26, width: 84)
                 }
                 .padding(.top, 4)
             }
-            .padding(14)
+            .padding(16)
         }
-        .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+        )
     }
 }
 
@@ -56,7 +60,7 @@ struct ProjectDetailSkeletonView: View {
         VStack(alignment: .leading, spacing: 0) {
             SkeletonBlock(height: 220, cornerRadius: 0)
             VStack(alignment: .leading, spacing: 14) {
-                SkeletonBlock(height: 22, width: 90, cornerRadius: 3)
+                SkeletonBlock(height: 22, width: 90)
                 SkeletonBlock(height: 32, width: 220)
                 SkeletonBlock(height: 14, width: 260)
                 SkeletonBlock(height: 14, width: 180)
@@ -71,8 +75,8 @@ struct ProjectDetailSkeletonView: View {
                 .padding(.top, 10)
             }
             .padding(20)
-            .background(Theme.flap)
-            .clipShape(RoundedRectangle(cornerRadius: 3))
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
             .padding(.horizontal, 20)
             .offset(y: -60)
         }

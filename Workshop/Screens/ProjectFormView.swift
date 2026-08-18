@@ -261,7 +261,9 @@ struct ProjectFormView: View {
             }
         }
         .environment(\.editMode, .constant(.active))
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        .background(PlanCanvasBackground())
     }
 
     /// iPad only — cross-app drag-and-drop needs Split View/Slide Over, which
@@ -312,8 +314,9 @@ struct ProjectFormView: View {
                 Button {
                     row.wrappedValue.purchased.toggle()
                 } label: {
-                    Image(systemName: row.wrappedValue.purchased ? "checkmark.square.fill" : "square")
-                        .foregroundStyle(row.wrappedValue.purchased ? Theme.accent : Theme.muted)
+                    Image(systemName: row.wrappedValue.purchased ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(row.wrappedValue.purchased ? Theme.accentDeep : Theme.muted)
                 }
                 .buttonStyle(.plain)
                 .minimumHitTarget()
@@ -344,14 +347,17 @@ struct ProjectFormView: View {
                                 AuthImage(url: url, contentMode: .fill)
                             }
                         }
-                        .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 3))
+                        .frame(width: 90, height: 90)
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                        )
 
                         Button { Task { await removeImage(img, kind: kind) } } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 10, weight: .bold)).foregroundStyle(.white)
                                 .frame(width: 20, height: 20)
                                 .background(.black.opacity(0.72),
-                                            in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                                            in: Circle())
                         }
                         .buttonStyle(.plain)
                         .minimumHitTarget()

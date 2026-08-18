@@ -67,6 +67,7 @@ private struct ZoomableImage: View {
         Group {
             if let uiImage {
                 LiveTextImageView(image: uiImage)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if failed {
                 Image(systemName: "exclamationmark.triangle")
                     .font(.largeTitle)
@@ -130,6 +131,9 @@ private struct LiveTextImageView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIImageView {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
+        view.clipsToBounds = true
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         view.isUserInteractionEnabled = true
         if ImageAnalyzer.isSupported {
             let interaction = ImageAnalysisInteraction()
@@ -152,5 +156,18 @@ private struct LiveTextImageView: UIViewRepresentable {
                 interaction.analysis = analysis
             }
         }
+    }
+
+    func sizeThatFits(
+        _ proposal: ProposedViewSize,
+        uiView: UIImageView,
+        context: Context
+    ) -> CGSize? {
+        guard let width = proposal.width,
+              let height = proposal.height,
+              width.isFinite,
+              height.isFinite
+        else { return nil }
+        return CGSize(width: width, height: height)
     }
 }

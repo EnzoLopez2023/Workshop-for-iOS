@@ -1,0 +1,245 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d8e5e1"/>
+      <stop offset="0.55" stop-color="#eef4f2"/>
+      <stop offset="1" stop-color="#c8d9d5"/>
+    </linearGradient>
+    <linearGradient id="plan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eaf2f0"/>
+      <stop offset="1" stop-color="#b9d0cb"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8d6040"/>
+      <stop offset="0.48" stop-color="#c69a70"/>
+      <stop offset="1" stop-color="#9d6d49"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#15332e" flood-opacity="0.18"/>
+    </filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#15332e" flood-opacity="0.14"/>
+    </filter>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#527f76" stroke-opacity="0.11" stroke-width="1"/>
+    </pattern>
+    <pattern id="keys" width="42" height="34" patternUnits="userSpaceOnUse">
+      <rect x="3" y="3" width="34" height="26" rx="6" fill="#18352f" fill-opacity="0.88"/>
+      <path d="M10 23H30" stroke="#dbe7e4" stroke-opacity="0.35" stroke-width="2"/>
+    </pattern>
+    <clipPath id="ipadScreen">
+      <rect x="54" y="64" width="1036" height="790" rx="44"/>
+    </clipPath>
+    <clipPath id="phoneScreen">
+      <rect x="1160" y="74" width="370" height="842" rx="54"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#ground)"/>
+  <circle cx="150" cy="860" r="270" fill="#7aa7b2" fill-opacity="0.14"/>
+  <circle cx="1410" cy="120" r="300" fill="#1e7666" fill-opacity="0.10"/>
+
+  <!-- iPad -->
+  <rect x="36" y="46" width="1072" height="826" rx="58" fill="#10221f" filter="url(#shadow)"/>
+  <g clip-path="url(#ipadScreen)">
+    <rect x="54" y="64" width="1036" height="790" fill="#edf3f1"/>
+    <rect x="54" y="64" width="1036" height="790" fill="url(#grid)"/>
+
+    <!-- Persistent frosted sidebar -->
+    <rect x="74" y="84" width="232" height="750" rx="28" fill="#ffffff" fill-opacity="0.62"
+          stroke="#ffffff" stroke-opacity="0.86" stroke-width="2" filter="url(#softShadow)"/>
+    <g transform="translate(101 115)">
+      <rect x="2" y="20" width="42" height="14" rx="7" fill="#15332e" transform="rotate(-34 23 27)"/>
+      <rect x="31" y="0" width="16" height="38" rx="6" fill="#15332e" transform="rotate(-34 39 19)"/>
+      <text x="62" y="30" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif"
+            font-size="24" font-weight="700" fill="#15332e">Workshop</text>
+    </g>
+    <g transform="translate(92 190)">
+      <rect width="196" height="54" rx="16" fill="#1e7666" fill-opacity="0.14"/>
+      <circle cx="26" cy="27" r="10" fill="#1e7666"/>
+      <rect x="50" y="18" width="92" height="10" rx="5" fill="#15332e"/>
+      <rect x="50" y="34" width="58" height="7" rx="3.5" fill="#527f76" fill-opacity="0.55"/>
+      <g transform="translate(0 76)">
+        <circle cx="26" cy="25" r="9" fill="none" stroke="#527f76" stroke-width="3"/>
+        <rect x="50" y="19" width="108" height="9" rx="4.5" fill="#527f76" fill-opacity="0.48"/>
+      </g>
+      <g transform="translate(0 136)">
+        <path d="M16 16h20v20H16z" fill="none" stroke="#527f76" stroke-width="3"/>
+        <rect x="50" y="19" width="82" height="9" rx="4.5" fill="#527f76" fill-opacity="0.48"/>
+      </g>
+      <g transform="translate(0 196)">
+        <path d="M16 33l10-18 10 18z" fill="none" stroke="#527f76" stroke-width="3"/>
+        <rect x="50" y="19" width="70" height="9" rx="4.5" fill="#527f76" fill-opacity="0.48"/>
+      </g>
+      <g transform="translate(0 256)">
+        <circle cx="26" cy="25" r="11" fill="none" stroke="#527f76" stroke-width="3"/>
+        <path d="M26 18v14M19 25h14" stroke="#527f76" stroke-width="3"/>
+        <rect x="50" y="19" width="96" height="9" rx="4.5" fill="#527f76" fill-opacity="0.48"/>
+      </g>
+    </g>
+    <rect x="94" y="754" width="172" height="50" rx="16" fill="#ffffff" fill-opacity="0.72"
+          stroke="#8ba9a2" stroke-opacity="0.38"/>
+    <circle cx="120" cy="779" r="13" fill="#7aa7b2"/>
+    <rect x="145" y="769" width="80" height="9" rx="4.5" fill="#15332e" fill-opacity="0.7"/>
+    <rect x="145" y="786" width="54" height="7" rx="3.5" fill="#527f76" fill-opacity="0.46"/>
+
+    <!-- Main plan surface -->
+    <rect x="326" y="84" width="744" height="750" rx="30" fill="#f7faf9" fill-opacity="0.76"
+          stroke="#ffffff" stroke-width="2"/>
+    <rect x="350" y="108" width="696" height="400" rx="26" fill="url(#plan)"/>
+    <rect x="350" y="108" width="696" height="400" rx="26" fill="url(#grid)"/>
+
+    <!-- Stylized top-down keyboard and wood project -->
+    <g transform="translate(405 150)">
+      <rect x="42" y="24" width="500" height="176" rx="18" fill="#112621" fill-opacity="0.94"
+            transform="rotate(-3 292 112)" filter="url(#softShadow)"/>
+      <rect x="52" y="34" width="480" height="154" rx="14" fill="url(#keys)"
+            transform="rotate(-3 292 112)"/>
+      <rect x="88" y="200" width="430" height="112" rx="18" fill="url(#wood)"
+            transform="rotate(2 303 256)" filter="url(#softShadow)"/>
+      <path d="M116 240c90-18 270-12 366 8" fill="none" stroke="#e4c7a9" stroke-opacity="0.7" stroke-width="3"/>
+      <path d="M130 270c90-12 230-7 334 10" fill="none" stroke="#80543a" stroke-opacity="0.34" stroke-width="2"/>
+      <path d="M72 12H548M72 4v16M548 4v16" stroke="#1e7666" stroke-width="2" stroke-dasharray="8 8"/>
+      <path d="M558 34v274M550 34h16M550 308h16" stroke="#1e7666" stroke-width="2" stroke-dasharray="8 8"/>
+    </g>
+
+    <text x="378" y="146" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif"
+          font-size="15" font-weight="600" letter-spacing="1.5" fill="#1e7666">ACTIVE PROJECT</text>
+    <text x="378" y="188" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif"
+          font-size="38" font-weight="740" fill="#15332e">Keyboard Palm Rest</text>
+
+    <!-- Floating next action layer -->
+    <rect x="390" y="420" width="616" height="178" rx="24" fill="#ffffff" fill-opacity="0.76"
+          stroke="#ffffff" stroke-opacity="0.94" stroke-width="2" filter="url(#shadow)"/>
+    <circle cx="432" cy="466" r="16" fill="#1e7666"/>
+    <path d="M425 466l5 5 10-12" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="464" y="450" width="104" height="9" rx="4.5" fill="#1e7666" fill-opacity="0.54"/>
+    <rect x="464" y="472" width="328" height="18" rx="9" fill="#15332e"/>
+    <rect x="464" y="504" width="248" height="10" rx="5" fill="#527f76" fill-opacity="0.48"/>
+    <rect x="814" y="452" width="154" height="56" rx="16" fill="#1e7666"/>
+    <path d="M876 480h28m-9-9 9 9-9 9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="416" y="548" width="548" height="8" rx="4" fill="#d5e1de"/>
+    <rect x="416" y="548" width="236" height="8" rx="4" fill="#1e7666"/>
+
+    <!-- Project phase layers -->
+    <g transform="translate(350 628)">
+      <path d="M40 32H630" stroke="#9cb6b0" stroke-width="3"/>
+      <g>
+        <circle cx="40" cy="32" r="18" fill="#1e7666"/>
+        <path d="M33 32l5 5 10-12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="18" y="64" width="44" height="7" rx="3.5" fill="#15332e" fill-opacity="0.7"/>
+      </g>
+      <g transform="translate(148 0)">
+        <circle cx="40" cy="32" r="18" fill="#1e7666"/>
+        <path d="M33 32l5 5 10-12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="12" y="64" width="56" height="7" rx="3.5" fill="#15332e" fill-opacity="0.7"/>
+      </g>
+      <g transform="translate(296 0)">
+        <circle cx="40" cy="32" r="21" fill="#f7faf9" stroke="#1e7666" stroke-width="5"/>
+        <circle cx="40" cy="32" r="8" fill="#1e7666"/>
+        <rect x="9" y="64" width="62" height="7" rx="3.5" fill="#15332e"/>
+      </g>
+      <g transform="translate(444 0)">
+        <circle cx="40" cy="32" r="17" fill="#e1eae8" stroke="#9cb6b0" stroke-width="3"/>
+        <rect x="10" y="64" width="60" height="7" rx="3.5" fill="#527f76" fill-opacity="0.42"/>
+      </g>
+      <g transform="translate(590 0)">
+        <circle cx="40" cy="32" r="17" fill="#e1eae8" stroke="#9cb6b0" stroke-width="3"/>
+        <rect x="14" y="64" width="52" height="7" rx="3.5" fill="#527f76" fill-opacity="0.42"/>
+      </g>
+    </g>
+
+    <!-- Other projects -->
+    <g transform="translate(350 738)">
+      <rect width="212" height="74" rx="18" fill="#ffffff" fill-opacity="0.72" stroke="#ffffff"/>
+      <rect x="10" y="10" width="54" height="54" rx="13" fill="#b6cbc6"/>
+      <rect x="78" y="17" width="104" height="10" rx="5" fill="#15332e" fill-opacity="0.72"/>
+      <rect x="78" y="38" width="76" height="8" rx="4" fill="#527f76" fill-opacity="0.4"/>
+      <rect x="78" y="53" width="44" height="7" rx="3.5" fill="#1e7666" fill-opacity="0.5"/>
+      <g transform="translate(230 0)">
+        <rect width="212" height="74" rx="18" fill="#ffffff" fill-opacity="0.72" stroke="#ffffff"/>
+        <rect x="10" y="10" width="54" height="54" rx="13" fill="#9db8b1"/>
+        <rect x="78" y="17" width="112" height="10" rx="5" fill="#15332e" fill-opacity="0.72"/>
+        <rect x="78" y="38" width="68" height="8" rx="4" fill="#527f76" fill-opacity="0.4"/>
+        <rect x="78" y="53" width="52" height="7" rx="3.5" fill="#7aa7b2" fill-opacity="0.62"/>
+      </g>
+      <g transform="translate(460 0)">
+        <rect width="212" height="74" rx="18" fill="#ffffff" fill-opacity="0.72" stroke="#ffffff"/>
+        <rect x="10" y="10" width="54" height="54" rx="13" fill="#c4d6d2"/>
+        <rect x="78" y="17" width="96" height="10" rx="5" fill="#15332e" fill-opacity="0.72"/>
+        <rect x="78" y="38" width="82" height="8" rx="4" fill="#527f76" fill-opacity="0.4"/>
+        <rect x="78" y="53" width="38" height="7" rx="3.5" fill="#527f76" fill-opacity="0.34"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- iPhone -->
+  <rect x="1142" y="56" width="406" height="878" rx="70" fill="#10221f" filter="url(#shadow)"/>
+  <g clip-path="url(#phoneScreen)">
+    <rect x="1160" y="74" width="370" height="842" fill="#edf3f1"/>
+    <rect x="1160" y="74" width="370" height="842" fill="url(#grid)"/>
+    <rect x="1180" y="104" width="330" height="64" rx="22" fill="#ffffff" fill-opacity="0.62"
+          stroke="#ffffff" stroke-opacity="0.9"/>
+    <g transform="translate(1198 119) scale(.72)">
+      <rect x="2" y="20" width="42" height="14" rx="7" fill="#15332e" transform="rotate(-34 23 27)"/>
+      <rect x="31" y="0" width="16" height="38" rx="6" fill="#15332e" transform="rotate(-34 39 19)"/>
+    </g>
+    <text x="1250" y="145" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif"
+          font-size="22" font-weight="720" fill="#15332e">Workshop</text>
+    <circle cx="1478" cy="136" r="17" fill="#1e7666"/>
+    <path d="M1478 127v18M1469 136h18" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+
+    <rect x="1180" y="188" width="330" height="300" rx="28" fill="url(#plan)" filter="url(#softShadow)"/>
+    <rect x="1180" y="188" width="330" height="300" rx="28" fill="url(#grid)"/>
+    <g transform="translate(1200 245) scale(.51)">
+      <rect x="42" y="24" width="500" height="176" rx="18" fill="#112621" fill-opacity="0.94"
+            transform="rotate(-3 292 112)"/>
+      <rect x="52" y="34" width="480" height="154" rx="14" fill="url(#keys)"
+            transform="rotate(-3 292 112)"/>
+      <rect x="88" y="200" width="430" height="112" rx="18" fill="url(#wood)"
+            transform="rotate(2 303 256)"/>
+      <path d="M116 240c90-18 270-12 366 8" fill="none" stroke="#e4c7a9" stroke-opacity="0.7" stroke-width="3"/>
+    </g>
+    <text x="1206" y="222" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif"
+          font-size="12" font-weight="650" letter-spacing="1.2" fill="#1e7666">ACTIVE PROJECT</text>
+    <text x="1206" y="455" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif"
+          font-size="27" font-weight="740" fill="#15332e">Keyboard Palm Rest</text>
+
+    <rect x="1196" y="458" width="298" height="178" rx="24" fill="#ffffff" fill-opacity="0.80"
+          stroke="#ffffff" stroke-width="2" filter="url(#shadow)"/>
+    <circle cx="1230" cy="500" r="14" fill="#1e7666"/>
+    <path d="M1224 500l4 4 9-10" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="1256" y="486" width="86" height="8" rx="4" fill="#1e7666" fill-opacity="0.5"/>
+    <rect x="1256" y="507" width="198" height="15" rx="7.5" fill="#15332e"/>
+    <rect x="1256" y="535" width="146" height="9" rx="4.5" fill="#527f76" fill-opacity="0.44"/>
+    <rect x="1220" y="568" width="250" height="48" rx="15" fill="#1e7666"/>
+    <path d="M1324 592h32m-10-10 10 10-10 10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g transform="translate(1192 664)">
+      <rect width="142" height="116" rx="22" fill="#ffffff" fill-opacity="0.68" stroke="#ffffff"/>
+      <rect x="12" y="12" width="118" height="56" rx="15" fill="#a9c2bc"/>
+      <rect x="14" y="80" width="92" height="9" rx="4.5" fill="#15332e" fill-opacity="0.72"/>
+      <rect x="14" y="98" width="60" height="7" rx="3.5" fill="#527f76" fill-opacity="0.4"/>
+      <g transform="translate(158 0)">
+        <rect width="142" height="116" rx="22" fill="#ffffff" fill-opacity="0.68" stroke="#ffffff"/>
+        <rect x="12" y="12" width="118" height="56" rx="15" fill="#c3d4d0"/>
+        <rect x="14" y="80" width="102" height="9" rx="4.5" fill="#15332e" fill-opacity="0.72"/>
+        <rect x="14" y="98" width="54" height="7" rx="3.5" fill="#527f76" fill-opacity="0.4"/>
+      </g>
+    </g>
+
+    <!-- Native glass tab bar -->
+    <rect x="1182" y="824" width="326" height="72" rx="30" fill="#ffffff" fill-opacity="0.74"
+          stroke="#ffffff" stroke-opacity="0.95" stroke-width="2" filter="url(#softShadow)"/>
+    <g transform="translate(1210 842)">
+      <circle cx="18" cy="16" r="17" fill="#1e7666" fill-opacity="0.16"/>
+      <rect x="10" y="8" width="16" height="16" rx="5" fill="#1e7666"/>
+      <circle cx="91" cy="16" r="9" fill="none" stroke="#527f76" stroke-width="3"/>
+      <path d="M161 7h20v18h-20z" fill="none" stroke="#527f76" stroke-width="3"/>
+      <circle cx="247" cy="16" r="10" fill="none" stroke="#527f76" stroke-width="3"/>
+      <path d="M240 26c3-6 11-6 14 0" fill="none" stroke="#527f76" stroke-width="3"/>
+    </g>
+  </g>
+
+  <rect x="1300" y="82" width="90" height="26" rx="13" fill="#10221f"/>
+</svg>

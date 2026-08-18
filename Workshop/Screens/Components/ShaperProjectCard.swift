@@ -1,67 +1,72 @@
 import SwiftUI
 import NintekKit
 
-/// The Shaper Hub's departure card. Same board grammar as `ProjectCard`, with
-/// a steel origin plate on the photo instead of a status flap — a Shaper
-/// project has no status, it has a source. Mirrors
-/// `src/components/ShaperProjectCard.tsx`.
+/// Image-forward Shaper/CNC project layer.
 struct ShaperProjectCard: View {
     let project: ShaperProject
     let heroURL: URL?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topLeading) {
-                Rectangle().fill(Theme.flapShade)
-                    .aspectRatio(16.0 / 10.0, contentMode: .fit)
+                Rectangle()
+                    .fill(Theme.flapShade)
+                    .aspectRatio(16.0 / 9.0, contentMode: .fit)
                     .overlay {
                         if heroURL != nil {
                             AuthImage(url: heroURL, contentMode: .fill, placeholderSymbol: "cpu")
+                                .allowsHitTesting(false)
                         } else {
-                            Image(systemName: "cpu")
-                                .font(.system(size: 30))
-                                .foregroundStyle(Theme.line)
+                            PlanCanvasBackground()
+                                .overlay {
+                                    Image(systemName: "cpu")
+                                        .font(.system(size: 30, weight: .medium))
+                                        .foregroundStyle(Theme.accent.opacity(0.42))
+                                }
                         }
                     }
                     .clipped()
-                    .overlay(alignment: .bottom) {
-                        Rectangle().fill(Theme.line).frame(height: 1)
-                    }
+                    .contentShape(Rectangle())
 
-                Text("SHAPER HUB")
-                    .font(Theme.board(8.5, .bold, relativeTo: .caption2))
-                    .tracking(1.4)
-                    .foregroundStyle(Theme.onSteel)
-                    .padding(.horizontal, 7).padding(.vertical, 4)
-                    .background(Theme.steel.opacity(0.92), in: RoundedRectangle(cornerRadius: Theme.rFlap))
-                    .padding(10)
+                Label("Shaper", systemImage: "cpu")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.accentDeep)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .padding(12)
             }
 
-            BoardCaps(project.title.isEmpty ? "Untitled" : project.title, size: 13.5)
-                .lineLimit(2)
-                .padding(.horizontal, 14)
-
-            if let desc = project.description, !desc.isEmpty {
-                Text(desc)
-                    .font(Theme.ui(13))
-                    .foregroundStyle(Theme.muted)
+            VStack(alignment: .leading, spacing: 12) {
+                Text(project.title.isEmpty ? "Untitled" : project.title)
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.ink)
                     .lineLimit(2)
-                    .padding(.horizontal, 14)
-            }
+                if let desc = project.description, !desc.isEmpty {
+                    Text(desc)
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.muted)
+                        .lineLimit(2)
+                }
 
-            Spacer(minLength: 0)
-
-            HStack(spacing: 1) {
-                cell("Materials", String(format: "%02d", project.materials.count))
-                cell("Source", "Shaper", wide: true)
+                HStack(spacing: 14) {
+                    Label("\(project.materials.count) materials", systemImage: "cube.box")
+                    Label("CNC project", systemImage: "scope")
+                }
+                .font(.caption)
+                .foregroundStyle(Theme.muted)
             }
-            .background(Theme.line)
-            .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }
+            .padding(16)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.flap)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-        .overlay(RoundedRectangle(cornerRadius: Theme.rPanel).strokeBorder(Theme.line, lineWidth: 1))
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+        )
+        .shadow(color: Theme.steelDark.opacity(0.1), radius: 14, x: 0, y: 7)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilitySummary)
     }
@@ -78,20 +83,4 @@ struct ShaperProjectCard: View {
         return values.joined(separator: ", ")
     }
 
-    private func cell(_ label: String, _ value: String, wide: Bool = false) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(label.uppercased())
-                .font(Theme.board(8.5, .semibold, relativeTo: .caption2))
-                .tracking(1.1)
-                .foregroundStyle(Theme.muted)
-            Readout(value, size: 11.5)
-                .lineLimit(1)
-        }
-        .frame(maxWidth: wide ? .infinity : nil, alignment: .leading)
-        .frame(minWidth: 62, alignment: .leading)
-        .padding(.horizontal, 12)
-        .padding(.top, 8)
-        .padding(.bottom, 9)
-        .background(Theme.flapShade)
-    }
 }

@@ -1,435 +1,319 @@
-# The Workshop for iOS — Concourse Board
+---
+name: Workshop for iOS
+description: A living plan table that keeps the next woodworking action on top.
+colors:
+  canvas: "light-dark(#EEF4F2, #0C1513)"
+  layer-recessed: "light-dark(#E0EBE7, #12201D)"
+  layer-raised: "light-dark(#FAFCFB, #182823)"
+  ink: "light-dark(#15332E, #F3F8F6)"
+  muted-ink: "light-dark(#58716B, #9CB2AC)"
+  divider: "light-dark(#C9DAD5, #2A423C)"
+  navigation-material: "light-dark(#E7F0ED, #172923)"
+  navigation-deep: "light-dark(#15332E, #09110F)"
+  navigation-highlight: "light-dark(#FFFFFF, #254039)"
+  on-navigation: "light-dark(#15332E, #F3F8F6)"
+  metric-face: "light-dark(#F7FAF9, #1A2B26)"
+  metric-face-low: "light-dark(#E5EFEC, #12201D)"
+  metric-ink: "light-dark(#15332E, #F2F8F6)"
+  success: "light-dark(#2F7657, #76CFA5)"
+  success-fill: "light-dark(#3F936D, #4DAE81)"
+  danger: "light-dark(#A64139, #F28A80)"
+  danger-fill: "light-dark(#C75A50, #D86C62)"
+  spruce-annotation: "light-dark(#176B5B, #68C7B0)"
+  spruce-action: "light-dark(#125447, #8AD8C5)"
+  spruce-fill: "light-dark(#1E7666, #2A927E)"
+  clay-annotation: "light-dark(#96513E, #E9A08A)"
+  clay-action: "light-dark(#743D2F, #F0B6A5)"
+  clay-fill: "light-dark(#A95F49, #C97C65)"
+  moss-annotation: "light-dark(#557A43, #9BCB82)"
+  moss-action: "light-dark(#3F5E32, #B5DEA0)"
+  moss-fill: "light-dark(#668E50, #79A962)"
+  pencil-blue-annotation: "light-dark(#356D85, #7AB9D3)"
+  pencil-blue-action: "light-dark(#29566A, #A0D0E2)"
+  pencil-blue-fill: "light-dark(#477F97, #5B9DB8)"
+  iris-annotation: "light-dark(#66568E, #B5A4DE)"
+  iris-action: "light-dark(#4D416D, #CFC3EB)"
+  iris-fill: "light-dark(#7868A2, #9281BD)"
+typography:
+  display:
+    fontFamily: "SF Rounded, SF Pro Rounded, system-ui"
+    fontSize: "34pt"
+    fontWeight: 700
+  headline:
+    fontFamily: "SF Rounded, SF Pro Rounded, system-ui"
+    fontSize: "20pt"
+    fontWeight: 700
+  title:
+    fontFamily: "SF Rounded, SF Pro Rounded, system-ui"
+    fontSize: "17pt"
+    fontWeight: 600
+  body:
+    fontFamily: "SF Pro, system-ui"
+    fontSize: "17pt"
+    fontWeight: 400
+  label:
+    fontFamily: "SF Rounded, SF Pro Rounded, system-ui"
+    fontSize: "12pt"
+    fontWeight: 600
+rounded:
+  compact: "10pt"
+  control: "14pt"
+  hero: "24pt"
+  capsule: "999pt"
+spacing:
+  compact: "8pt"
+  small: "12pt"
+  card: "16pt"
+  canvas: "20pt"
+  generous: "28pt"
+components:
+  action-primary:
+    backgroundColor: "{colors.spruce-action}"
+    textColor: "#FFFFFF"
+    typography: "{typography.title}"
+    rounded: "{rounded.control}"
+    padding: "0 16pt"
+    height: "48pt"
+  card-glass:
+    backgroundColor: "{colors.layer-raised}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    padding: "{spacing.card}"
+  search-field:
+    backgroundColor: "{colors.layer-raised}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    padding: "0 14pt"
+    height: "50pt"
+  sidebar-destination:
+    backgroundColor: "{colors.layer-recessed}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.control}"
+    padding: "0 13pt"
+    height: "48pt"
+  status-capsule:
+    backgroundColor: "{colors.layer-recessed}"
+    textColor: "{colors.muted-ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.capsule}"
+    padding: "6pt 10pt"
+---
 
-The native app carries the same visual world as the web app. **The normative
-token contract lives in the web repo's `DESIGN.md`** (`EnzoLopez2023/workshop`);
-this file records only what is specific to the iOS implementation.
+# Design System: Workshop for iOS
 
-## The world
+## Overview
 
-A Solari rail departure board. A shop record reads like a concourse: every
-project is a row that flips into its new state, and the board's grid — split
-line, cell divider, steel frame — *is* the layout, not decoration. It refuses
-the warm-paper / editorial-serif / terracotta arrangement it replaced.
+**Creative North Star: "The Living Plan Table"**
 
-Light is the default rendition (a lit concourse). Dark is the board's own night
-form, **not an inversion**: steel *lifts* rather than darkens, and the signal
-lamps brighten — which is what a real board does when the hall lights go down.
+Workshop is a cool, native drafting surface rather than a dashboard of summaries. A project is treated as one living plan: its drawing or photograph establishes context, its current stage explains progress, and a translucent action sheet puts the next useful move physically on top. The visual character comes from vellum, spruce drawing ink, pencil annotations, restrained frosted layers, and Apple system geometry.
 
-**The risk this world runs:** it collapses into "one animation on a normal app".
-It survives only because the split line, cell grid, steel frame and tracked caps
-are structural at rest. The board reads as a board with animation disabled.
+This is an Operate system. Native navigation, controls, gestures, Dynamic Type, and accessibility settings outrank visual expression. Brand lives in the plan grid, the layered-project composition, the hammer mark, the adaptive annotation palette, and the disciplined 14-point squircle—not in replacement platform chrome.
 
-## Tokens
+**Key Characteristics:**
 
-`Workshop/App/Palette.swift` is the single source. Every token is a `WSColor`
-carrying a light and a dark hex, resolved through a `UIColor` trait callback.
-Values are ported verbatim from the web `DESIGN.md` — do not re-derive them.
+- Cool adaptive vellum surfaces with deep spruce ink.
+- A 24-point drafting grid behind content, never a decorative card texture.
+- SF Rounded for focal titles and compact data; SF Pro for reading and controls.
+- Native material used only where a physical tracing or chrome layer is needed.
+- One active project leads; the rest of the workshop follows as a browsable library.
+- Continuous geometry, 44-point minimum targets, and semantic labels throughout.
 
-Flap modules (`flapFace`, `flapFaceLo`, `flapLetter`) are **dark in both
-renditions**. They are hardware, not a colour scheme, and this single decision
-does more work than any other in the port.
+**Source of truth:** `Workshop/App/Palette.swift` owns adaptive colors and annotation presets; `Workshop/App/Theme.swift` owns type helpers, geometry, glass, the plan canvas, and shared primitives; `Workshop/App/RootView.swift` owns the device shell; `Workshop/Screens/**` and `Workshop/Auth/SignInView.swift` own shipped compositions; `WorkshopWidgets/WidgetSupport.swift` and the other `WorkshopWidgets/**` files own extension-safe adaptations. The packaged icon renditions in `Workshop/Assets.xcassets/AppIcon.appiconset/` and plan PNGs in `Workshop/Resources/StarterPlans/` are the runtime asset truth.
 
-Radii: `rFlap` 2pt, `rPanel` 3pt. **Nothing in the app exceeds 3pt.** The one
-exception is the lightbox close button, which is a full-screen photo affordance
-matching system Photos.
+**The Shipped Artifact Rule.** Compatibility names left from an earlier implementation carry no visual authority. New work follows the values and behavior they now resolve to.
 
-## Type
+## Colors
 
-No `font-stretch` on Apple platforms, so the condensed board face is baked as
-static instances with `fontTools.varLib.instancer` and shipped in `Fonts/`:
+The palette is a two-axis system: every structural role adapts between light and dark, while the user may independently choose one of five annotation families.
 
-| Family | Instance | Used for |
-|---|---|---|
-| `Martian Mono Board` | wdth 82, wght 400/600/700 | board caps, every datum, every figure |
-| `Archivo WS` | wdth 100, wght 400/500/700 | UI labels, body copy, descriptions |
+### Primary
 
-Reach for them via `Theme.board(_:_:relativeTo:)` and `Theme.ui(_:_:relativeTo:)`,
-never `Font.custom` directly — the helpers wire up Dynamic Type.
+- **Spruce Annotation:** The default drawing-note color and quiet emphasis.
+- **Spruce Action:** The higher-contrast default for tints, active controls, stage progress, and selected navigation.
+- **Spruce Fill:** The saturated companion for compact filled marks and widget figures.
 
-Both families are registered in `project.yml` for the **app and widget targets
-separately**. An app extension cannot read its host app's `UIAppFonts`, so the
-duplication is deliberate.
+### Secondary
 
-Text size is a five-step scale (`TextSize`), applied once at `RootView` as a
-Dynamic Type override, so it reaches everything the two helpers hand out. Step 2
-is iOS's own default; **step 3 is Workshop's** — a shop screen is read at arm's
-length, across a bench, often through safety glasses. Step 5 stops at
-`.xxxLarge`; the accessibility sizes above it break the board's fixed-slot rows.
-`Theme.boardFixed` is the one escape hatch, for the picker's own samples, where
-type that scaled with the setting would defeat the sample.
+- **Pencil Blue:** A drafting-note family available as a complete annotation, action, and fill preset. `Theme.pencil` deliberately remains the base Pencil Blue annotation even when another preset is selected.
+- **Clay, Moss, and Iris:** Full three-token alternatives. They replace the annotation axis only; they do not recolor vellum, ink, dividers, or semantic state.
 
-## The reading column
+### Tertiary
 
-`contentColumn(_:)` caps content so cards don't stretch into ribbons. A hard cap,
-though, turns a landscape iPad into a narrow app between two dead bands — so
-where the space is wider than the cap, the column reclaims **a third of the
-leftover margin** (`ContentColumnLayout`). Still a column, noticeably less blank.
+- **Success / Success Fill:** Completion and positive state.
+- **Danger / Danger Fill:** Destructive state and errors.
+- Status always includes a word or symbol; green and red never carry meaning alone.
 
-It's a `Layout`, not a `.frame(maxWidth:)`, because it needs the width actually
-*proposed* to the content; a `GeometryReader` would claim the space instead of
-measuring it. The trigger is width, not orientation — a vertical `ScrollView`
-proposes a `nil` height to its content, so orientation is not knowable from in
-there. Where there's no slack (any phone in portrait) it is a no-op.
+### Neutral
 
-## The rule about amber
+- **Canvas:** The app-wide cool vellum ground.
+- **Layer Recessed / Layer Raised:** Secondary wells and translucent-card fallback surfaces.
+- **Ink / Muted Ink:** Primary reading color and secondary explanation.
+- **Divider:** Hairlines, grid strokes, and subtle component boundaries.
+- **Navigation Material / Deep / Highlight:** The tonal ingredients behind native blurred navigation.
+- **Metric Face / Low / Ink:** Compatibility roles for compact data surfaces and widget figures, not a separate visual world.
 
-Amber is a signal lamp, not a brand colour. **One amber element per screen**,
-and it marks the primary action or the live figure — the `+` on the dashboard,
-the print button on the shopping list, the sign-in button, the in-progress flag.
+### Annotation presets
 
-Use `Theme.accentDeep` (#C77800) for system control tints. `Theme.accent`
-(#8A4F00) reads *brown* on a tint and is for text-on-light emphasis only.
+`Palette.all` presents presets in this order: Spruce, Clay, Moss, Pencil Blue, Iris. Each preset contains base annotation, high-contrast action, and saturated fill tokens, and every member has a light and dark value. The selection persists under `ws.accent`; unknown or retired identifiers fall back to Spruce. Widgets intentionally use Spruce because their process cannot observe the app's `ThemeManager`.
+
+### Named Rules
+
+**The Independent Axes Rule.** Appearance and annotation selection are independent. Switching to dark mode never changes the selected annotation family, and switching annotation never recolors structural surfaces.
+
+**The Annotation, Not Wallpaper Rule.** Annotation color marks actions, current stages, counts, and drafting notes. It does not flood the plan canvas or replace semantic success and danger.
+
+**The Contrast Has a Companion Rule.** Use each preset's action token for control tint and text emphasis, and its fill token for compact solid marks. Do not assume the base annotation is legible as filled-control text.
+
+## Typography
+
+**Display Font:** SF Rounded through the system font API
+
+**Body Font:** SF Pro through the system font API
+
+**Label/Mono Font:** SF Rounded with monospaced digits only for numeric readouts
+
+**Character:** Rounded system type makes project titles and measurements approachable without introducing a display typeface foreign to iOS. Default SF Pro keeps longer instructions, forms, and system controls familiar and highly legible.
+
+### Hierarchy
+
+- **Display** (bold, 34pt base): Sign-in promise, large project titles, and singular focal moments.
+- **Headline** (bold, 20pt base): Next actions and major content emphasis.
+- **Title** (semibold, 17pt base): Navigation, card titles, rail headings, and primary actions.
+- **Body** (regular, 17pt base): Instructions, fields, and ordinary reading.
+- **Label** (semibold, 12pt base): Status, stage names, metadata, and compact annotations.
+- **Caption** (system caption and caption2 roles): Secondary metadata. Numeric values use tabular figures through `monospacedDigit()`.
+
+`Theme.board`, `Theme.ui`, and `Theme.display` retain source-compatible names but all return Apple system fonts. Custom base sizes pass through `UIFontMetrics` relative to the supplied SwiftUI text style. Native text-style calls inherit Dynamic Type directly. `Theme.boardFixed` is reserved for the text-size picker's fixed comparison samples and is not a general escape hatch.
+
+### Named Rules
+
+**The System Scale Rule.** Use semantic SwiftUI text styles first. When an exact base size is necessary, route it through `Theme` so `UIFontMetrics` scales it.
+
+**The Rounded Focus Rule.** SF Rounded belongs to project names, section rails, status, compact data, and actions; prose and form content stay in default SF Pro.
+
+**The No Display Font Rule.** Do not restore bundled condensed or custom display faces to the interface. The shipped visual system is native SF typography.
+
+## Layout
+
+The global spatial model is a centered plan canvas with an adaptive reading column. `ContentColumnLayout` defaults to 640pt and reclaims one third of width beyond its cap instead of leaving dead side bands; the dashboard requests a 900pt working column. Screen content generally begins with a 20pt canvas inset, 16pt card rhythm, and larger section separation only where content groups change.
+
+The plan canvas is a top-leading to bottom-trailing gradient of canvas and recessed tones. A 24pt orthogonal grid is drawn with 0.5pt divider strokes at 18% opacity and hidden from accessibility.
+
+The dashboard's active-project composition is intentionally different by size class:
+
+- **Compact / iPhone:** A 310pt plan or photograph is followed by the next-action glass layer with a 34pt overlap and 16pt side/bottom inset.
+- **Regular / iPad:** The plan and action layer share a minimum 380pt hero. The action layer floats on the trailing side at 300–380pt wide with a 28pt inset.
+- **Library:** Project cards use an adaptive grid with a 280pt minimum and 16pt gaps; template cards use a 220pt minimum.
+
+iPhone is portrait-only in `Workshop/Info.plist` and `project.yml` and always uses the four-destination native tab shell. iPad supports portrait, upside-down portrait, and both landscape orientations. At regular width it uses a persistent `NavigationSplitView` with `.balanced` behavior and a 216–272pt sidebar; narrow split or Slide Over falls back to tabs. The split view and its native collapse behavior remain intact in both iPad orientations.
+
+**The Active Layer Rule.** The first useful viewport belongs to the active project and its next action. Counts, search, remaining projects, Shaper work, templates, and inspiration follow rather than competing above it.
+
+**The Platform Shell Rule.** Device idiom and size class select the shell. Do not infer iPad behavior from orientation or let an iPhone replace its navigation tree during rotation.
+
+## Elevation & Depth
+
+Depth is a restrained hybrid of tonal layering, native blur, and soft vertical shadow. `planGlass` uses `.ultraThinMaterial`, a 1pt divider stroke at 62% opacity, and an optional deep-spruce shadow. Standard glass lifts by 8pt with a 16pt blur at 12% opacity; library cards use 7pt / 14pt / 10%; the active hero uses 10pt / 22pt / 14%; the iPad sidebar uses 8pt / 18pt / 12%.
+
+Navigation bars and tab bars use `systemUltraThinMaterial` with raised-surface color at 58% and 66% respectively. When Reduce Transparency is enabled, the sidebar resolves to an opaque raised surface and sign-in strengthens its vellum veil. Glass is a functional layer—navigation chrome, action tracing sheet, card, or modal—not ambient decoration.
+
+### Shadow Vocabulary
+
+- **Tracing Layer:** 0 8pt 16pt deep-spruce at 12%; standard elevated glass.
+- **Library Sheet:** 0 7pt 14pt deep-spruce at 10%; image-forward project cards.
+- **Hero Plan:** 0 10pt 22pt deep-spruce at 14%; the single active project.
+- **Sidebar Rail:** 0 8pt 18pt deep-spruce at 12%; the persistent iPad workbench rail.
+
+### Named Rules
+
+**The Native Glass Rule.** Use Apple material for layers that must visibly sit above content. Use adaptive solid fallbacks when transparency is reduced.
+
+**The One Hero Rule.** Only the active project earns hero depth and 24pt clipping. Ordinary cards use the standard 14pt system.
+
+## Shapes
+
+The default form is a continuous 14pt squircle. It is used for buttons, search, glass cards, sidebar destinations, and common containers. Compact utility wells may use 10pt; the active project's large clipped plan uses 24pt. Status and stage labels are capsules because they represent compact state, not because pills are a general container style.
+
+Borders are 1pt adaptive divider strokes, usually softened to 62–70% opacity over material. Controls preserve at least a 44×44pt interactive region even when the visible glyph is smaller. Image wells clip visually and define their own content shape; decorative fill images disable hit testing so oversized image content cannot steal neighboring taps.
+
+**The Fourteen-Point Default Rule.** Begin every interactive surface and ordinary card at a 14pt continuous radius. Depart only for a documented compact well, capsule state, or the singular hero.
+
+**The Visible Bounds Rule.** Clipping an image is not enough. Its hit shape must match the visible card, and the image itself is noninteractive inside a larger navigation target.
 
 ## Components
 
-| Component | Role |
-|---|---|
-| `SplitFlap` | Rolls a string into place on one motor with staggered starts, like a real Solari unit |
-| `FlapToggleStyle` | Every `Toggle` is a two-cell flap reading OFF/ON. The system capsule has no place here |
-| `Flag` / `StatusBadge` | Status as a board flag, not a pill |
-| `ProjectCard` / `ShaperProjectCard` | Departure cards: tracked-caps title, status flag, three-cell data strip |
-| `BoardCaps` / `Readout` / `Rail` | The board's structural type and rules |
-| `BoardToolbarButton` | A flap on the steel band, amber or recessed steel |
-| `SignInPlate` | The two providers as one pair of plates: same lettering, same metrics, only fill and mark differ |
-| `CutPlanBoard` | Recolours NintekKit cut plans at the app boundary. Sheet and ink stay fixed — a cut plan is a printed document, not a themed surface |
-
-## Where the platform wins
-
-This is an Operate surface, so native expectations outrank expression:
-
-- **The system back button stays native.** Replacing it would cost the
-  interactive pop gesture for a cosmetic gain.
-- **The iOS 26 floating tab bar stays.** Its contents are board type and signal
-  amber; the glass shell is platform chrome.
-- **Nav titles are `.inline` everywhere.** Content already carries board headers,
-  so a large title was a second, redundant heading.
-
-Two iOS 26 behaviours must be actively opted out of:
-
-1. Toolbar items get a glass capsule. Every `ToolbarItem` therefore takes
-   `.boardToolbarItem()`, which applies `sharedBackgroundVisibility(.hidden)`.
-2. A `Button` with a custom background and **no explicit `buttonStyle`** is
-   dimmed to ~43% in dark mode. Any button that paints its own surface needs
-   `.buttonStyle(.plain)`.
-
-## Widgets and the share extension
-
-The widgets carry the same world, mirrored in `WorkshopWidgets/WidgetSupport.swift`
-because an app extension cannot reach the app's `Theme`/`Palette`. `WSWidget`
-holds the same hexes, `wsAdaptive(light:dark:)` stands in for `WSColor`, and
-`WSCaps` / `WSFlap` / `WSFlapNumber` / `WSHeader` are the widget-budget versions
-of the app's primitives. Flaps are **static** here — a widget gets no animation
-budget, and the board has to read as a board at rest anyway.
-
-Rules that came out of building them:
-
-- **The board bleeds to the edges.** `.contentMarginsDisabled()` plus
-  `containerBackground(WSWidget.flap)`, so the steel header band touches the
-  widget's own rounded corners. Without it the board floats inside ~22pt of
-  system padding and reads as a card, not a board.
-- **A board always shows a fixed number of slots.** Unfilled rows stay blank
-  shaded board with their hairline separators intact, the way a departure board
-  reads between arrivals. Never collapse the list and leave bright flap face
-  below it — that reads as a truncated card. Filled rows sit on `flap`, the
-  container is `flapShade`.
-- **Rows divide the height evenly** (`.frame(maxHeight: .infinity)`), so no size
-  class ends up with dead space.
-- **One amber per widget.** The header's trailing figure or the single headline
-  stat. Green and red stay reserved for status; money is neutral flap type, not
-  green.
-- **Each extension bundles its own fonts.** `UIAppFonts` does not cross the
-  app/extension boundary. The widgets carry all six faces (~532KB); the share
-  extension carries only the two it uses (~170KB).
-
-The share extension answers with a board confirmation card rather than a system
-alert — steel band, hammer lamp, `SAVED` / `NOT SAVED`, auto-dismissing. It is
-the only place the world appears outside the app, so it has to be unmistakable.
-
-Widgets cannot be placed on the Home Screen from `simctl` (no tap command, no
-`idb`). They were verified by temporarily compiling the widget views into the
-app target and rendering them at real pixel sizes; that harness was reverted
-after the pass.
-
-## The iPad / Mac sidebar
-
-The sidebar is the steel frame the board hangs on — the same face as the
-toolbar, so the two meet as one continuous edge instead of a light column
-butting into a dark bar. Destinations are board caps; the active one is lit
-with an amber lamp bar on its leading edge and a lifted `steelLight` plate.
-The header reuses the sign-in plate's lockup verbatim (amber `hammer.fill` +
-`THE WORKSHOP`), so the app announces itself the same way everywhere.
-
-A system `.sidebar` `List` cannot carry this — its background, row type and
-selection capsule are all platform chrome, and `.tint()` only recolours the
-capsule. It is a plain stack of buttons instead. The split view, its collapse
-toggle (which lives in the *detail* column's toolbar) and the swipe gesture
-all stay native.
-
-When it slides in over the board rather than beside it, the rail is **frosted
-steel** — `Theme.steel` at 0.8 over `.ultraThinMaterial`, header band at 0.9 —
-so the rows behind it stay faintly there. Opaque steel reads as a second screen
-having replaced the first.
-
-**A `Rectangle` with only a width set has unbounded height** and will stretch
-its row to the full column. The lamp bar rides in an `.overlay(alignment:
-.leading)`, which never affects layout.
-
-## Signed-out demo
-
-The sign-in board sits over an enlarged, bundled cabinet-plan drawing with a
-strong concourse veil. The drawing drifts as one slow authored motion; Reduce
-Motion freezes it, and Reduce Transparency strengthens the veil. Microsoft
-remains the screen's one amber action, while Apple and Browse Demo use neutral
-plates with the same type and dimensions.
-
-Demo mode runs the production screens against `DemoWorkshopTransport`, which
-serves the seven complete starter projects locally and rejects every non-GET
-request. Write affordances are removed as well as blocked: no create, edit,
-delete, purchased toggle, log/link mutation, or saved cut-plan configuration.
-The persistent `DEMO WORKSHOP · READ ONLY` rail makes the mode explicit and
-returns directly to sign-in without writing widget, Spotlight, or seed state.
-
-## Photos
-
-`AuthImage` uses `.fill`, which means it reports a size **larger** than the
-proposal on one axis. Never hand it an aspect ratio directly:
-
-```swift
-// WRONG — the photo draws outside its layout box and spills across the grid.
-AuthImage(url: url, contentMode: .fill)
-    .aspectRatio(16.0 / 10.0, contentMode: .fill)
-    .clipped()
-```
-
-Bound the box first, then fill it:
-
-```swift
-Rectangle().fill(Theme.flapShade)
-    .aspectRatio(16.0 / 10.0, contentMode: .fit)   // the box
-    .overlay { AuthImage(url: url, contentMode: .fill) }
-    .clipped()
-```
-
-An explicit `.frame(width:height:)` or `.frame(height:)` before `.clipped()`
-works too. Every call site uses one of these two forms.
-
-## Shipping to the App Store
-
-Three things here exist only because App Review or the upload validator demands
-them, and all three are easy to undo by accident.
-
-**Every binary carries a `PrivacyInfo.xcprivacy`** — the app, the widget and the
-share extension. All three statically link NintekKit, which reads and writes the
-App Group defaults, and `UserDefaults` is a required-reason API: an upload with
-an undeclared use is rejected outright with ITMS-91053. The reasons are `CA92.1`
-(the app's own defaults) and `1C8F.1` (the group). The app's manifest also lists
-what the account collects — name, email, user id, photos, project content — all
-linked to the user, none of it tracking, all of it App Functionality. Those
-answers are cross-checked against App Store Connect, so change both or neither.
-
-**The photo library has no usage string, on purpose.** Photos only ever arrive
-through `PhotosPicker`, which runs out of process and hands back the one image
-the user chose; the app never touches `PHPhotoLibrary`. Declaring
-`NSPhotoLibraryUsageDescription` anyway would ask for access it doesn't use,
-which reviewers read as overreach. `NSCameraUsageDescription` is real — see
-`CameraPicker`, which is `sourceType = .camera` only.
-
-**Account deletion is server-first.** Guideline 5.1.1(v) requires any app that
-creates an account to let the user initiate permanent deletion in-app. The
-Account section in More puts that action beside Sign Out, explains what leaves,
-offers the JSON backup immediately above it, and protects the irreversible call
-with a system destructive-confirmation alert. It calls authenticated
-`DELETE /api/account`; the server derives the account from the bearer token,
-never from a client-supplied user id.
-
-The client clears credentials, widgets, Spotlight, pending shares, reminders,
-decoded-image memory and the starter-seed marker **only after** the server
-confirms deletion. A network or server failure leaves the session intact and
-the action retryable; local success-shaped cleanup must never hide server data
-that still exists.
-
-Sign in with Apple has one extra obligation: deleting Workshop data is not
-enough — Apple's token must be revoked too. Every Apple sign-in therefore sends
-both `identityToken` and the short-lived `authorizationCode` to
-`POST /api/auth/apple`. The server exchanges the code using credentials that
-must never ship in the app, stores the resulting Apple refresh token encrypted,
-and revokes it with Apple before deleting the account. Microsoft deletion
-removes the Workshop account only; it does not delete the user's Entra account.
-
-## Failing safely
-
-Two shapes of bug turned up often enough to be worth naming.
-
-**`Int(_:)` traps.** It is a runtime crash on infinity, NaN, and anything past
-`Int64` — not a clamp and not an optional. Any value that came from a text field
-is hostile: a `.decimalPad` still reaches 1e22 by holding down a key, and paste
-ignores the keyboard entirely. Screen with `isFinite` and a range before
-converting (`toFrac32` in `ConversionTablesView`).
-
-**A save that is several round trips can half-succeed.** The project forms write
-the project, then every cut row, then every material. If the network drops in
-the middle, the sheet stays open on an error with some of it already on the
-server — and the obvious next move, tapping Save again, used to create a second
-copy of the project. So each form remembers the id it created
-(`createdProjectId` / `createdShaperId`) and stamps each row's `serverId` the
-moment it lands. Retrying resumes; it doesn't duplicate. Anything else that
-grows a multi-step save needs the same treatment.
-
-Relatedly, `SessionTokenProvider` refreshes through an actor
-(`SessionRefresher`). The app fans several requests out at once, and without
-coalescing each one that finds the token expired spends the *same* refresh
-token; a backend that rotates them answers the first and rejects the rest, and
-every loser clears the Keychain and signs the user out of a session that was
-fine. The unexpired path stays lock-free.
-
-## The app icon
-
-The icon is shared with the web app and **the web repo owns it**. Sources live in
-`workshop/app-store/` — `AppIcon.svg` (default), `AppIcon-dark.svg`, `AppIcon-tinted.svg`.
-Do not redraw it here; re-render from those.
-
-`AppIcon.appiconset` carries all three as single 1024×1024 renditions and lets the
-system downscale:
-
-| Rendition | Appearance | Treatment |
-|---|---|---|
-| `AppIcon-1024.png` | default | The mark as drawn |
-| `AppIcon-1024-dark.png` | `luminosity / dark` | Steel gradient pulled down; flap, `W` and lamp untouched |
-| `AppIcon-1024-tinted.png` | `luminosity / tinted` | Mapped to value alone, lamp forced to white so it stays brightest under any user tint |
-
-Three rules, all of which produce a silently wrong icon if broken: **full bleed** (iOS
-applies its own superellipse mask — rounding the artwork too leaves a light fringe),
-**no alpha channel** (App Store submission rejects it), and **opaque dark/tinted
-variants** rather than transparent ones, because the mark is a physical object and
-letting the system background show through the frame breaks it.
-
-`AccentColor` is `#C77800` — `accentDeep`, the same amber the board tints with.
-
-Verify by inspecting the compiled catalog rather than the Home Screen; SpringBoard
-does not re-render icons when `simctl ui … appearance` changes:
-
-```
-xcrun assetutil --info <build>/Workshop.app/Assets.car | grep -A2 AppIcon
-```
-
-Expect `UIAppearanceDark` and `ISAppearanceTintable` renditions alongside the default.
-
-## The first board
-
-An empty board is the worst first impression this app can make — a departure
-board with no departures. So a brand-new account gets seeded once, on the first
-load that comes back genuinely empty (`StarterProjects` / `StarterSeeder`): four
-projects and three Shaper builds, all real records the user can edit or delete.
-The guard is marked **before** the writes, so a seed that half-fails can't come
-back on the next pull-to-refresh and duplicate what did land.
-
-A seed is only worth having if it looks like a project someone kept. The first
-version created bare `ProjectInput`s, which landed on the board reading PARTS 0
-and EST. COST $0.00 — teaching a new user that a Workshop project is an empty
-shell. So each starter carries a cut list, a costed material list, numbered
-build steps and a plan sheet. Those are four separate endpoints, so `seed` walks
-the projects one at a time (to keep "last updated" order matching the list
-order) and fans the children of each out concurrently — they don't depend on
-each other, and row order travels in `sortOrder`, not in insertion order. Every
-child write is individually non-fatal: a project missing one of its ten parts is
-still worth having.
-
-**The seed content is original, and has to stay that way.** Hotlinking photos
-and build steps from plans blogs into every new user's account is a copyright
-problem and a broken-link problem, and it's the kind of thing App Review reads
-as shipping someone else's content. So the prose is written for this app, and
-the drawings are generated by `Scripts/make-starter-plans.swift` — orthographic
-plan sheets in Martian Mono on steel, deliberately monochrome because the signal
-lamp is user-swappable and these bytes are baked at build time. `sourceUrl` is
-left empty on purpose: there is no original elsewhere to link to. The sheets are
-drawn from the same dimensions as the cut lists, so a part size changes in both
-places or in neither.
-
-## Verifying a change
-
-There are no tests and no linter. Build with:
-
-```
-xcodebuild -project Workshop.xcodeproj -scheme Workshop \
-  -destination 'platform=iOS Simulator,name=<sim>' build
-```
-
-Re-run `xcodegen generate` after adding any `.swift` file, or the build will
-fail with "cannot find X in scope".
-
-**Close the project in Xcode before regenerating.** If Xcode has it open, it
-re-reads the rewritten `project.pbxproj` and re-resolves the package graph. If
-that resolve fails for any reason, Xcode keeps the *empty* graph and every
-target fails with *"Missing package product 'NintekKit'"* — a misleading error,
-since nothing is wrong with the local package and `xcodebuild` on the same file
-still succeeds off its cached resolution. Recover with:
-
-```
-xcodebuild -project Workshop.xcodeproj -scheme Workshop -resolvePackageDependencies
-```
-
-then close and reopen the project. Check that resolve prints a real path for
-NintekKit — `NintekKit: (null)` means the graph is broken.
-
-Package resolution needs the network, so builds must use the **default**
-DerivedData path. Passing `-derivedDataPath` forces a fresh MSAL resolve and
-fails with "Couldn't get the list of tags".
-
-SwiftPM keeps its mirrors as **bare** git repos under
-`SourcePackages/repositories`, so resolution breaks under
-`safe.bareRepository=explicit` with the same "Couldn't get the list of tags".
-Some sandboxed/agent shells inject that setting; if resolve fails there, unset
-it for the command rather than deleting `SourcePackages` — deleting it destroys
-a working resolution that can only be rebuilt online.
-
-## MSAL has no symbols of its own
-
-MSAL is a SwiftPM `.binaryTarget` — a prebuilt, stripped XCFramework Microsoft
-publishes as a zip. Nothing in this build compiles it, so nothing produces a
-dSYM for it, and every App Store upload used to come back with *"Upload Symbols
-Failed … did not include a dSYM for the MSAL.framework"*. The build is accepted
-either way; the cost is that crash reports with an MSAL frame arrive
-unsymbolicated.
-
-Microsoft does publish the symbols, as a separate release asset
-(`MSAL-iOS.framework.dSYM.zip`, or `MSAL-iOS-Sim…` for the simulator slice —
-they are separate builds with separate UUIDs). `Scripts/embed-msal-dsym.sh`
-runs as a post-build phase on the app target: it reads the version SwiftPM
-actually pinned from `Package.resolved` (not the floating `from:` in
-`project.yml`), fetches that release's dSYM into `.dsyms/` keyed by version and
-slice, checks its UUID against the binary being linked, and copies it into
-`DWARF_DSYM_FOLDER_PATH` so Xcode collects it into the archive.
-
-It gates on `DEBUG_INFORMATION_FORMAT = dwarf-with-dsym`, which is the real
-precondition — builds that produce no dSYMs at all skip it and never touch the
-network. **Every failure path warns and exits 0**: missing symbols cost
-symbolication, and that is never worth failing a release build over, least of
-all offline. A UUID mismatch is treated as a failure, because symbolicating
-MSAL frames against the wrong build is worse than not symbolicating them.
-
-This script is **shared verbatim with ShopKeep** (same filename, same contents
-apart from the `.xcodeproj` name). Both ports hit this identically, so fix it in
-one place and copy across rather than letting the two drift.
-
-To inspect a screen against real data without driving auth, the app reads these
-environment overrides (`WORKSHOP_START_*` are `#if DEBUG` only):
-
-`WORKSHOP_API_BASE`, `WORKSHOP_DEV_TOKEN`, `WORKSHOP_DEV_USER_KEY`,
-`WORKSHOP_START_TAB`, `WORKSHOP_START_PROJECT`, `WORKSHOP_START_SHAPER`,
-`WORKSHOP_SIDEBAR=open`
-
-`WORKSHOP_SIDEBAR=open` exists because the sidebar starts collapsed on iPad and
-its toggle can only be tapped by hand — `simctl` has no tap command, so the
-sidebar is otherwise invisible to an automated pass.
-
-**Always set `WORKSHOP_DEV_USER_KEY`.** `WORKSHOP_DEV_TOKEN` alone leaves
-`userKey` nil, which silently suppresses every `?oid=`-scoped image URL — so
-the whole app renders photo-free and image layout bugs pass a local sweep
-untouched. That is exactly how a card-image overflow shipped once already.
-
-**Check the regular size class too.** iPad and "Designed for iPad" on a Mac use
-`NavigationSplitView` and much wider grids; an adaptive column count that looks
-right on a phone can lay out more columns than there are cells.
-
-Pass them through `simctl` as `SIMCTL_CHILD_*`. **Always check both renditions** —
-every defect found late in this port was a dark-mode contrast failure.
+### Buttons
+
+- **Shape:** Continuous 14pt squircle, normally 48pt high; authentication plates are 52pt high. Toolbar glyphs sit in a 38pt visual well inside a 44pt target.
+- **Primary:** Palette action color with white SF Rounded semibold text. Press feedback scales to 97% and fades to 82% over 160ms.
+- **Secondary:** Raised adaptive surface or clear material with ink/action text and a divider stroke when needed.
+- **Danger:** Semantic danger fill with white content, never annotation redirection.
+- **Focus / Pointer:** Native focus behavior remains. iPad cards and the active project use `.hoverEffect(.highlight)`; sidebar rows add a faint hover wash. Hover never reveals an otherwise hidden action.
+
+### Chips
+
+- **Status:** Capsule with both text and semantic tone. Image-backed status adds an ultra-thin material halo for contrast.
+- **Counts:** Quiet annotation tint with action-colored tabular figures.
+- **Stages:** A four-step Idea / Plan / Build / Done track uses color plus current-dot or completed-check state and exposes one VoiceOver label for the whole track.
+
+### Cards / Containers
+
+- **Corner Style:** 14pt continuous for ordinary cards; 24pt for the active hero.
+- **Background:** Ultra-thin material over the plan canvas, with raised-surface fallback.
+- **Border:** One-point adaptive divider, commonly at 62%.
+- **Internal Padding:** 16pt for standard cards, 20pt for the next-action sheet.
+- **Project Card:** A bounded 16:9 image or plan surface, optional material-backed status, then title, description, wood, parts, and hours. The card merges children into one useful accessibility summary.
+
+### Inputs / Fields
+
+- **Style:** Native controls retain native behavior. Search uses a 50pt non-elevated glass field with 14pt horizontal inset and muted leading magnifier.
+- **Focus:** System keyboard, focus, correction, and selection behavior wins. Search disables capitalization and autocorrection because it matches project and material names.
+- **Error / Disabled:** Errors use danger color and explanatory text. Disabled controls retain their label and native disabled semantics.
+
+### Navigation
+
+iPhone uses the native four-tab shell; iPad uses the balanced split view and persistent frosted sidebar. Navigation stacks, sheets, back buttons, edge-swipe gestures, tab behavior, toolbar placement, sheet detents, and drag indicators stay native. The hammer mark and annotation tint identify Workshop without replacing platform interaction.
+
+### Active Project Layer
+
+The project plan or photograph is the base layer. A dark lower gradient protects the white title and status over imagery. The action sheet supplies a symbol, action title, explanation, parts/hours, stage track, and a full-width Open Project control. The outer navigation target has one combined label and hint; inner visuals are decorative to accessibility.
+
+### Widgets and Live Activities
+
+Widget extensions mirror the default Spruce palette and system type in `WorkshopWidgets/WidgetSupport.swift`; they do not import the app's runtime theme selection. Home Screen widgets disable system content margins and paint to the container edge. Stats adapt between a focused small view and four equal medium cells; in-progress work adapts from two medium rows to six large rows; shopping adapts between small and medium; Lock Screen widgets use the circular, rectangular, and inline accessory families.
+
+Figures use compact SF Rounded with monospaced digits and minimum scale factors. Rows divide available height evenly, and empty slots retain structure rather than collapsing. Live Activities and Dynamic Island regions keep the same canvas, annotation, semantic state, and compact data hierarchy while following each system region's constraints.
+
+**The Static Extension Rule.** Widgets preserve the visual language at rest. They compress hierarchy by family and use native links/intents; they do not reproduce app-only animation or runtime palette switching.
+
+### App Icon and Starter Plans
+
+The app icon ships as opaque, full-bleed 1024×1024 default, dark-luminosity, and tinted-luminosity renditions. All three show layered translucent plan sheets, a drafting grid and dimension line, and the hammer silhouette. iOS supplies the outer mask; do not round the source artwork or add alpha.
+
+Seven bundled 1600×1100 starter-plan PNGs are part of the first-run material system. The shipped sheets use light vellum, a pale wood surround, spruce outlines, pencil-blue dimensions and notes, a small wood swatch, and restrained sheet depth. Their drawing geometry corresponds to the editable starter records in `Workshop/App/StarterProjects.swift`. `Scripts/make-starter-plans.swift` is the generator location, but packaged PNGs remain the visual runtime authority whenever generator comments or colors diverge.
+
+### Accessibility and Motion
+
+Every custom action preserves a 44pt minimum target. Important image cards combine child content into explicit labels; icons that repeat visible text are hidden; state uses words, symbols, and traits as well as color. Reduce Motion freezes the sign-in plan drift and removes or simplifies active-layer, loading, metric, and toast animation. Reduce Transparency substitutes solid adaptive surfaces or stronger veils. Pointer highlights are additive feedback for iPad and never a prerequisite.
+
+## Do's and Don'ts
+
+### Do:
+
+- **Do** start with `Palette.swift` and `Theme.swift`; reuse adaptive roles rather than embedding new light-only colors.
+- **Do** keep the active plan/photo and next-action layer dominant before search and library content.
+- **Do** use semantic SwiftUI type styles or the `Theme` helpers so `UIFontMetrics` and Dynamic Type remain active.
+- **Do** use native material only for an actual raised layer and provide the shipped Reduce Transparency behavior.
+- **Do** preserve the 14pt default geometry, 44pt targets, native navigation, VoiceOver summaries, and pointer-as-enhancement behavior.
+- **Do** adapt widget density to family while retaining equal row structure and the default Spruce annotation.
+- **Do** treat the packaged app-icon and starter-plan assets as visual evidence; preserve their variant and no-alpha requirements.
+
+### Don't:
+
+- **Don't** revive the former board metaphor, condensed display type, tiny radii, steel bands, split-flap decoration, or summary-metric wall.
+- **Don't** let annotation color become a full-screen brand wash or substitute for semantic success and danger.
+- **Don't** stack ornamental glass layers; every blur must explain chrome, tracing, selection, or containment.
+- **Don't** use hover to disclose required controls, replace native back/tab/sheet behavior, or key responsive structure to orientation alone.
+- **Don't** use fixed custom font sizes without `UIFontMetrics`, hide state in color alone, or ship a custom control below 44pt.
+- **Don't** treat legacy helper names or stale generator prose as permission to reintroduce a retired visual device.

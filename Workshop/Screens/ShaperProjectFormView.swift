@@ -169,7 +169,7 @@ struct ShaperProjectFormView: View {
                         Theme.flapShade
                     }
                     .frame(height: 160).frame(maxWidth: .infinity).clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 3))
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
                 }
             } header: {
                 Text("Photo URL")
@@ -246,7 +246,9 @@ struct ShaperProjectFormView: View {
             }
         }
         .environment(\.editMode, .constant(.active))
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        .background(PlanCanvasBackground())
     }
 
     private var imageStrip: some View {
@@ -255,7 +257,10 @@ struct ShaperProjectFormView: View {
                 ForEach(existingImages) { img in
                     if let key = model.userKey {
                         AuthImage(url: api.imageURL(imageId: img.id, userKey: key), contentMode: .fill)
-                            .frame(width: 90, height: 90).clipShape(RoundedRectangle(cornerRadius: 3))
+                            .frame(width: 90, height: 90)
+                            .clipShape(
+                                RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                            )
                     }
                 }
             }

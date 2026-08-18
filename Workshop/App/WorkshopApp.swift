@@ -9,7 +9,6 @@ struct WorkshopApp: App {
     @StateObject private var theme = ThemeManager.shared
 
     init() {
-        SettingsKeys.migrateLegacyTextSize()
         Theme.configureAppearance()
     }
 

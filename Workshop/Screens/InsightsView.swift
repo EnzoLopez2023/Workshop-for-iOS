@@ -53,10 +53,10 @@ struct InsightsView: View {
             } else {
                 Chart(points, id: \.date) { point in
                     LineMark(x: .value("Date", point.date), y: .value("Cumulative Cost", point.cumulative))
-                        .foregroundStyle(Theme.accent)
+                        .foregroundStyle(Theme.accentDeep)
                         .interpolationMethod(.monotone)
                     AreaMark(x: .value("Date", point.date), y: .value("Cumulative Cost", point.cumulative))
-                        .foregroundStyle(Theme.accent.opacity(0.15))
+                        .foregroundStyle(Theme.accent.opacity(0.16))
                         .interpolationMethod(.monotone)
                 }
                 .chartYAxis { AxisMarks { value in
@@ -66,6 +66,8 @@ struct InsightsView: View {
                 .frame(height: 200)
             }
         }
+        .padding(20)
+        .planGlass()
     }
 
     // MARK: Cost by project
@@ -82,12 +84,20 @@ struct InsightsView: View {
             } else {
                 Chart(rows) { p in
                     BarMark(x: .value("Cost", p.totalCost ?? 0), y: .value("Project", p.title))
-                        .foregroundStyle(Theme.accent)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Theme.accentDeep, Theme.pencil],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                         .annotation(position: .trailing) { Text(money(p.totalCost ?? 0)).font(Theme.ui(11, .regular)).foregroundStyle(Theme.muted) }
                 }
                 .frame(height: CGFloat(rows.count) * 34 + 20)
             }
         }
+        .padding(20)
+        .planGlass()
     }
 
     // MARK: Build activity
@@ -102,7 +112,7 @@ struct InsightsView: View {
             } else {
                 Chart(months, id: \.month) { row in
                     BarMark(x: .value("Month", row.month, unit: .month), y: .value("Entries", row.count))
-                        .foregroundStyle(Theme.accent)
+                        .foregroundStyle(Theme.accentDeep)
                 }
                 .chartXAxis { AxisMarks(values: .stride(by: .month)) { AxisValueLabel(format: .dateTime.month(.abbreviated)) } }
                 .frame(height: 180)
@@ -110,6 +120,8 @@ struct InsightsView: View {
                     .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
             }
         }
+        .padding(20)
+        .planGlass()
     }
 
     private func errorState(_ msg: String) -> some View {

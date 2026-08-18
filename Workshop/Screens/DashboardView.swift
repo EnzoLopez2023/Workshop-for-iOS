@@ -1,3 +1,15 @@
+/*
+ THESIS: A project is one living plan whose active layer is always the next
+ action; this replaces summary-card dashboards and the Concourse Board metaphor.
+ OWN-WORLD: Cool vellum canvas, deep spruce ink, pencil-blue annotations, native
+ frosted glass, SF typography, and 14-point squircle controls.
+ STORY: The woodworker sees the active build, understands its current phase,
+ continues the next task, then scans the rest of the workshop.
+ FIRST VIEWPORT: The active project plan/photo owns the canvas; a glass action
+ layer sits above it, with project stages and the remaining library below.
+ FORM: Grounded direction 3 of 7, direction-native layered plan-table staging,
+ seed ef48c050, approved from the Living Plan Table sketch.
+ */
 import SwiftUI
 import WidgetKit
 import NintekKit
@@ -8,14 +20,13 @@ enum DashboardRoute: Hashable {
     case shaper(Int)
 }
 
-/// The home screen — full parity with the web `Dashboard.tsx`: the shop board,
-/// search + status filter, project grid, Shaper Hub section, templates, and DIY
-/// links. Templates' clone/delete and the "Add project" actions are writes,
-/// deferred to Phase 3. Details push via NavigationLink.
+/// The home screen: active build and next action first, followed by the
+/// searchable project library, Shaper work, templates, and inspiration.
 struct DashboardView: View {
     let api: WorkshopAPI
     @EnvironmentObject private var model: AppModel
     @Environment(\.horizontalSizeClass) private var hSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var projects: [WSProject] = []
     @State private var shaper: [ShaperProject] = []
@@ -23,6 +34,8 @@ struct DashboardView: View {
     @State private var loading = true
     @State private var loadError: String?
     @State private var filter: StatusFilter = .all
+    @State private var showProjectFilters = false
+    @State private var pendingFilter: StatusFilter?
     @State private var search = ""
     @State private var path: [DashboardRoute] = []
     @State private var showNewProject = false
@@ -37,14 +50,7 @@ struct DashboardView: View {
     @AppStorage(SettingsKeys.dashboardSort) private var dashboardSortRaw = DashboardSort.updated.rawValue
     @AppStorage(SettingsKeys.showCompletedByDefault) private var showCompletedByDefault = false
 
-    private let grid = [GridItem(.adaptive(minimum: 240), spacing: 18)]
-
-    /// The shop board is exactly four cells wide when there is room for them.
-    /// An adaptive grid would lay out eight columns on an iPad and leave the
-    /// last four as a dead slab of line colour.
-    private var shopBoardColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 1), count: hSize == .regular ? 4 : 2)
-    }
+    private let grid = [GridItem(.adaptive(minimum: 280), spacing: 16)]
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -54,29 +60,54 @@ struct DashboardView: View {
                         sharedItemsBanner.padding(.bottom, 20)
                     }
                     if loading {
-                        LazyVGrid(columns: grid, spacing: 18) {
-                            ForEach(0..<6, id: \.self) { _ in ProjectCardSkeletonView() }
+                        VStack(spacing: 16) {
+                            ProjectCardSkeletonView()
+                            LazyVGrid(columns: grid, spacing: 16) {
+                                ForEach(0..<4, id: \.self) { _ in ProjectCardSkeletonView() }
+                            }
                         }
                     } else if let err = loadError {
                         errorState(err)
                     } else {
-                        if !projects.isEmpty { shopBoard.padding(.bottom, 24) }
-                        searchAndFilters.padding(.bottom, 20)
-                        projectGrid
-                        shaperSection.padding(.top, 44)
-                        if !templates.isEmpty { templatesSection.padding(.top, 44) }
-                        diySection.padding(.top, 44)
+                        if let project = focusProject {
+                            activeProjectLayer(project)
+                                .padding(.bottom, 30)
+                        }
+                        searchAndFilters.padding(.bottom, 26)
+                        projectLibrary
+                        shaperSection.padding(.top, 42)
+                        if !templates.isEmpty { templatesSection.padding(.top, 42) }
+                        diySection.padding(.top, 42)
                     }
                 }
                 .contentColumn(900)
                 .padding(20)
             }
             .boardBackground()
-            .navigationTitle("Dashboard")
-            // The shop board *is* this screen's header — a large system title
-            // above it would be a second, emptier one.
+            .navigationTitle("Workshop")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if hSize == .compact {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Image(systemName: "hammer.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.accentDeep)
+                            .accessibilityHidden(true)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    BoardToolbarButton(
+                        symbol: filter == .all
+                            ? "line.3.horizontal.decrease"
+                            : "line.3.horizontal.decrease.circle.fill",
+                        label: "Filter Projects, \(filter.label) selected"
+                    ) {
+                        pendingFilter = nil
+                        showProjectFilters = true
+                    }
+                }
+                .boardToolbarItem()
+
                 if !model.isDemoMode {
                     ToolbarItem(placement: .topBarTrailing) {
                         BoardToolbarButton(symbol: "plus", label: "New Project", tone: .amber) {
@@ -103,6 +134,12 @@ struct DashboardView: View {
                 ShaperProjectFormView(api: api, shaperId: nil) { newId in
                     Task { await load() }
                     path.append(.shaper(newId))
+                }
+            }
+            .sheet(isPresented: $showProjectFilters, onDismiss: commitPendingFilter) {
+                DashboardFilterSheet(applied: filter) { selected in
+                    pendingFilter = selected
+                    showProjectFilters = false
                 }
             }
             .sheet(isPresented: $showPendingShares) {
@@ -155,87 +192,234 @@ struct DashboardView: View {
         path.append(.project(id))
     }
 
+    private func commitPendingFilter() {
+        guard let selected = pendingFilter else { return }
+        pendingFilter = nil
+        guard selected != filter else { return }
+        filter = selected
+    }
+
     /// Surfaces items the Share Extension queued (Phase 7.5) — "Add to
     /// Workshop" from Safari/Photos/Pinterest — until the user reviews them.
     private var sharedItemsBanner: some View {
         Button { showPendingShares = true } label: {
             HStack(spacing: 10) {
-                Image(systemName: "square.and.arrow.down.on.square.fill").foregroundStyle(Theme.accent)
+                Image(systemName: "square.and.arrow.down.on.square.fill")
+                    .foregroundStyle(Theme.accentDeep)
                 Text("\(pendingShares.count) item\(pendingShares.count == 1 ? "" : "s") shared with Workshop")
-                    .font(Theme.ui(14, .medium)).foregroundStyle(Theme.ink)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.ink)
                 Spacer()
-                Text("Review").font(Theme.ui(13, .medium)).foregroundStyle(Theme.accent)
+                Text("Review")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.accentDeep)
             }
-            .padding(.horizontal, 16).padding(.vertical, 12)
-            .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
+            .padding(.horizontal, 16)
+            .frame(minHeight: 52)
+            .planGlass(elevated: false)
+            .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
         }
         .buttonStyle(.plain)
     }
 
-    /// The shop board — the app's signature surface. Four values that roll to
-    /// themselves on load, the way a departure board sets itself when it wakes.
-    private var shopBoard: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 8) {
-                Text("SHOP BOARD")
-                    .font(Theme.board(11, .bold, relativeTo: .caption))
-                    .tracking(1.5)
-                    .foregroundStyle(Theme.onSteel)
-                Spacer(minLength: 8)
-                Text(boardClock)
-                    .font(Theme.board(10, .semibold, relativeTo: .caption2))
-                    .tracking(1.0)
-                    .foregroundStyle(Theme.accentFill)
-                    .monospacedDigit()
-                    .accessibilityHidden(true)
+    private func activeProjectLayer(_ project: WSProject) -> some View {
+        NavigationLink(value: DashboardRoute.project(project.id)) {
+            Group {
+                if hSize == .regular {
+                    ZStack(alignment: .trailing) {
+                        projectPlanVisual(project)
+                            .frame(maxWidth: .infinity)
+                        nextActionLayer(project)
+                            .frame(minWidth: 300, idealWidth: 340, maxWidth: 380)
+                            .padding(28)
+                    }
+                    .frame(minHeight: 380)
+                } else {
+                    VStack(spacing: -34) {
+                        projectPlanVisual(project)
+                            .frame(height: 310)
+                        nextActionLayer(project)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
+                    }
+                }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 9)
-            .background(Theme.steelFace)
-
-            LazyVGrid(columns: shopBoardColumns, spacing: 1) {
-                DashCell(label: "In Progress", value: pad(inProgressCount, 2),
-                         sub: "active builds", tone: .amber)
-                DashCell(label: "In Queue", value: pad(queuedCount, 2),
-                         sub: "ideas & plans")
-                DashCell(label: "Total Parts", value: pad(totalParts, 3),
-                         sub: "across active projects")
-                DashCell(label: "Est. Value", value: "$" + estValue.formatted(.number.grouping(.automatic)),
-                         sub: "in materials")
-            }
-            .background(Theme.line)
+            .background(Theme.flap.opacity(0.42))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous)
+                    .strokeBorder(Theme.line.opacity(0.65), lineWidth: 1)
+            )
+            .shadow(color: Theme.steelDark.opacity(0.14), radius: 22, x: 0, y: 10)
+            .contentShape(RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous))
         }
-        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.rPanel)
-                .strokeBorder(Theme.line, lineWidth: 1)
+        .buttonStyle(.plain)
+        .hoverEffect(.highlight)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.22), value: project.id)
+        .accessibilityLabel(
+            "\(focusLabel(for: project)). \(project.title). \(nextAction(for: project).title)."
         )
+        .accessibilityHint("Opens this project")
     }
 
-    /// Board figures are zero-padded to a fixed width, so a cell never shows a
-    /// blank flap where a digit belongs and the row never changes width.
-    private func pad(_ value: Int, _ width: Int) -> String {
-        String(format: "%0\(width)d", value)
+    private func projectPlanVisual(_ project: WSProject) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            Rectangle()
+                .fill(Theme.flapShade)
+                .overlay {
+                    if heroURL(project.heroImageId) != nil {
+                        AuthImage(url: heroURL(project.heroImageId), contentMode: .fill)
+                            .allowsHitTesting(false)
+                    } else {
+                        PlanCanvasBackground()
+                            .overlay {
+                                Image(systemName: "pencil.and.ruler.fill")
+                                    .font(.system(size: hSize == .regular ? 58 : 44, weight: .medium))
+                                    .foregroundStyle(Theme.accent.opacity(0.34))
+                            }
+                    }
+                }
+                .clipped()
+
+            LinearGradient(
+                colors: [.clear, Theme.steelDark.opacity(0.78)],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(focusLabel(for: project))
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.78))
+                Text(project.title)
+                    .font(
+                        .system(
+                            hSize == .regular ? .largeTitle : .title,
+                            design: .rounded,
+                            weight: .bold
+                        )
+                    )
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                StatusBadge(status: project.status, withBackdrop: true)
+            }
+            .padding(hSize == .regular ? 28 : 22)
+        }
+        .accessibilityHidden(true)
     }
 
-    private var inProgressCount: Int { projects.filter { $0.status == .inProgress }.count }
-    private var queuedCount: Int { projects.filter { $0.status == .idea || $0.status == .planning }.count }
-    private var totalParts: Int {
-        projects.filter { $0.status != .completed }.reduce(0) { $0 + ($1.partsCount ?? 0) }
-    }
-    private var estValue: Int {
-        let rounded = projects.reduce(0.0) { $0 + ($1.totalCost ?? 0) }.rounded()
-        guard rounded.isFinite, rounded > 0 else { return 0 }
-        guard rounded < Double(Int.max) else { return Int.max }
-        return Int(rounded)
+    private func nextActionLayer(_ project: WSProject) -> some View {
+        let action = nextAction(for: project)
+        return VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 10) {
+                Image(systemName: action.symbol)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 34, height: 34)
+                    .background(Theme.accentDeep, in: RoundedRectangle(cornerRadius: 11))
+                Text("Next action")
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.accentDeep)
+                Spacer()
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(action.title)
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .foregroundStyle(Theme.ink)
+                Text(action.detail)
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 12) {
+                Label("\(project.partsCount ?? 0) parts", systemImage: "square.stack.3d.up")
+                Label(
+                    project.estimatedHours > 0 ? "\(project.estimatedHours)h" : "Hours open",
+                    systemImage: "clock"
+                )
+            }
+            .font(.caption)
+            .foregroundStyle(Theme.muted)
+
+            ProjectStageTrack(status: project.status)
+
+            HStack {
+                Text("Open Project")
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                Spacer()
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .frame(minHeight: 48)
+            .background(
+                Theme.accentDeep,
+                in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+            )
+        }
+        .padding(20)
+        .planGlass()
     }
 
-    /// Board clock — the departure-board dateline, not a live ticking clock.
-    private var boardClock: String {
-        let f = DateFormatter()
-        f.dateFormat = "EEE MMM d · HH:mm"
-        f.locale = Locale(identifier: "en_US_POSIX")
-        return f.string(from: Date()).uppercased()
+    private func focusLabel(for project: WSProject) -> String {
+        switch project.status {
+        case .inProgress: "Active build"
+        case .planning: "Ready to plan"
+        case .idea: "Next idea"
+        case .completed: "Recent project"
+        case .unknown: "Project"
+        }
+    }
+
+    private func nextAction(for project: WSProject) -> ProjectNextAction {
+        switch project.status {
+        case .idea:
+            ProjectNextAction(
+                title: "Shape the idea",
+                detail: "Add dimensions, reference photos, and the first parts when you are ready.",
+                symbol: "pencil.and.ruler"
+            )
+        case .planning where (project.partsCount ?? 0) == 0:
+            ProjectNextAction(
+                title: "Build the cut list",
+                detail: "Turn the plan into measured parts before choosing materials.",
+                symbol: "list.bullet.rectangle"
+            )
+        case .planning where project.woodTypes.isEmpty:
+            ProjectNextAction(
+                title: "Choose the stock",
+                detail: "Match the planned parts to the wood you want to build with.",
+                symbol: "tree"
+            )
+        case .planning:
+            ProjectNextAction(
+                title: "Review and start",
+                detail: "Confirm the parts and materials, then move the project into the shop.",
+                symbol: "checklist"
+            )
+        case .inProgress:
+            ProjectNextAction(
+                title: "Continue the build",
+                detail: "Open the project, review the plan, and record the work you complete next.",
+                symbol: "hammer.fill"
+            )
+        case .completed:
+            ProjectNextAction(
+                title: "Review the finished build",
+                detail: "Keep the photos, finish details, and lessons ready for the next project.",
+                symbol: "checkmark.seal.fill"
+            )
+        case .unknown:
+            ProjectNextAction(
+                title: "Open the project",
+                detail: "Review the project record and choose the next useful step.",
+                symbol: "arrow.right.circle"
+            )
+        }
     }
 
     private var searchAndFilters: some View {
@@ -245,58 +429,60 @@ struct DashboardView: View {
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.muted)
                 TextField("Search projects, wood types…", text: $search)
-                    .font(Theme.ui(14))
+                    .font(.body)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
-            .padding(.horizontal, 12).padding(.vertical, 11)
-            .background(Theme.flap)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.rPanel)
-                    .strokeBorder(Theme.line, lineWidth: 1)
-            )
+            .padding(.horizontal, 14)
+            .frame(minHeight: 50)
+            .planGlass(elevated: false)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 1) {
-                    ForEach(StatusFilter.allCases) { f in
-                        let active = filter == f
-                        Button { filter = f } label: {
-                            Text(f.label.uppercased())
-                                .font(Theme.board(10, .semibold, relativeTo: .caption2))
-                                .tracking(1.0)
-                                .foregroundStyle(active ? Theme.onSteel : Theme.muted)
-                                .padding(.horizontal, 12).padding(.vertical, 9)
-                                .background(active ? Theme.steel : Theme.flap)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
-                    }
+            if filter != .all {
+                HStack(spacing: 8) {
+                    Image(systemName: "line.3.horizontal.decrease")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Theme.accent)
+                    Text("Showing \(filter.label)")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.ink)
+                    Spacer(minLength: 8)
+                    Button("Clear") { filter = .all }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.accentDeep)
+                        .minimumHitTarget()
                 }
+                .padding(.leading, 14)
+                .planGlass(elevated: false)
             }
-            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.rPanel)
-                    .strokeBorder(Theme.line, lineWidth: 1)
-            )
+        }
+    }
+
+    private var projectLibrary: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Rail(search.isEmpty && filter == .all ? "Project Library" : "Results",
+                 count: libraryProjects.count)
+            projectGrid
         }
     }
 
     @ViewBuilder private var projectGrid: some View {
-        let items = filteredProjects
+        let items = libraryProjects
         if items.isEmpty {
-            Text(projects.isEmpty ? "No projects yet. Start by capturing your first idea on the web."
-                                  : "No projects match those filters.")
-                .font(Theme.ui(15, .regular, relativeTo: .subheadline)).foregroundStyle(Theme.muted)
+            Text(projects.isEmpty ? "No projects yet. Capture your first build idea."
+                                  : "No other projects match these filters.")
+                .font(.subheadline)
+                .foregroundStyle(Theme.muted)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 40)
         } else {
-            LazyVGrid(columns: grid, spacing: 18) {
+            LazyVGrid(columns: grid, spacing: 16) {
                 ForEach(items) { p in
                     NavigationLink(value: DashboardRoute.project(p.id)) {
                         ProjectCard(project: p, heroURL: heroURL(p.heroImageId))
                     }
                     .buttonStyle(.plain)
+                    .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+                    .hoverEffect(.highlight)
                 }
             }
         }
@@ -308,25 +494,27 @@ struct DashboardView: View {
                 if !model.isDemoMode {
                     Button { showNewShaper = true } label: {
                         Label("Add", systemImage: "plus")
-                            .font(Theme.board(10, .semibold, relativeTo: .caption2))
-                            .foregroundStyle(Theme.onSteel)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Theme.accentDeep)
                     }
                 }
             }
             if shaper.isEmpty {
                 Text("No Shaper Hub projects yet.")
-                    .font(Theme.ui(15, .regular, relativeTo: .subheadline)).foregroundStyle(Theme.muted)
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.muted)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
-                    .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-                    .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                    .planGlass(elevated: false)
             } else {
-                LazyVGrid(columns: grid, spacing: 18) {
+                LazyVGrid(columns: grid, spacing: 16) {
                     ForEach(shaper) { s in
                         NavigationLink(value: DashboardRoute.shaper(s.id)) {
                             ShaperProjectCard(project: s, heroURL: shaperHeroURL(s))
                         }
                         .buttonStyle(.plain)
+                        .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+                        .hoverEffect(.highlight)
                     }
                 }
             }
@@ -342,16 +530,28 @@ struct DashboardView: View {
                         Group {
                             if let url = heroURL(t.heroImageId) {
                                 AuthImage(url: url, contentMode: .fill)
+                                    .allowsHitTesting(false)
                             } else {
-                                ZStack { Theme.flapShade; Image(systemName: "doc.on.doc").font(Theme.ui(28, .bold, relativeTo: .title)).foregroundStyle(Theme.muted.opacity(0.5)) }
+                                PlanCanvasBackground()
+                                    .overlay {
+                                        Image(systemName: "doc.on.doc")
+                                            .font(.system(size: 28, weight: .medium))
+                                            .foregroundStyle(Theme.accent.opacity(0.42))
+                                    }
                             }
                         }
-                        .frame(height: 100).frame(maxWidth: .infinity).clipped()
+                        .frame(height: 132)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
                         VStack(alignment: .leading, spacing: 10) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(t.templateName ?? t.title).font(Theme.ui(16, .bold)).foregroundStyle(Theme.ink).lineLimit(2)
+                                Text(t.templateName ?? t.title)
+                                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                                    .foregroundStyle(Theme.ink)
+                                    .lineLimit(2)
                                 Text("\(t.difficulty.rawValue) · \(t.partsCount) part\(t.partsCount == 1 ? "" : "s")")
-                                    .font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.muted)
                             }
                             if !model.isDemoMode {
                                 HStack(spacing: 8) {
@@ -362,18 +562,21 @@ struct DashboardView: View {
                                             Image(systemName: "doc.on.doc")
                                             Text(cloningTemplateId == t.id ? "Creating…" : "Use Template")
                                         }
-                                        .font(Theme.ui(12, .medium))
+                                        .font(.subheadline.weight(.semibold))
                                         .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 7)
+                                        .frame(minHeight: 44)
                                     }
                                     .disabled(cloningTemplateId == t.id)
-                                    .background(Theme.steel, in: RoundedRectangle(cornerRadius: 3))
-                                    .foregroundStyle(Theme.concourse)
+                                    .background(
+                                        Theme.accentDeep,
+                                        in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                                    )
+                                    .foregroundStyle(.white)
                                     .buttonStyle(.plain)
 
                                     if confirmDeleteTemplateId == t.id {
                                         Button("Cancel") { confirmDeleteTemplateId = nil }
-                                            .font(Theme.ui(12, .regular))
+                                            .font(.subheadline)
                                             .minimumHitTarget()
                                         Button { Task { await deleteTemplate(t) } } label: {
                                             Image(systemName: "trash").foregroundStyle(Theme.red)
@@ -390,10 +593,14 @@ struct DashboardView: View {
                                 }
                             }
                         }
-                        .padding(14)
+                        .padding(16)
                     }
-                    .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-                    .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                            .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                    )
                 }
             }
         }
@@ -407,16 +614,22 @@ struct DashboardView: View {
                     Link(destination: site.url) {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(site.name).font(Theme.ui(15, .medium)).foregroundStyle(Theme.ink)
-                                Text(site.tagline).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
+                                Text(site.name)
+                                    .font(.system(.body, design: .rounded, weight: .semibold))
+                                    .foregroundStyle(Theme.ink)
+                                Text(site.tagline)
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.muted)
                             }
                             Spacer()
-                            Image(systemName: "arrow.up.right").font(.system(size: 13)).foregroundStyle(Theme.muted)
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Theme.accentDeep)
                         }
-                        .padding(.horizontal, 18).padding(.vertical, 14)
+                        .padding(.horizontal, 18)
+                        .frame(minHeight: 62)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-                        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                        .planGlass(elevated: false)
                     }
                     .buttonStyle(.plain)
                 }
@@ -436,6 +649,30 @@ struct DashboardView: View {
     }
 
     // MARK: Data
+
+    private var focusProject: WSProject? {
+        for status in [
+            ProjectStatus.inProgress,
+            .planning,
+            .idea,
+            .completed,
+            .unknown,
+        ] {
+            if let project = projects
+                .filter({ $0.status == status })
+                .max(by: { $0.updatedAt < $1.updatedAt }) {
+                return project
+            }
+        }
+        return nil
+    }
+
+    private var libraryProjects: [WSProject] {
+        let items = filteredProjects
+        let hasExplicitQuery = !search.trimmingCharacters(in: .whitespaces).isEmpty || filter != .all
+        guard !hasExplicitQuery, let focusProject else { return items }
+        return items.filter { $0.id != focusProject.id }
+    }
 
     private var filteredProjects: [WSProject] {
         let q = search.trimmingCharacters(in: .whitespaces).lowercased()
@@ -545,27 +782,113 @@ struct DashboardView: View {
 
 // MARK: - Supporting types
 
-/// One cell of the shop board — a label plate, a split-flap value, and the
-/// unit beneath it.
-private struct DashCell: View {
-    let label: String
-    let value: String
-    let sub: String
-    var tone: SplitFlap.Tone = .letter
+/// Status selection stays outside the scrolling project content. The chosen
+/// value is committed by DashboardView only after this sheet has dismissed, so
+/// rebuilding the grid cannot interrupt the control handling the selection.
+private struct DashboardFilterSheet: View {
+    let onApply: (StatusFilter) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft: StatusFilter
+
+    init(applied: StatusFilter, onApply: @escaping (StatusFilter) -> Void) {
+        self.onApply = onApply
+        _draft = State(initialValue: applied)
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            BoardCaps(label)
-            SplitFlap(value, label: "\(label): \(value)", size: 21, tone: tone)
-            Text(sub)
-                .font(Theme.ui(10))
-                .foregroundStyle(Theme.muted)
-                .lineLimit(1).minimumScaleFactor(0.7)
+        NavigationStack {
+            List(StatusFilter.allCases) { option in
+                Button { draft = option } label: {
+                    HStack(spacing: 12) {
+                        Text(option.label)
+                            .font(Theme.ui(16))
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        if draft == option {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Theme.accentDeep)
+                                .accessibilityHidden(true)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(draft == option ? [.isButton, .isSelected] : .isButton)
+            }
+            .navigationTitle("Filter Projects")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { onApply(draft) }
+                        .fontWeight(.semibold)
+                }
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 13)
-        .background(Theme.flap)
+        .tint(Theme.accentDeep)
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+}
+
+private struct ProjectNextAction {
+    let title: String
+    let detail: String
+    let symbol: String
+}
+
+private struct ProjectStageTrack: View {
+    let status: ProjectStatus
+
+    private let stages: [(status: ProjectStatus, label: String)] = [
+        (.idea, "Idea"),
+        (.planning, "Plan"),
+        (.inProgress, "Build"),
+        (.completed, "Done"),
+    ]
+
+    private var currentIndex: Int {
+        stages.firstIndex { $0.status == status } ?? 0
+    }
+
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(stages.indices, id: \.self) { index in
+                VStack(spacing: 6) {
+                    ZStack {
+                        Circle()
+                            .fill(index <= currentIndex ? Theme.accentDeep : Theme.flapShade)
+                            .frame(width: 18, height: 18)
+                        if index < currentIndex {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundStyle(.white)
+                        } else if index == currentIndex {
+                            Circle()
+                                .fill(.white)
+                                .frame(width: 6, height: 6)
+                        }
+                    }
+                    Text(stages[index].label)
+                        .font(.caption2)
+                        .foregroundStyle(index == currentIndex ? Theme.ink : Theme.muted)
+                }
+                if index < stages.count - 1 {
+                    Capsule()
+                        .fill(index < currentIndex ? Theme.accentDeep : Theme.line)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 2)
+                        .offset(y: -10)
+                }
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Project stage: \(status.label)")
     }
 }
 

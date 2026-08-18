@@ -1,8 +1,7 @@
 import SwiftUI
 import AuthenticationServices
 
-/// Sign-in gate. Carries the Concourse Board world over a veiled technical-plan
-/// backdrop, with two account providers and a read-only local demo.
+/// Sign-in gate over a veiled technical-plan backdrop.
 struct SignInView: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -50,9 +49,8 @@ struct SignInView: View {
                             .disabled(busy)
                             .accessibilityHint("Opens seven complete starter projects without signing in")
 
-                            Text("DEMO IS READ-ONLY · NO ACCOUNT REQUIRED")
-                                .font(Theme.board(9, .semibold, relativeTo: .caption2))
-                                .tracking(1)
+                            Text("Demo is read-only · No account required")
+                                .font(.caption)
                                 .foregroundStyle(Theme.muted)
                                 .padding(.top, 4)
                         }
@@ -68,50 +66,62 @@ struct SignInView: View {
     }
 
     private var titleBoard: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 24) {
+            HStack(spacing: 12) {
                 Image(systemName: "hammer.fill")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Theme.accentFill)
-                Text("THE WORKSHOP")
-                    .font(Theme.board(13, .bold, relativeTo: .caption))
-                    .tracking(1.8)
-                    .foregroundStyle(Theme.onSteel)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(Theme.accentDeep)
+                    .frame(width: 44, height: 44)
+                    .background(
+                        Theme.tint(Theme.accent),
+                        in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                    )
+                Text("Workshop")
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .foregroundStyle(Theme.ink)
                 Spacer(minLength: 0)
-                Text("LIVE")
-                    .font(Theme.board(10, .bold, relativeTo: .caption2))
-                    .tracking(1.2)
-                    .foregroundStyle(Theme.accentFill)
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 13)
-            .background(Theme.steelFace)
 
-            VStack(spacing: 13) {
-                SplitFlap("IN PROGRESS", size: 25, tone: .amber)
-                SplitFlap("PLANNING", size: 25)
-                SplitFlap("COMPLETE", size: 25, tone: .green)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Keep the whole build connected.")
+                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
+                    .foregroundStyle(Theme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("Every project, from first sketch to final coat.")
+                    .font(.title3)
+                    .foregroundStyle(Theme.muted)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 34)
-            .background(Theme.flapShade)
 
-            Text("Every project, from first cut to final coat.")
-                .font(Theme.ui(15, .regular, relativeTo: .subheadline))
-                .foregroundStyle(Theme.onSteel.opacity(0.9))
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 16)
-                .background(Theme.steelFace)
+            HStack(spacing: 8) {
+                stage("Idea", complete: true)
+                connector(complete: true)
+                stage("Plan", complete: true)
+                connector(complete: false)
+                stage("Build", complete: false)
+                connector(complete: false)
+                stage("Finish", complete: false)
+            }
         }
         .frame(maxWidth: 660)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.rPanel)
-                .strokeBorder(Theme.line, lineWidth: 1)
-        )
+        .padding(28)
+        .planGlass()
+    }
+
+    private func stage(_ label: String, complete: Bool) -> some View {
+        Text(label)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(complete ? .white : Theme.muted)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
+            .background(complete ? Theme.accentDeep : Theme.flapShade, in: Capsule())
+    }
+
+    private func connector(complete: Bool) -> some View {
+        Capsule()
+            .fill(complete ? Theme.accentDeep : Theme.line)
+            .frame(maxWidth: .infinity)
+            .frame(height: 2)
     }
 
     private func signInWithMicrosoft() async {
@@ -162,36 +172,32 @@ struct SignInView: View {
 private enum SignInProvider {
     case microsoft, apple, demo
 
-    /// Board lettering, so both plates speak the concourse's caps. The wording
-    /// itself is each provider's required phrase, unchanged.
     var title: String {
         switch self {
-        case .microsoft: "SIGN IN WITH MICROSOFT"
-        case .apple:     "SIGN IN WITH APPLE"
-        case .demo:      "BROWSE DEMO"
+        case .microsoft: "Sign in with Microsoft"
+        case .apple:     "Sign in with Apple"
+        case .demo:      "Browse Demo"
         }
     }
 
-    /// Amber is this screen's one signal lamp and marks the primary action;
-    /// Apple's plate is the ink counterpart, not a second lamp.
     var fill: Color {
         switch self {
-        case .microsoft: Theme.accentFill
+        case .microsoft: Theme.accentDeep
         case .apple:     Color(uiColor: UIColor(rgb: 0x14181A))
-        case .demo:      Theme.steelLight
+        case .demo:      Theme.flap
         }
     }
 
     var foreground: Color {
         switch self {
-        case .microsoft: Theme.steelDark
+        case .microsoft: .white
         case .apple:     .white
-        case .demo:      Theme.onSteel
+        case .demo:      Theme.ink
         }
     }
 }
 
-/// One sign-in action as a flap-square plate on the concourse.
+/// One sign-in action using native continuous geometry.
 private struct SignInPlate: View {
     let provider: SignInProvider
     let busy: Bool
@@ -205,20 +211,24 @@ private struct SignInPlate: View {
                 } else {
                     mark
                 }
-                Text(busy ? "SIGNING IN…" : provider.title)
-                    .font(Theme.board(12, .bold, relativeTo: .callout))
-                    .tracking(1.1)
+                Text(busy ? "Signing in…" : provider.title)
+                    .font(.system(.body, design: .rounded, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
             }
             .foregroundStyle(provider.foreground)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 15)
+            .frame(minHeight: 52)
             .background(provider.fill)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                    .strokeBorder(
+                        provider == .demo ? Theme.line.opacity(0.7) : .clear,
+                        lineWidth: 1
+                    )
+            )
         }
-        // Without an explicit style the system dims the whole label in dark
-        // mode, which mutes the one amber action on screen.
         .buttonStyle(.plain)
         .accessibilityLabel(provider.title.capitalized)
     }
@@ -226,13 +236,10 @@ private struct SignInPlate: View {
     @ViewBuilder private var mark: some View {
         switch provider {
         case .microsoft:
-            // Microsoft's mark needs a white or dark ground — its yellow square
-            // is invisible on amber. A white flap chip gives it one, and reads
-            // as board hardware rather than a sticker.
             MicrosoftLogo(size: 13)
                 .padding(3)
                 .background(.white)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.rFlap))
+                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
         case .apple:
             Image(systemName: "applelogo")
                 .font(.system(size: 16))

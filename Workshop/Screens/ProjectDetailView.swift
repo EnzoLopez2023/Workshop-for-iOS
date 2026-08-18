@@ -69,6 +69,7 @@ struct ProjectDetailView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         metaCard(d).padding(.top, heroImage(d) != nil ? -70 : 20)
                         if !d.woodTypes.isEmpty || !d.toolsNeeded.isEmpty { chips(d).padding(.top, 28) }
+                        buildNotesSection(d)
                         sketchesSection(d)
                         inspirationSection(d)
                         cutListSection(d)
@@ -112,10 +113,12 @@ struct ProjectDetailView: View {
                     } label: {
                         Image(systemName: "ellipsis")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Theme.onSteel)
-                            .frame(width: 30, height: 30)
-                            .background(Theme.steelLight,
-                                        in: RoundedRectangle(cornerRadius: Theme.rFlap))
+                            .foregroundStyle(Theme.accentDeep)
+                            .frame(width: 38, height: 38)
+                            .background(
+                                .ultraThinMaterial,
+                                in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                            )
                             .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
@@ -168,7 +171,9 @@ struct ProjectDetailView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if let desc = d.description, !desc.isEmpty {
-                Text(desc).font(Theme.ui(15, .regular)).foregroundStyle(Theme.muted)
+                Text(descriptionParts(desc).summary)
+                    .font(Theme.ui(15, .regular))
+                    .foregroundStyle(Theme.muted)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -184,7 +189,11 @@ struct ProjectDetailView: View {
             }
 
             Divider().overlay(Theme.line).padding(.top, 8)
-            HStack(alignment: .top, spacing: 12) {
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 112), spacing: 10)],
+                alignment: .leading,
+                spacing: 10
+            ) {
                 Stat(icon: "gauge.medium", label: "Difficulty", value: d.difficulty.rawValue.capitalized)
                 Stat(icon: "clock", label: "Est. Hours", value: "\(d.estimatedHours)h")
                 Stat(icon: "square.stack.3d.up", label: "Parts", value: "\(d.partsCount)")
@@ -193,8 +202,7 @@ struct ProjectDetailView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .planGlass()
     }
 
     private func linkLabel(_ text: String, _ symbol: String) -> some View {
@@ -213,6 +221,37 @@ struct ProjectDetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    @ViewBuilder private func buildNotesSection(_ d: WSProjectDetail) -> some View {
+        if let description = d.description,
+           let notes = descriptionParts(description).notes {
+            SectionBox(title: "Build Notes", icon: "list.number") {
+                Text(notes)
+                    .font(.body)
+                    .foregroundStyle(Theme.ink)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(18)
+                    .planGlass(elevated: false)
+            }
+        }
+    }
+
+    private func descriptionParts(_ description: String) -> (summary: String, notes: String?) {
+        guard let marker = description.range(
+            of: "\\n\\s*1[\\.)]\\s",
+            options: .regularExpression
+        ) else {
+            return (description, nil)
+        }
+        let summary = description[..<marker.lowerBound]
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let notesStart = description.index(after: marker.lowerBound)
+        let notes = description[notesStart...]
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return (summary, notes.isEmpty ? nil : notes)
+    }
+
     // MARK: Galleries
 
     @ViewBuilder private func sketchesSection(_ d: WSProjectDetail) -> some View {
@@ -229,8 +268,14 @@ struct ProjectDetailView: View {
                                     Text("Open PDF").font(Theme.ui(13, .medium)).foregroundStyle(Theme.ink)
                                 }
                                 .frame(maxWidth: .infinity).aspectRatio(1, contentMode: .fit)
-                                .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: 3))
-                                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                                .background(
+                                    Theme.flapShade,
+                                    in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                                        .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                                )
                             }
                             .buttonStyle(.plain)
                             .accessibilityLabel("Open plan PDF \(index + 1)")
@@ -278,7 +323,7 @@ struct ProjectDetailView: View {
         Color.clear
             .aspectRatio(1, contentMode: .fit)
             .overlay { AuthImage(url: url, contentMode: .fill).clipped() }
-            .clipShape(RoundedRectangle(cornerRadius: 3))
+            .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
     }
 
     private func imageGrid<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
@@ -343,8 +388,11 @@ struct ProjectDetailView: View {
                     }
                 }
                 .background(Theme.flap)
-                .clipShape(RoundedRectangle(cornerRadius: 3))
-                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                        .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                )
             }
         }
     }
@@ -394,8 +442,12 @@ struct ProjectDetailView: View {
                         materialRow(m)
                     }
                 }
-                .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                        .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                )
             }
         }
     }
@@ -482,8 +534,12 @@ struct ProjectDetailView: View {
                         .padding(.horizontal, 16).padding(.vertical, 13)
                     }
                 }
-                .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                        .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                )
             }
         }
     }
@@ -511,8 +567,7 @@ struct ProjectDetailView: View {
         }
         .textFieldStyle(.roundedBorder)
         .padding(16)
-        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .planGlass(elevated: false)
     }
 
     // MARK: Build log
@@ -532,7 +587,7 @@ struct ProjectDetailView: View {
                 VStack(spacing: 12) {
                     ForEach(d.buildLog) { e in
                         HStack(alignment: .top, spacing: 14) {
-                            RoundedRectangle(cornerRadius: 2).fill(Theme.steel).frame(width: 3)
+                            Capsule().fill(Theme.accentDeep.opacity(0.62)).frame(width: 3)
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(shortDate(e.createdAt)).font(Theme.ui(12, .regular)).foregroundStyle(Theme.muted)
                                 if !e.note.isEmpty {
@@ -543,7 +598,12 @@ struct ProjectDetailView: View {
                                     Button { gallery = GalleryPreview(urls: [url], index: 0) } label: {
                                         AuthImage(url: url, contentMode: .fill)
                                             .frame(maxWidth: 260).frame(height: 180).clipped()
-                                            .clipShape(RoundedRectangle(cornerRadius: 3))
+                                            .clipShape(
+                                                RoundedRectangle(
+                                                    cornerRadius: Theme.rPanel,
+                                                    style: .continuous
+                                                )
+                                            )
                                     }
                                     .buttonStyle(.plain)
                                     .accessibilityLabel("Open build photo from \(shortDate(e.createdAt))")
@@ -560,8 +620,7 @@ struct ProjectDetailView: View {
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-                        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                        .planGlass(elevated: false)
                     }
                 }
             }
@@ -613,8 +672,7 @@ struct ProjectDetailView: View {
             .disabled(buildSaving || (buildNote.trimmingCharacters(in: .whitespaces).isEmpty && buildPhotoData == nil))
         }
         .padding(16)
-        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .planGlass(elevated: false)
     }
 
     // MARK: Linked projects
@@ -653,8 +711,12 @@ struct ProjectDetailView: View {
                         .padding(.horizontal, 16).padding(.vertical, 12)
                     }
                 }
-                .background(Theme.flap).clipShape(RoundedRectangle(cornerRadius: 3))
-                .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                        .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                )
             }
         }
     }
@@ -680,8 +742,7 @@ struct ProjectDetailView: View {
             .disabled(linkSaving || linkProjectId == nil)
         }
         .padding(16)
-        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
+        .planGlass(elevated: false)
     }
 
     private func toggleButton(_ shown: Bool, _ label: String, action: @escaping () -> Void) -> some View {
@@ -970,8 +1031,14 @@ private struct SectionBox<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
-                if let icon { Image(systemName: icon).font(.system(size: 12)).foregroundStyle(Theme.muted) }
-                BoardCaps(title, size: 13)
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Theme.accentDeep)
+                }
+                Text(title)
+                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.ink)
                 Spacer()
                 if let trailing { trailing }
             }
@@ -986,17 +1053,22 @@ private struct Stat: View {
     let icon: String, label: String, value: String
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label.uppercased())
-                .font(Theme.board(9.5, .semibold, relativeTo: .caption2))
-                .tracking(1.0)
+            Label(label, systemImage: icon)
+                .font(.caption)
                 .foregroundStyle(Theme.muted)
                 .lineLimit(1).minimumScaleFactor(0.7)
             Text(value)
-                .font(Theme.board(15, .bold, relativeTo: .headline))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+                .monospacedDigit()
                 .foregroundStyle(Theme.ink)
                 .lineLimit(1).minimumScaleFactor(0.6)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(
+            Theme.flapShade.opacity(0.72),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
     }
 }
 

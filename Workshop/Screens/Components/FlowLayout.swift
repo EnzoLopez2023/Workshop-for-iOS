@@ -28,28 +28,36 @@ struct FlowLayout: Layout {
     }
 }
 
-/// A rounded tag chip — the web `.chip`.
+/// Compact plan annotation chip.
 struct Chip: View {
     let text: String
     var body: some View {
-        Text(text.uppercased())
-            .font(Theme.board(11, .semibold))
-            .tracking(0.8)
-            .foregroundStyle(Theme.ink)
-            .padding(.horizontal, 10).padding(.vertical, 6)
-            .background(Theme.flapShade, in: RoundedRectangle(cornerRadius: Theme.rFlap))
-            .overlay(RoundedRectangle(cornerRadius: Theme.rFlap).strokeBorder(Theme.line, lineWidth: 1))
+        Text(text)
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(Theme.accentDeep)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 7)
+            .background(
+                Theme.tint(Theme.accent),
+                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(Theme.line.opacity(0.6), lineWidth: 1)
+            )
     }
 }
 
-/// A labelled group of chips (WOOD / TOOLS on the detail page).
+/// A labelled group of plan annotations.
 struct ChipGroup: View {
     let label: String
     let items: [String]
     var body: some View {
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
-                BoardCaps(label, size: 10)
+                Text(label.capitalized)
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.ink)
                 FlowLayout(spacing: 8) {
                     ForEach(items, id: \.self) { Chip(text: $0) }
                 }

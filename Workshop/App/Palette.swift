@@ -9,8 +9,7 @@ struct WSColor {
     let light: UInt
     let dark: UInt
 
-    /// A token that reads the same in both renditions — used by the flap modules,
-    /// which are dark hardware whether the hall around them is lit or not.
+    /// A token that reads the same in both renditions.
     init(_ both: UInt) { self.light = both; self.dark = both }
     init(light: UInt, dark: UInt) { self.light = light; self.dark = dark }
 
@@ -33,37 +32,33 @@ extension UIColor {
 
 // MARK: - Palette
 
-/// A complete named color scheme for the Concourse Board world — a Solari rail
-/// departure board rendered as a woodworking record.
-///
-/// Values are normative and come from `DESIGN.md` in the web repo. Light is the
-/// lit concourse; dark is the board's own night form, *not* an inversion —
-/// steel lifts rather than darkens and the signal lamps brighten, because that
-/// is what a real board does when the hall lights go down.
+/// A complete adaptive palette for the Living Plan Table world. The field names
+/// remain source-compatible with existing views while their roles now describe
+/// vellum, glass, ink, and annotation layers rather than board hardware.
 struct Palette: Identifiable, Equatable {
     let id: String
     let name: String
 
     // Surfaces
-    let concourse: WSColor   // app background — the hall
-    let flapShade: WSColor   // recessed / secondary background
-    let flap: WSColor        // cards — the flap face at rest
+    let concourse: WSColor   // app background — the plan canvas
+    let flapShade: WSColor   // recessed / secondary layer
+    let flap: WSColor        // glass fallback / raised layer
 
     // Text
-    let ink: WSColor         // headings and board lettering
+    let ink: WSColor         // primary text and drawing ink
     let muted: WSColor       // muted / secondary
 
     // Structure
     let line: WSColor
-    let steel: WSColor       // frames, header bands
+    let steel: WSColor       // sidebar / navigation material tint
     let steelDark: WSColor
     let steelLight: WSColor
-    let onSteel: WSColor     // lettering on a steel band
+    let onSteel: WSColor     // text over navigation material
 
-    // Signal lamp (the user-swappable axis)
-    let accent: WSColor      // legible ink weight of the lamp
+    // Annotation color (the user-swappable axis)
+    let accent: WSColor      // legible annotation ink
     let accentDeep: WSColor
-    let accentFill: WSColor  // the lamp glass itself — saturated, for fills
+    let accentFill: WSColor  // saturated control fill
 
     // Semantic signals (shared across lamps)
     let green: WSColor
@@ -71,12 +66,10 @@ struct Palette: Identifiable, Equatable {
     let red: WSColor
     let redFill: WSColor
 
-    /// Flap module internals. Deliberately identical in both renditions — this is
-    /// the single detail that makes the board read as hardware rather than as a
-    /// color scheme.
-    let flapFace = WSColor(0x2E363B)
-    let flapFaceLo = WSColor(0x232A2E)
-    let flapLetter = WSColor(0xF2F4F1)
+    /// Compatibility tokens used by the legacy animated metric component.
+    let flapFace = WSColor(light: 0xF7FAF9, dark: 0x1A2B26)
+    let flapFaceLo = WSColor(light: 0xE5EFEC, dark: 0x12201D)
+    let flapLetter = WSColor(light: 0x15332E, dark: 0xF2F8F6)
 
     static func == (lhs: Palette, rhs: Palette) -> Bool { lhs.id == rhs.id }
 }
@@ -84,77 +77,73 @@ struct Palette: Identifiable, Equatable {
 // MARK: - Palette catalog
 
 extension Palette {
-    /// Shared board surfaces plus one signal-lamp triple. The five presets below
-    /// differ only in which lamp is lit.
-    private static func board(
+    /// Shared plan-table surfaces plus one annotation triple. Preset ids stay
+    /// stable so an existing selection migrates without resetting preferences.
+    private static func plan(
         id: String, name: String,
         accent: WSColor, accentDeep: WSColor, accentFill: WSColor
     ) -> Palette {
         Palette(
             id: id, name: name,
-            concourse: WSColor(light: 0xDDE3E0, dark: 0x0C0F10),
-            flapShade: WSColor(light: 0xE5EAE6, dark: 0x101415),
-            flap:      WSColor(light: 0xF7F9F6, dark: 0x171B1D),
-            ink:       WSColor(light: 0x14181A, dark: 0xEFF2ED),
-            muted:     WSColor(light: 0x59686A, dark: 0x8B9794),
-            line:       WSColor(light: 0xC0CAC6, dark: 0x2C3335),
-            steel:      WSColor(light: 0x2B3238, dark: 0x39434A),
-            steelDark:  WSColor(light: 0x1A2025, dark: 0x232B30),
-            steelLight: WSColor(light: 0x47535B, dark: 0x566269),
-            onSteel:    WSColor(0xEDF1EE),
+            concourse: WSColor(light: 0xEEF4F2, dark: 0x0C1513),
+            flapShade: WSColor(light: 0xE0EBE7, dark: 0x12201D),
+            flap:      WSColor(light: 0xFAFCFB, dark: 0x182823),
+            ink:       WSColor(light: 0x15332E, dark: 0xF3F8F6),
+            muted:     WSColor(light: 0x58716B, dark: 0x9CB2AC),
+            line:       WSColor(light: 0xC9DAD5, dark: 0x2A423C),
+            steel:      WSColor(light: 0xE7F0ED, dark: 0x172923),
+            steelDark:  WSColor(light: 0x15332E, dark: 0x09110F),
+            steelLight: WSColor(light: 0xFFFFFF, dark: 0x254039),
+            onSteel:    WSColor(light: 0x15332E, dark: 0xF3F8F6),
             accent: accent, accentDeep: accentDeep, accentFill: accentFill,
-            green:     WSColor(light: 0x2E7148, dark: 0x6BC48D),
-            greenFill: WSColor(0x46A46A),
-            red:       WSColor(light: 0xB3271F, dark: 0xF0736A),
-            redFill:   WSColor(0xD3392F)
+            green:     WSColor(light: 0x2F7657, dark: 0x76CFA5),
+            greenFill: WSColor(light: 0x3F936D, dark: 0x4DAE81),
+            red:       WSColor(light: 0xA64139, dark: 0xF28A80),
+            redFill:   WSColor(light: 0xC75A50, dark: 0xD86C62)
         )
     }
 
-    /// The default — the departure-board amber every Solari split-flap is lit in.
-    static let amber = board(
-        id: "amber", name: "Amber",
-        accent:     WSColor(light: 0x8A4F00, dark: 0xFFB400),
-        accentDeep: WSColor(0xC77800),
-        accentFill: WSColor(0xFFB400)
+    /// Default annotation: the deep spruce ink from the approved direction.
+    static let amber = plan(
+        id: "amber", name: "Spruce",
+        accent:     WSColor(light: 0x176B5B, dark: 0x68C7B0),
+        accentDeep: WSColor(light: 0x125447, dark: 0x8AD8C5),
+        accentFill: WSColor(light: 0x1E7666, dark: 0x2A927E)
     )
-    /// Signal red — the "cancelled" lamp, borrowed as a lead.
-    static let signal = board(
-        id: "signal", name: "Signal",
-        accent:     WSColor(light: 0xB3271F, dark: 0xF0736A),
-        accentDeep: WSColor(0x8E1D17),
-        accentFill: WSColor(0xD3392F)
+    static let signal = plan(
+        id: "signal", name: "Clay",
+        accent:     WSColor(light: 0x96513E, dark: 0xE9A08A),
+        accentDeep: WSColor(light: 0x743D2F, dark: 0xF0B6A5),
+        accentFill: WSColor(light: 0xA95F49, dark: 0xC97C65)
     )
-    /// Platform green — the "on time" lamp.
-    static let platform = board(
-        id: "platform", name: "Platform",
-        accent:     WSColor(light: 0x2E7148, dark: 0x6BC48D),
-        accentDeep: WSColor(0x1F5233),
-        accentFill: WSColor(0x46A46A)
+    static let platform = plan(
+        id: "platform", name: "Moss",
+        accent:     WSColor(light: 0x557A43, dark: 0x9BCB82),
+        accentDeep: WSColor(light: 0x3F5E32, dark: 0xB5DEA0),
+        accentFill: WSColor(light: 0x668E50, dark: 0x79A962)
     )
-    /// Beacon blue — the approach light.
-    static let beacon = board(
-        id: "beacon", name: "Beacon",
-        accent:     WSColor(light: 0x1B5E8A, dark: 0x5FB5E6),
-        accentDeep: WSColor(0x134563),
-        accentFill: WSColor(0x2E90C7)
+    static let beacon = plan(
+        id: "beacon", name: "Pencil Blue",
+        accent:     WSColor(light: 0x356D85, dark: 0x7AB9D3),
+        accentDeep: WSColor(light: 0x29566A, dark: 0xA0D0E2),
+        accentFill: WSColor(light: 0x477F97, dark: 0x5B9DB8)
     )
-    /// Violet — the night indicator.
-    static let violet = board(
-        id: "violet", name: "Violet",
-        accent:     WSColor(light: 0x5B3E9B, dark: 0xA98BE6),
-        accentDeep: WSColor(0x452D78),
-        accentFill: WSColor(0x7C5BC4)
+    static let violet = plan(
+        id: "violet", name: "Iris",
+        accent:     WSColor(light: 0x66568E, dark: 0xB5A4DE),
+        accentDeep: WSColor(light: 0x4D416D, dark: 0xCFC3EB),
+        accentFill: WSColor(light: 0x7868A2, dark: 0x9281BD)
     )
 
-    /// Every selectable lamp, in display order (matches the web's ACCENT_PRESETS).
+    /// Every selectable annotation color, in display order.
     static let all: [Palette] = [.amber, .signal, .platform, .beacon, .violet]
 }
 
 // MARK: - Theme manager
 
-/// Owns the active lamp selection, persists it, and re-styles the UIKit
+/// Owns the active annotation selection, persists it, and re-styles the UIKit
 /// nav/tab bars whenever it changes. Views observe this to re-render on switch.
-/// (Light/dark *mode* is a separate axis — `WSColor` follows the system scheme,
+/// (Light/dark mode is a separate axis — `WSColor` follows the system scheme,
 /// and the app's appearance override lives in RootView.)
 final class ThemeManager: ObservableObject {
     /// Only ever touched on the main thread (SwiftUI UI + appearance proxies).
@@ -177,8 +166,8 @@ final class ThemeManager: ObservableObject {
 
     private init() {
         let stored = UserDefaults.standard.string(forKey: Self.key)
-        // Retired names from the pre-board palette (rust/forest/slate/navy) fall
-        // back rather than persisting a selection that no longer resolves.
+        // Unknown or retired ids fall back rather than persisting a selection
+        // that no longer resolves.
         selection = Palette.all.first { $0.id == stored }?.id ?? Palette.amber.id
     }
 }

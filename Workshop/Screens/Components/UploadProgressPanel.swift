@@ -61,8 +61,6 @@ struct UploadProgressPanel: View {
             }
         }
         .padding(12)
-        .background(Theme.flap, in: RoundedRectangle(cornerRadius: 3))
-        .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(Theme.line, lineWidth: 1))
-        .shadow(color: .black.opacity(0.24), radius: 7, x: 0, y: 3)
+        .planGlass()
     }
 }
