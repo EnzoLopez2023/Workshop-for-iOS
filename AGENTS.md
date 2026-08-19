@@ -5,8 +5,26 @@ Native SwiftUI Workshop (woodworking project planner). Bundle `com.nintek.worksh
 ## Start here
 - **Cross-app standards:** https://github.com/EnzoLopez2023/azure-infra/blob/main/STANDARDS.md
 - **Cross-repo product map:** https://github.com/EnzoLopez2023/azure-infra/blob/main/PORTFOLIO.md
+- **App Store submission playbook:** https://github.com/EnzoLopez2023/azure-infra/blob/main/APP_STORE_SUBMISSION.md
 
 > Agent sessions run in git worktrees, so relative paths into sibling repos (`../foo/BAR.md`) do **not** resolve. The cross-repo facts below are inlined deliberately. Always link other repos by absolute GitHub URL.
+
+## App Store submission
+
+- Use the shared playbook above. Authenticated App Store Connect REST, signed
+  archive/export/upload, screenshots, TestFlight, IAP metadata, and review
+  submission are proven from this machine, subject to Workshop-specific readiness.
+  Xcode Organizer is optional, not a required manual-only upload path.
+- Nonsecret locators: Team ID `3KB968X34U`, Issuer ID
+  `cc6451f9-92e6-4a01-8e33-ce879517b98f`, and Key ID `334P495BAR`.
+  The canonical local key path is
+  `~/.appstoreconnect/private_keys/AuthKey_334P495BAR.p8`;
+  `~/.appstoreconnect/issuer_id` and `~/.appstoreconnect/key_id` store the
+  nonsecret identifiers.
+- Never commit or print the `.p8` key or a JWT. The proven machine workflow does
+  not mean Workshop itself has been uploaded or submitted; record those
+  app-specific milestones only after they occur.
+- Account-holder/legal actions and hands-on device QA remain manual.
 
 ## Scope
 
