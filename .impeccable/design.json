@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-18T17:54:39.960Z",
+  "generatedAt": "2026-08-18T19:34:12.048Z",
   "title": "Design System: Workshop for iOS",
   "extensions": {
     "colorMeta": {
@@ -235,17 +235,17 @@
       {
         "name": "iphone-shell",
         "value": "userInterfaceIdiom.phone",
-        "purpose": "Portrait-only native four-tab shell."
+        "purpose": "Portrait-only native four-tab shell; Dashboard retains the two-page segmented model and one stack."
       },
       {
         "name": "ipad-compact-shell",
         "value": "userInterfaceIdiom.pad + horizontalSizeClass.compact",
-        "purpose": "Tab shell for narrow split and Slide Over."
+        "purpose": "Tab shell for narrow split and Slide Over; Dashboard retains the two-page segmented model and one stack."
       },
       {
         "name": "ipad-regular-shell",
         "value": "userInterfaceIdiom.pad + horizontalSizeClass.regular",
-        "purpose": "Balanced split view with persistent 216–272pt sidebar."
+        "purpose": "Balanced split view with persistent 216–272pt frosted sidebar; Dashboard retains the two-page segmented model and one stack."
       }
     ]
   },
@@ -296,6 +296,13 @@
       "description": "A 48pt iPad destination row with persistent selected state.",
       "html": "<button class=\"ds-sidebar-destination\" aria-current=\"page\"><span aria-hidden=\"true\">▦</span> Dashboard</button>",
       "css": ".ds-sidebar-destination { color-scheme:light dark; display:flex; align-items:center; gap:12px; width:100%; min-height:48px; padding:0 13px; border:0; border-radius:14px; background:light-dark(rgb(23 107 91 / 11%),rgb(104 199 176 / 11%)); color:light-dark(#125447,#8AD8C5); font:600 17px/1.2 system-ui; text-align:left; transition:background 200ms ease-in-out; } .ds-sidebar-destination:hover { background:light-dark(rgb(23 107 91 / 16%),rgb(104 199 176 / 16%)); } .ds-sidebar-destination:focus-visible { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:2px; }"
+    },
+    {
+      "name": "Dashboard Mode Switcher",
+      "kind": "nav",
+      "description": "The sole project-type selector, pinned in frosted chrome below navigation. Selection persists per scene, page-local search and Projects status stay independent, entry actions select the matching page, and one Dashboard path preserves return behavior.",
+      "html": "<nav class=\"ds-dashboard-switcher-shell\" aria-label=\"Project type\"><div class=\"ds-dashboard-segmented\" role=\"group\" aria-label=\"Project type\"><button class=\"ds-dashboard-segment is-selected\" aria-pressed=\"true\">Projects</button><button class=\"ds-dashboard-segment\" aria-pressed=\"false\">Shaper Hub</button></div></nav>",
+      "css": ".ds-dashboard-switcher-shell { color-scheme:light dark; display:flex; align-items:center; min-height:48px; padding:10px 20px; border-bottom:1px solid light-dark(rgb(201 218 213 / 60%),rgb(42 66 60 / 60%)); background:light-dark(rgb(231 240 237 / 82%),rgb(23 41 35 / 82%)); backdrop-filter:blur(20px); } .ds-dashboard-segmented { display:grid; grid-template-columns:1fr 1fr; width:min(420px,100%); padding:2px; border-radius:10px; background:light-dark(rgb(201 218 213 / 58%),rgb(42 66 60 / 58%)); } .ds-dashboard-segment { min-height:32px; padding:0 14px; border:0; border-radius:8px; background:transparent; color:light-dark(#58716B,#9CB2AC); font:600 13px/1.2 system-ui; transition:background 200ms ease-in-out,color 200ms ease-in-out; } .ds-dashboard-segment.is-selected { background:light-dark(#125447,#8AD8C5); color:light-dark(#FFFFFF,#09110F); box-shadow:0 1px 3px rgb(9 17 15 / 14%); } .ds-dashboard-segment:hover { color:light-dark(#15332E,#F3F8F6); } .ds-dashboard-segment:focus-visible { outline:3px solid light-dark(#356D85,#7AB9D3); outline-offset:2px; }"
     },
     {
       "name": "Active Project Layer",
@@ -354,7 +361,12 @@
       },
       {
         "name": "The Active Layer Rule",
-        "body": "The first useful viewport belongs to the active project and its next action. Counts, search, remaining projects, Shaper work, templates, and inspiration follow rather than competing above it.",
+        "body": "On the Projects page, the first useful viewport belongs to the active project and its next action. Counts, search, remaining projects, templates, and inspiration follow rather than competing above it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Type Separation Rule",
+        "body": "Regular and Shaper Hub projects never share one grid. The dashboard switcher changes the whole project context; regular status filter state and each page's search query remain independent.",
         "section": "layout"
       },
       {
@@ -391,6 +403,7 @@
     "dos": [
       "Do start with `Palette.swift` and `Theme.swift`; reuse adaptive roles rather than embedding new light-only colors.",
       "Do keep the active plan/photo and next-action layer dominant before search and library content.",
+      "Do keep regular and Shaper Hub libraries on separate sibling dashboard pages; persist the selected page per scene while retaining independent search and Projects-only status state.",
       "Do use semantic SwiftUI type styles or the `Theme` helpers so `UIFontMetrics` and Dynamic Type remain active.",
       "Do use native material only for an actual raised layer and provide the shipped Reduce Transparency behavior.",
       "Do preserve the 14pt default geometry, 44pt targets, native navigation, VoiceOver summaries, and pointer-as-enhancement behavior.",
@@ -402,6 +415,7 @@
       "Don't let annotation color become a full-screen brand wash or substitute for semantic success and danger.",
       "Don't stack ornamental glass layers; every blur must explain chrome, tracing, selection, or containment.",
       "Don't use hover to disclose required controls, replace native back/tab/sheet behavior, or key responsive structure to orientation alone.",
+      "Don't duplicate project type inside the status filter or create a second dashboard navigation stack.",
       "Don't use fixed custom font sizes without `UIFontMetrics`, hide state in color alone, or ship a custom control below 44pt.",
       "Don't treat legacy helper names or stale generator prose as permission to reintroduce a retired visual device."
     ]

@@ -36,7 +36,9 @@ struct DashboardView: View {
     @State private var filter: StatusFilter = .all
     @State private var showProjectFilters = false
     @State private var pendingFilter: StatusFilter?
-    @State private var search = ""
+    @SceneStorage("ws.dashboard.page") private var dashboardPageRaw = DashboardPage.projects.rawValue
+    @State private var projectSearch = ""
+    @State private var shaperSearch = ""
     @State private var path: [DashboardRoute] = []
     @State private var showNewProject = false
     @State private var newProjectSourceURL: String?
@@ -60,30 +62,20 @@ struct DashboardView: View {
                         sharedItemsBanner.padding(.bottom, 20)
                     }
                     if loading {
-                        VStack(spacing: 16) {
-                            ProjectCardSkeletonView()
-                            LazyVGrid(columns: grid, spacing: 16) {
-                                ForEach(0..<4, id: \.self) { _ in ProjectCardSkeletonView() }
-                            }
-                        }
+                        loadingPage
                     } else if let err = loadError {
                         errorState(err)
                     } else {
-                        if let project = focusProject {
-                            activeProjectLayer(project)
-                                .padding(.bottom, 30)
-                        }
-                        searchAndFilters.padding(.bottom, 26)
-                        projectLibrary
-                        shaperSection.padding(.top, 42)
-                        if !templates.isEmpty { templatesSection.padding(.top, 42) }
-                        diySection.padding(.top, 42)
+                        dashboardContent
                     }
                 }
                 .contentColumn(900)
                 .padding(20)
             }
             .boardBackground()
+            .safeAreaInset(edge: .top, spacing: 0) {
+                dashboardPageSwitcher
+            }
             .navigationTitle("Workshop")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -95,24 +87,40 @@ struct DashboardView: View {
                             .accessibilityHidden(true)
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    BoardToolbarButton(
-                        symbol: filter == .all
-                            ? "line.3.horizontal.decrease"
-                            : "line.3.horizontal.decrease.circle.fill",
-                        label: "Filter Projects, \(filter.label) selected"
-                    ) {
-                        pendingFilter = nil
-                        showProjectFilters = true
+                if dashboardPage == .projects {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        BoardToolbarButton(
+                            symbol: filter == .all
+                                ? "line.3.horizontal.decrease"
+                                : "line.3.horizontal.decrease.circle.fill",
+                            label: "Filter Projects, \(filter.label) selected"
+                        ) {
+                            pendingFilter = nil
+                            showProjectFilters = true
+                        }
                     }
+                    .boardToolbarItem()
                 }
-                .boardToolbarItem()
 
                 if !model.isDemoMode {
                     ToolbarItem(placement: .topBarTrailing) {
-                        BoardToolbarButton(symbol: "plus", label: "New Project", tone: .amber) {
-                            showNewProject = true
+                        Menu {
+                            Button {
+                                selectDashboardPage(.projects)
+                                showNewProject = true
+                            } label: {
+                                Label("New Project", systemImage: "square.and.pencil")
+                            }
+                            Button {
+                                selectDashboardPage(.shaperHub)
+                                showNewShaper = true
+                            } label: {
+                                Label("New Shaper Hub Project", systemImage: "cpu")
+                            }
+                        } label: {
+                            createMenuLabel
                         }
+                        .accessibilityLabel("Add a project")
                     }
                     .boardToolbarItem()
                 }
@@ -125,6 +133,7 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $showNewProject) {
                 ProjectFormView(api: api, projectId: nil, initialSourceUrl: newProjectSourceURL) { newId in
+                    selectDashboardPage(.projects)
                     newProjectSourceURL = nil
                     Task { await load() }
                     path.append(.project(newId))
@@ -132,6 +141,7 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $showNewShaper) {
                 ShaperProjectFormView(api: api, shaperId: nil) { newId in
+                    selectDashboardPage(.shaperHub)
                     Task { await load() }
                     path.append(.shaper(newId))
                 }
@@ -144,6 +154,7 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $showPendingShares) {
                 PendingSharesView(api: api, items: pendingShares) { url in
+                    selectDashboardPage(.projects)
                     newProjectSourceURL = url
                     showNewProject = true
                 } onHandled: { item in
@@ -164,6 +175,110 @@ struct DashboardView: View {
         }
     }
 
+    private var dashboardPage: DashboardPage {
+        DashboardPage(rawValue: dashboardPageRaw) ?? .projects
+    }
+
+    private var dashboardPageBinding: Binding<DashboardPage> {
+        Binding(
+            get: { dashboardPage },
+            set: { selectDashboardPage($0) }
+        )
+    }
+
+    private func selectDashboardPage(_ page: DashboardPage) {
+        guard dashboardPageRaw != page.rawValue else { return }
+        if reduceMotion {
+            dashboardPageRaw = page.rawValue
+        } else {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                dashboardPageRaw = page.rawValue
+            }
+        }
+    }
+
+    private var dashboardPageSwitcher: some View {
+        HStack {
+            Picker("Project type", selection: dashboardPageBinding) {
+                ForEach(DashboardPage.allCases) { page in
+                    Text(page.label).tag(page)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: 420)
+            .accessibilityValue(dashboardPage.label)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .background(.ultraThinMaterial)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Theme.line.opacity(0.6))
+                .frame(height: 0.5)
+        }
+        .sensoryFeedback(.selection, trigger: dashboardPageRaw)
+    }
+
+    private var createMenuLabel: some View {
+        Image(systemName: "plus")
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: 38, height: 38)
+            .background(
+                Theme.accentDeep,
+                in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+            )
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+    }
+
+    @ViewBuilder private var loadingPage: some View {
+        if dashboardPage == .projects {
+            VStack(spacing: 16) {
+                ProjectCardSkeletonView()
+                LazyVGrid(columns: grid, spacing: 16) {
+                    ForEach(0..<4, id: \.self) { _ in ProjectCardSkeletonView() }
+                }
+            }
+        } else {
+            LazyVGrid(columns: grid, spacing: 16) {
+                ForEach(0..<4, id: \.self) { _ in ProjectCardSkeletonView() }
+            }
+        }
+    }
+
+    @ViewBuilder private var dashboardContent: some View {
+        switch dashboardPage {
+        case .projects:
+            projectsPage
+                .transition(.opacity)
+        case .shaperHub:
+            shaperHubPage
+                .transition(.opacity)
+        }
+    }
+
+    private var projectsPage: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let project = focusProject {
+                activeProjectLayer(project)
+                    .padding(.bottom, 30)
+            }
+            projectSearchAndFilters.padding(.bottom, 26)
+            projectLibrary
+            if !templates.isEmpty { templatesSection.padding(.top, 42) }
+            diySection.padding(.top, 42)
+        }
+    }
+
+    private var shaperHubPage: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            shaperSearchField.padding(.bottom, 26)
+            shaperLibrary
+        }
+    }
+
     // MARK: Sections
 
     /// Home Screen Quick Action → "New Project" (see `AppDelegate`/`IntentRouter`).
@@ -174,7 +289,9 @@ struct DashboardView: View {
         intentRouter.requestedAction = nil
         guard !model.isDemoMode else { return }
         switch action {
-        case .newProject: showNewProject = true
+        case .newProject:
+            selectDashboardPage(.projects)
+            showNewProject = true
         }
     }
 
@@ -184,11 +301,13 @@ struct DashboardView: View {
         #if DEBUG
         if let sid = model.pendingShaperId {
             model.pendingShaperId = nil
+            selectDashboardPage(.shaperHub)
             path.append(.shaper(sid))
         }
         #endif
         guard let id = model.pendingProjectId else { return }
         model.pendingProjectId = nil
+        selectDashboardPage(.projects)
         path.append(.project(id))
     }
 
@@ -422,13 +541,13 @@ struct DashboardView: View {
         }
     }
 
-    private var searchAndFilters: some View {
+    private var projectSearchAndFilters: some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.muted)
-                TextField("Search projects, wood types…", text: $search)
+                TextField("Search projects, wood types…", text: $projectSearch)
                     .font(.body)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -459,7 +578,7 @@ struct DashboardView: View {
 
     private var projectLibrary: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Rail(search.isEmpty && filter == .all ? "Project Library" : "Results",
+            Rail(projectSearch.isEmpty && filter == .all ? "Project Library" : "Results",
                  count: libraryProjects.count)
             projectGrid
         }
@@ -488,34 +607,88 @@ struct DashboardView: View {
         }
     }
 
-    private var shaperSection: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Rail("Shaper Tools Hub — CNC", count: shaper.count) {
-                if !model.isDemoMode {
-                    Button { showNewShaper = true } label: {
-                        Label("Add", systemImage: "plus")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Theme.accentDeep)
-                    }
-                }
-            }
-            if shaper.isEmpty {
-                Text("No Shaper Hub projects yet.")
+    private var shaperSearchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 13))
+                .foregroundStyle(Theme.muted)
+            TextField("Search Shaper projects, materials…", text: $shaperSearch)
+                .font(.body)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+        }
+        .padding(.horizontal, 14)
+        .frame(minHeight: 50)
+        .planGlass(elevated: false)
+    }
+
+    private var shaperLibrary: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Rail(shaperSearch.trimmingCharacters(in: .whitespaces).isEmpty
+                 ? "Shaper Hub Projects"
+                 : "Results",
+                 count: filteredShaperProjects.count)
+            shaperGrid
+        }
+    }
+
+    @ViewBuilder private var shaperGrid: some View {
+        if shaper.isEmpty {
+            VStack(spacing: 12) {
+                Image(systemName: "cpu")
+                    .font(.system(size: 28, weight: .medium))
+                    .foregroundStyle(Theme.accentDeep)
+                Text("No Shaper Hub projects yet")
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.ink)
+                Text("Create a project from a Shaper Tools Hub share URL, then keep its materials, photos, and cut plan together here.")
                     .font(.subheadline)
                     .foregroundStyle(Theme.muted)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(20)
-                    .planGlass(elevated: false)
-            } else {
-                LazyVGrid(columns: grid, spacing: 16) {
-                    ForEach(shaper) { s in
-                        NavigationLink(value: DashboardRoute.shaper(s.id)) {
-                            ShaperProjectCard(project: s, heroURL: shaperHeroURL(s))
-                        }
-                        .buttonStyle(.plain)
-                        .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel))
-                        .hoverEffect(.highlight)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                if !model.isDemoMode {
+                    Button {
+                        showNewShaper = true
+                    } label: {
+                        Label("New Shaper Hub Project", systemImage: "plus")
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 48)
+                            .background(
+                                Theme.accentDeep,
+                                in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+                            )
                     }
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(28)
+            .planGlass(elevated: false)
+        } else if filteredShaperProjects.isEmpty {
+            VStack(spacing: 10) {
+                Text("No Shaper Hub projects match that search.")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.muted)
+                Button("Clear Search") {
+                    shaperSearch = ""
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.accentDeep)
+                .minimumHitTarget()
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 32)
+        } else {
+            LazyVGrid(columns: grid, spacing: 16) {
+                ForEach(filteredShaperProjects) { project in
+                    NavigationLink(value: DashboardRoute.shaper(project.id)) {
+                        ShaperProjectCard(project: project, heroURL: shaperHeroURL(project))
+                    }
+                    .buttonStyle(.plain)
+                    .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+                    .hoverEffect(.highlight)
                 }
             }
         }
@@ -639,9 +812,12 @@ struct DashboardView: View {
     }
 
     private func errorState(_ msg: String) -> some View {
-        VStack(spacing: 8) {
+        let title = dashboardPage == .projects
+            ? "Couldn’t load projects"
+            : "Couldn’t load Shaper Hub"
+        return VStack(spacing: 8) {
             Image(systemName: "wifi.exclamationmark").font(Theme.ui(34, .bold, relativeTo: .largeTitle)).foregroundStyle(Theme.muted)
-            Text("Couldn’t load your workshop").font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
+            Text(title).font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
             Text(msg).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
             Button("Retry") { Task { await load() } }.padding(.top, 4)
         }
@@ -669,13 +845,38 @@ struct DashboardView: View {
 
     private var libraryProjects: [WSProject] {
         let items = filteredProjects
-        let hasExplicitQuery = !search.trimmingCharacters(in: .whitespaces).isEmpty || filter != .all
+        let hasExplicitQuery = !projectSearch.trimmingCharacters(in: .whitespaces).isEmpty || filter != .all
         guard !hasExplicitQuery, let focusProject else { return items }
         return items.filter { $0.id != focusProject.id }
     }
 
+    private var filteredShaperProjects: [ShaperProject] {
+        let query = shaperSearch.trimmingCharacters(in: .whitespaces).lowercased()
+        let matching = shaper.filter { project in
+            guard !query.isEmpty else { return true }
+            let materials = project.materials
+                .map { "\($0.name) \($0.qty)" }
+                .joined(separator: " ")
+            let cutList = project.cutList
+                .map { "\($0.partName) \($0.material ?? "")" }
+                .joined(separator: " ")
+            let haystack = [
+                project.title,
+                project.description ?? "",
+                project.shaperUrl,
+                project.instructions ?? "",
+                materials,
+                cutList,
+            ]
+            .joined(separator: " ")
+            .lowercased()
+            return haystack.contains(query)
+        }
+        return matching.sorted { $0.updatedAt > $1.updatedAt }
+    }
+
     private var filteredProjects: [WSProject] {
-        let q = search.trimmingCharacters(in: .whitespaces).lowercased()
+        let q = projectSearch.trimmingCharacters(in: .whitespaces).lowercased()
         let base = projects.filter { p in
             if filter != .all, p.status != filter.status { return false }
             if filter == .all, !showCompletedByDefault, p.status == .completed { return false }
@@ -781,6 +982,20 @@ struct DashboardView: View {
 }
 
 // MARK: - Supporting types
+
+private enum DashboardPage: String, CaseIterable, Identifiable {
+    case projects
+    case shaperHub
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .projects: "Projects"
+        case .shaperHub: "Shaper Hub"
+        }
+    }
+}
 
 /// Status selection stays outside the scrolling project content. The chosen
 /// value is committed by DashboardView only after this sheet has dismissed, so

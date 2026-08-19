@@ -194,6 +194,22 @@ enum Theme {
         }
         UITabBar.appearance().standardAppearance = tab
         UITabBar.appearance().scrollEdgeAppearance = tab
+
+        let segmented = UISegmentedControl.appearance()
+        segmented.selectedSegmentTintColor = accentColor
+        let selectedSegmentTextColor = UIColor { traits in
+            traits.userInterfaceStyle == .dark
+                ? UIColor(rgb: palette.steelDark.dark)
+                : .white
+        }
+        segmented.setTitleTextAttributes(
+            [.foregroundColor: selectedSegmentTextColor],
+            for: .selected
+        )
+        segmented.setTitleTextAttributes(
+            [.foregroundColor: inkColor],
+            for: .normal
+        )
     }
 
     private static func roundedUIFont(size: CGFloat, weight: UIFont.Weight) -> UIFont {
