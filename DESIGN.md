@@ -12,9 +12,6 @@ colors:
   navigation-deep: "light-dark(#15332E, #09110F)"
   navigation-highlight: "light-dark(#FFFFFF, #254039)"
   on-navigation: "light-dark(#15332E, #F3F8F6)"
-  metric-face: "light-dark(#F7FAF9, #1A2B26)"
-  metric-face-low: "light-dark(#E5EFEC, #12201D)"
-  metric-ink: "light-dark(#15332E, #F2F8F6)"
   success: "light-dark(#2F7657, #76CFA5)"
   success-fill: "light-dark(#3F936D, #4DAE81)"
   danger: "light-dark(#A64139, #F28A80)"
@@ -119,9 +116,9 @@ This is an Operate system. Native navigation, controls, gestures, Dynamic Type, 
 - One active project leads; the rest of the workshop follows as a browsable library.
 - Continuous geometry, 44-point minimum targets, and semantic labels throughout.
 
-**Source of truth:** `Workshop/App/Palette.swift` owns adaptive colors and annotation presets; `Workshop/App/Theme.swift` owns type helpers, geometry, glass, the plan canvas, and shared primitives; `Workshop/App/RootView.swift` owns the device shell; `Workshop/Screens/**` and `Workshop/Auth/SignInView.swift` own shipped compositions; `WorkshopWidgets/WidgetSupport.swift` and the other `WorkshopWidgets/**` files own extension-safe adaptations. The packaged icon renditions in `Workshop/Assets.xcassets/AppIcon.appiconset/` and plan PNGs in `Workshop/Resources/StarterPlans/` are the runtime asset truth.
+**Source of truth:** `Shared/LivingPlanTokens.swift` owns cross-target adaptive values; `Workshop/App/Palette.swift` owns selectable annotation presets; `Workshop/App/Theme.swift` owns app type helpers, geometry, glass, the plan canvas, and shared primitives; `Workshop/App/RootView.swift` owns the device shell; `Workshop/Screens/**` and `Workshop/Auth/SignInView.swift` own shipped compositions; `WorkshopWidgets/**` and `Shared/ShareConfirmationView.swift` own extension-safe adaptations. The packaged icon renditions in `Workshop/Assets.xcassets/AppIcon.appiconset/` and plan PNGs in `Workshop/Resources/StarterPlans/` are the runtime asset truth.
 
-**The Shipped Artifact Rule.** Compatibility names left from an earlier implementation carry no visual authority. New work follows the values and behavior they now resolve to.
+**The Semantic Source Rule.** Shipping source names describe current visual roles. Retired names, custom typefaces, and superseded palette values are rejected by `Scripts/check-shipping-residue.sh`.
 
 ## Colors
 
@@ -135,7 +132,7 @@ The palette is a two-axis system: every structural role adapts between light and
 
 ### Secondary
 
-- **Pencil Blue:** A drafting-note family available as a complete annotation, action, and fill preset. `Theme.pencil` deliberately remains the base Pencil Blue annotation even when another preset is selected.
+- **Pencil Blue:** A drafting-note family available as a complete annotation, action, and fill preset. `Theme.pencilBlue` deliberately remains the base Pencil Blue annotation even when another preset is selected.
 - **Clay, Moss, and Iris:** Full three-token alternatives. They replace the annotation axis only; they do not recolor vellum, ink, dividers, or semantic state.
 
 ### Tertiary
@@ -151,7 +148,6 @@ The palette is a two-axis system: every structural role adapts between light and
 - **Ink / Muted Ink:** Primary reading color and secondary explanation.
 - **Divider:** Hairlines, grid strokes, and subtle component boundaries.
 - **Navigation Material / Deep / Highlight:** The tonal ingredients behind native blurred navigation.
-- **Metric Face / Low / Ink:** Compatibility roles for compact data surfaces and widget figures, not a separate visual world.
 
 ### Annotation presets
 
@@ -184,7 +180,7 @@ The palette is a two-axis system: every structural role adapts between light and
 - **Label** (semibold, 12pt base): Status, stage names, metadata, and compact annotations.
 - **Caption** (system caption and caption2 roles): Secondary metadata. Numeric values use tabular figures through `monospacedDigit()`.
 
-`Theme.board`, `Theme.ui`, and `Theme.display` retain source-compatible names but all return Apple system fonts. Custom base sizes pass through `UIFontMetrics` relative to the supplied SwiftUI text style. Native text-style calls inherit Dynamic Type directly. `Theme.boardFixed` is reserved for the text-size picker's fixed comparison samples and is not a general escape hatch.
+`Theme.rounded`, `Theme.ui`, and `Theme.display` all return Apple system fonts. Custom base sizes pass through `UIFontMetrics` relative to the supplied SwiftUI text style. Native text-style calls inherit Dynamic Type directly. `Theme.roundedFixed` is reserved for fixed comparison samples and is not a general escape hatch. No custom font resource or `UIAppFonts` registration ships in any target.
 
 ### Named Rules
 
@@ -310,11 +306,15 @@ Figures use compact SF Rounded with monospaced digits and minimum scale factors.
 
 **The Static Extension Rule.** Widgets preserve the visual language at rest. They compress hierarchy by family and use native links/intents; they do not reproduce app-only animation or runtime palette switching.
 
+### Share Extension
+
+The confirmation surface uses the same shared canvas, raised layer, divider, Spruce action, and semantic success/danger values as the app. It uses SF Rounded and SF Pro through system APIs, a 14pt continuous material sheet, and an opaque raised fallback under Reduce Transparency. The extension retains its one-way local queue and self-dismisses after confirmation; VoiceOver receives extra reading time.
+
 ### App Icon and Starter Plans
 
 The app icon ships as opaque, full-bleed 1024×1024 default, dark-luminosity, and tinted-luminosity renditions. All three show layered translucent plan sheets, a drafting grid and dimension line, and the hammer silhouette. iOS supplies the outer mask; do not round the source artwork or add alpha.
 
-Seven bundled 1600×1100 starter-plan PNGs are part of the first-run material system. The shipped sheets use light vellum, a pale wood surround, spruce outlines, pencil-blue dimensions and notes, a small wood swatch, and restrained sheet depth. Their drawing geometry corresponds to the editable starter records in `Workshop/App/StarterProjects.swift`. `Scripts/make-starter-plans.swift` is the generator location, but packaged PNGs remain the visual runtime authority whenever generator comments or colors diverge.
+Seven bundled 1600×1100 starter-plan PNGs are part of the first-run material system. The shipped sheets use light vellum, spruce outlines, Pencil Blue dimensions and notes, and system typography. Their drawing geometry corresponds to the editable starter records in `Workshop/App/StarterProjects.swift`. `Scripts/make-starter-plans.swift` is the reproducible source; the packaged PNGs are the runtime assets and must be regenerated when the script changes.
 
 ### Accessibility and Motion
 
@@ -335,10 +335,10 @@ Every custom action preserves a 44pt minimum target. Important image cards combi
 
 ### Don't:
 
-- **Don't** revive the former board metaphor, condensed display type, tiny radii, steel bands, split-flap decoration, or summary-metric wall.
+- **Don't** restore retired control-panel ornament, bundled display type, tiny radii, or a summary-metric wall.
 - **Don't** let annotation color become a full-screen brand wash or substitute for semantic success and danger.
 - **Don't** stack ornamental glass layers; every blur must explain chrome, tracing, selection, or containment.
 - **Don't** use hover to disclose required controls, replace native back/tab/sheet behavior, or key responsive structure to orientation alone.
 - **Don't** duplicate project type inside the status filter or create a second dashboard navigation stack.
 - **Don't** use fixed custom font sizes without `UIFontMetrics`, hide state in color alone, or ship a custom control below 44pt.
-- **Don't** treat legacy helper names or stale generator prose as permission to reintroduce a retired visual device.
+- **Don't** let tooling or archived screenshots override the shipped implementation.

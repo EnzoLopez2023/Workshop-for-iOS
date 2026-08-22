@@ -1,6 +1,6 @@
 /*
  THESIS: A project is one living plan whose active layer is always the next
- action; this replaces summary-card dashboards and the Concourse Board metaphor.
+ action; this replaces summary-card dashboards and the retired control-panel motif.
  OWN-WORLD: Cool vellum canvas, deep spruce ink, pencil-blue annotations, native
  frosted glass, SF typography, and 14-point squircle controls.
  STORY: The woodworker sees the active build, understands its current phase,
@@ -72,7 +72,7 @@ struct DashboardView: View {
                 .contentColumn(900)
                 .padding(20)
             }
-            .boardBackground()
+            .planBackground()
             .safeAreaInset(edge: .top, spacing: 0) {
                 dashboardPageSwitcher
             }
@@ -83,13 +83,13 @@ struct DashboardView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Image(systemName: "hammer.fill")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Theme.accentDeep)
+                            .foregroundStyle(Theme.action)
                             .accessibilityHidden(true)
                     }
                 }
                 if dashboardPage == .projects {
                     ToolbarItem(placement: .topBarTrailing) {
-                        BoardToolbarButton(
+                        PlanToolbarButton(
                             symbol: filter == .all
                                 ? "line.3.horizontal.decrease"
                                 : "line.3.horizontal.decrease.circle.fill",
@@ -99,7 +99,7 @@ struct DashboardView: View {
                             showProjectFilters = true
                         }
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 }
 
                 if !model.isDemoMode {
@@ -122,7 +122,7 @@ struct DashboardView: View {
                         }
                         .accessibilityLabel("Add a project")
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 }
             }
             .navigationDestination(for: DashboardRoute.self) { route in
@@ -214,7 +214,7 @@ struct DashboardView: View {
         .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Theme.line.opacity(0.6))
+                .fill(Theme.divider.opacity(0.6))
                 .frame(height: 0.5)
         }
         .sensoryFeedback(.selection, trigger: dashboardPageRaw)
@@ -226,7 +226,7 @@ struct DashboardView: View {
             .foregroundStyle(.white)
             .frame(width: 38, height: 38)
             .background(
-                Theme.accentDeep,
+                Theme.action,
                 in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
             )
             .frame(width: 44, height: 44)
@@ -324,14 +324,14 @@ struct DashboardView: View {
         Button { showPendingShares = true } label: {
             HStack(spacing: 10) {
                 Image(systemName: "square.and.arrow.down.on.square.fill")
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                 Text("\(pendingShares.count) item\(pendingShares.count == 1 ? "" : "s") shared with Workshop")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Theme.ink)
                 Spacer()
                 Text("Review")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
             }
             .padding(.horizontal, 16)
             .frame(minHeight: 52)
@@ -363,13 +363,13 @@ struct DashboardView: View {
                     }
                 }
             }
-            .background(Theme.flap.opacity(0.42))
+            .background(Theme.raised.opacity(0.42))
             .clipShape(RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.65), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.65), lineWidth: 1)
             )
-            .shadow(color: Theme.steelDark.opacity(0.14), radius: 22, x: 0, y: 10)
+            .shadow(color: Theme.navigationDeep.opacity(0.14), radius: 22, x: 0, y: 10)
             .contentShape(RoundedRectangle(cornerRadius: Theme.rHero, style: .continuous))
         }
         .buttonStyle(.plain)
@@ -384,7 +384,7 @@ struct DashboardView: View {
     private func projectPlanVisual(_ project: WSProject) -> some View {
         ZStack(alignment: .bottomLeading) {
             Rectangle()
-                .fill(Theme.flapShade)
+                .fill(Theme.recessed)
                 .overlay {
                     if heroURL(project.heroImageId) != nil {
                         AuthImage(url: heroURL(project.heroImageId), contentMode: .fill)
@@ -394,14 +394,14 @@ struct DashboardView: View {
                             .overlay {
                                 Image(systemName: "pencil.and.ruler.fill")
                                     .font(.system(size: hSize == .regular ? 58 : 44, weight: .medium))
-                                    .foregroundStyle(Theme.accent.opacity(0.34))
+                                    .foregroundStyle(Theme.annotation.opacity(0.34))
                             }
                     }
                 }
                 .clipped()
 
             LinearGradient(
-                colors: [.clear, Theme.steelDark.opacity(0.78)],
+                colors: [.clear, Theme.navigationDeep.opacity(0.78)],
                 startPoint: .center,
                 endPoint: .bottom
             )
@@ -436,10 +436,10 @@ struct DashboardView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(width: 34, height: 34)
-                    .background(Theme.accentDeep, in: RoundedRectangle(cornerRadius: 11))
+                    .background(Theme.action, in: RoundedRectangle(cornerRadius: 11))
                 Text("Next action")
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                 Spacer()
             }
 
@@ -476,7 +476,7 @@ struct DashboardView: View {
             .padding(.horizontal, 16)
             .frame(minHeight: 48)
             .background(
-                Theme.accentDeep,
+                Theme.action,
                 in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
             )
         }
@@ -560,14 +560,14 @@ struct DashboardView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "line.3.horizontal.decrease")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Theme.accent)
+                        .foregroundStyle(Theme.annotation)
                     Text("Showing \(filter.label)")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Theme.ink)
                     Spacer(minLength: 8)
                     Button("Clear") { filter = .all }
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.accentDeep)
+                        .foregroundStyle(Theme.action)
                         .minimumHitTarget()
                 }
                 .padding(.leading, 14)
@@ -637,7 +637,7 @@ struct DashboardView: View {
             VStack(spacing: 12) {
                 Image(systemName: "cpu")
                     .font(.system(size: 28, weight: .medium))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                 Text("No Shaper Hub projects yet")
                     .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(Theme.ink)
@@ -656,7 +656,7 @@ struct DashboardView: View {
                             .padding(.horizontal, 16)
                             .frame(minHeight: 48)
                             .background(
-                                Theme.accentDeep,
+                                Theme.action,
                                 in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                             )
                     }
@@ -675,7 +675,7 @@ struct DashboardView: View {
                     shaperSearch = ""
                 }
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Theme.accentDeep)
+                .foregroundStyle(Theme.action)
                 .minimumHitTarget()
             }
             .frame(maxWidth: .infinity)
@@ -709,7 +709,7 @@ struct DashboardView: View {
                                     .overlay {
                                         Image(systemName: "doc.on.doc")
                                             .font(.system(size: 28, weight: .medium))
-                                            .foregroundStyle(Theme.accent.opacity(0.42))
+                                            .foregroundStyle(Theme.annotation.opacity(0.42))
                                     }
                             }
                         }
@@ -741,7 +741,7 @@ struct DashboardView: View {
                                     }
                                     .disabled(cloningTemplateId == t.id)
                                     .background(
-                                        Theme.accentDeep,
+                                        Theme.action,
                                         in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                                     )
                                     .foregroundStyle(.white)
@@ -752,7 +752,7 @@ struct DashboardView: View {
                                             .font(.subheadline)
                                             .minimumHitTarget()
                                         Button { Task { await deleteTemplate(t) } } label: {
-                                            Image(systemName: "trash").foregroundStyle(Theme.red)
+                                            Image(systemName: "trash").foregroundStyle(Theme.danger)
                                         }
                                         .minimumHitTarget()
                                         .accessibilityLabel("Confirm delete \(t.templateName ?? t.title) template")
@@ -772,7 +772,7 @@ struct DashboardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                            .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                            .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
                     )
                 }
             }
@@ -797,7 +797,7 @@ struct DashboardView: View {
                             Spacer()
                             Image(systemName: "arrow.up.right")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(Theme.accentDeep)
+                                .foregroundStyle(Theme.action)
                         }
                         .padding(.horizontal, 18)
                         .frame(minHeight: 62)
@@ -1023,7 +1023,7 @@ private struct DashboardFilterSheet: View {
                         if draft == option {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(Theme.accentDeep)
+                                .foregroundStyle(Theme.action)
                                 .accessibilityHidden(true)
                         }
                     }
@@ -1045,7 +1045,7 @@ private struct DashboardFilterSheet: View {
                 }
             }
         }
-        .tint(Theme.accentDeep)
+        .tint(Theme.action)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
     }
@@ -1077,7 +1077,7 @@ private struct ProjectStageTrack: View {
                 VStack(spacing: 6) {
                     ZStack {
                         Circle()
-                            .fill(index <= currentIndex ? Theme.accentDeep : Theme.flapShade)
+                            .fill(index <= currentIndex ? Theme.action : Theme.recessed)
                             .frame(width: 18, height: 18)
                         if index < currentIndex {
                             Image(systemName: "checkmark")
@@ -1095,7 +1095,7 @@ private struct ProjectStageTrack: View {
                 }
                 if index < stages.count - 1 {
                     Capsule()
-                        .fill(index < currentIndex ? Theme.accentDeep : Theme.line)
+                        .fill(index < currentIndex ? Theme.action : Theme.divider)
                         .frame(maxWidth: .infinity)
                         .frame(height: 2)
                         .offset(y: -10)

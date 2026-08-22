@@ -14,7 +14,7 @@ struct WorkshopApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            launchView
                 .environmentObject(model)
                 .environmentObject(theme)
                 .onOpenURL { url in
@@ -40,5 +40,21 @@ struct WorkshopApp: App {
                     model.handleDeepLink(url)
                 }
         }
+        }
+
+        @ViewBuilder
+        private var launchView: some View {
+    #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-ui-test-share-confirmation") {
+                ShareConfirmationView(
+                    message: "Open Workshop to add this link as a new project.",
+                    ok: true
+                )
+            } else {
+                RootView()
+            }
+    #else
+            RootView()
+    #endif
     }
 }

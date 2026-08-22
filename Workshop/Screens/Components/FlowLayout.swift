@@ -34,16 +34,16 @@ struct Chip: View {
     var body: some View {
         Text(text)
             .font(.subheadline.weight(.medium))
-            .foregroundStyle(Theme.accentDeep)
+            .foregroundStyle(Theme.action)
             .padding(.horizontal, 11)
             .padding(.vertical, 7)
             .background(
-                Theme.tint(Theme.accent),
+                Theme.tint(Theme.annotation),
                 in: RoundedRectangle(cornerRadius: 10, style: .continuous)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.6), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.6), lineWidth: 1)
             )
     }
 }

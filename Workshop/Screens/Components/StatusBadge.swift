@@ -8,7 +8,7 @@ struct StatusBadge: View {
     var withBackdrop = false
 
     var body: some View {
-        Flag(status.label, tone: tone)
+        StatusFlag(status.label, tone: tone)
             .padding(withBackdrop ? 3 : 0)
             .background {
                 if withBackdrop {
@@ -17,13 +17,13 @@ struct StatusBadge: View {
             }
     }
 
-    private var tone: Flag.Tone {
+    private var tone: StatusFlag.Tone {
         switch status {
-        case .idea:       .idle
-        case .planning:   .steel
-        case .inProgress: .amber
-        case .completed:  .green
-        case .unknown:    .idle
+        case .idea:       .neutral
+        case .planning:   .accent
+        case .inProgress: .accentStrong
+        case .completed:  .success
+        case .unknown:    .neutral
         }
     }
 }

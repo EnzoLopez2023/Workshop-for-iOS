@@ -69,7 +69,7 @@ struct AuthImage: View {
                     .aspectRatio(contentMode: contentMode)
             } else {
                 ZStack {
-                    Theme.flapShade
+                    Theme.recessed
                     Image(systemName: failed ? "exclamationmark.triangle" : placeholderSymbol)
                         .foregroundStyle(Theme.muted.opacity(0.5))
                 }

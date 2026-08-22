@@ -41,7 +41,7 @@ struct PDFViewerSheet: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
                 }
-                .boardToolbarItem()
+                .planToolbarItem()
             }
             .task {
                 do {

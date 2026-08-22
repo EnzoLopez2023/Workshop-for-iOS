@@ -97,19 +97,19 @@ struct ProjectFormView: View {
                 UploadProgressPanel(uploads: uploads) { id in uploads.removeAll { $0.id == id } }
                     .padding(16)
             }
-            .boardBackground()
+            .planBackground()
             .navigationTitle(editing ? "Edit Project" : "New Project")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
-                .boardToolbarItem()
+                .planToolbarItem()
                 ToolbarItem(placement: .confirmationAction) {
                     Button(saving ? "Saving…" : "Save") { Task { await save() } }
                         .disabled(saving || title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
-                .boardToolbarItem()
+                .planToolbarItem()
             }
             .task { if editing { await loadExisting() } }
             .sheet(isPresented: Binding(
@@ -140,7 +140,7 @@ struct ProjectFormView: View {
                 }
                 .disabled(analyzing || sourceUrl.trimmingCharacters(in: .whitespaces).isEmpty)
                 if let analyzeError {
-                    Text(analyzeError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
+                    Text(analyzeError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.danger)
                 }
                 TextField("OptiCutter Cut Plan URL", text: $cutPlanUrl)
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
@@ -227,7 +227,7 @@ struct ProjectFormView: View {
             } footer: {
                 cutListFooter
             }
-            .listRowBackground(cutListDropTargeted ? Theme.tint(Theme.accentFill) : nil)
+            .listRowBackground(cutListDropTargeted ? Theme.tint(Theme.annotationFill) : nil)
             .onDrop(of: [UTType.image.identifier, UTType.pdf.identifier], isTargeted: $cutListDropTargeted) { providers in
                 guard UIDevice.current.userInterfaceIdiom == .pad, let projectId else { return false }
                 return handleCutListDrop(providers, projectId: projectId)
@@ -256,7 +256,7 @@ struct ProjectFormView: View {
 
             if let saveError {
                 Section {
-                    Text(saveError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
+                    Text(saveError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.danger)
                 }
             }
         }
@@ -271,7 +271,7 @@ struct ProjectFormView: View {
     @ViewBuilder private var cutListFooter: some View {
         if UIDevice.current.userInterfaceIdiom == .pad, projectId != nil {
             Text(cutListDropTargeted ? "Release to attach as a plan" : "Every piece you'll need to mill. Drag a photo or PDF here to attach it as a plan.")
-                .foregroundStyle(cutListDropTargeted ? Theme.accent : Theme.muted)
+                .foregroundStyle(cutListDropTargeted ? Theme.annotation : Theme.muted)
         } else {
             Text("Every piece you'll need to mill.")
         }
@@ -290,7 +290,7 @@ struct ProjectFormView: View {
                     Image(systemName: "camera.viewfinder").font(.system(size: 15))
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(Theme.accent)
+                .foregroundStyle(Theme.annotation)
                 .minimumHitTarget()
                 .accessibilityLabel("Scan dimensions for \(row.wrappedValue.partName.isEmpty ? "part" : row.wrappedValue.partName)")
             }
@@ -316,7 +316,7 @@ struct ProjectFormView: View {
                 } label: {
                     Image(systemName: row.wrappedValue.purchased ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundStyle(row.wrappedValue.purchased ? Theme.accentDeep : Theme.muted)
+                        .foregroundStyle(row.wrappedValue.purchased ? Theme.action : Theme.muted)
                 }
                 .buttonStyle(.plain)
                 .minimumHitTarget()
@@ -342,7 +342,7 @@ struct ProjectFormView: View {
                     ZStack(alignment: .topTrailing) {
                         Group {
                             if img.isPDF {
-                                ZStack { Theme.flapShade; Image(systemName: "doc.text.fill").foregroundStyle(Theme.accent) }
+                                ZStack { Theme.recessed; Image(systemName: "doc.text.fill").foregroundStyle(Theme.annotation) }
                             } else {
                                 AuthImage(url: url, contentMode: .fill)
                             }
@@ -407,7 +407,7 @@ struct ProjectFormView: View {
         }
         .font(Theme.ui(14, .regular))
         .buttonStyle(.plain)
-        .foregroundStyle(Theme.accent)
+        .foregroundStyle(Theme.annotation)
         .sheet(isPresented: kind == .sketch ? $showSketchCamera : $showInspirationCamera) {
             CameraPicker { image in
                 Task { await uploadCameraImage(image, kind: kind, projectId: projectId) }

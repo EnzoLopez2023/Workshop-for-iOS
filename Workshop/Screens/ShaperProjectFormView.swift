@@ -70,18 +70,18 @@ struct ShaperProjectFormView: View {
                     form
                 }
             }
-            .boardBackground()
+            .planBackground()
             .navigationTitle(editing ? "Edit Shaper Project" : "New Shaper Project")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                .boardToolbarItem()
+                .planToolbarItem()
                 ToolbarItem(placement: .confirmationAction) {
                     Button(saving ? "Saving…" : "Save") { Task { await save() } }
                         .disabled(saving || title.trimmingCharacters(in: .whitespaces).isEmpty
                                  || shaperUrl.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
-                .boardToolbarItem()
+                .planToolbarItem()
             }
             .task { if editing { await loadExisting() } }
             .sheet(isPresented: Binding(
@@ -107,7 +107,7 @@ struct ShaperProjectFormView: View {
                 }
                 .disabled(analyzing || shaperUrl.trimmingCharacters(in: .whitespaces).isEmpty)
                 if let analyzeError {
-                    Text(analyzeError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
+                    Text(analyzeError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.danger)
                 }
             } header: {
                 Text("Shaper Hub URL")
@@ -134,7 +134,7 @@ struct ShaperProjectFormView: View {
                 if unresolvedPhotoReadFailures > 0 {
                     Text(photoReadFailureMessage(unresolvedPhotoReadFailures))
                         .font(Theme.ui(13, .regular, relativeTo: .footnote))
-                        .foregroundStyle(Theme.red)
+                        .foregroundStyle(Theme.danger)
                     Button("Dismiss Photo Error") {
                         unresolvedPhotoReadFailures = 0
                     }
@@ -142,7 +142,7 @@ struct ShaperProjectFormView: View {
                 if let uploadStatus {
                     Text(uploadStatus)
                         .font(Theme.ui(13, .regular, relativeTo: .footnote))
-                        .foregroundStyle(uploadFailed ? Theme.red : Theme.muted)
+                        .foregroundStyle(uploadFailed ? Theme.danger : Theme.muted)
                 }
                 if editing, !failedPhotoUploads.isEmpty {
                     Button {
@@ -166,7 +166,7 @@ struct ShaperProjectFormView: View {
                     AsyncImage(url: url) { image in
                         image.resizable().aspectRatio(contentMode: .fill)
                     } placeholder: {
-                        Theme.flapShade
+                        Theme.recessed
                     }
                     .frame(height: 160).frame(maxWidth: .infinity).clipped()
                     .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
@@ -210,7 +210,7 @@ struct ShaperProjectFormView: View {
                                 Image(systemName: "camera.viewfinder").font(.system(size: 15))
                             }
                             .buttonStyle(.plain)
-                            .foregroundStyle(Theme.accent)
+                            .foregroundStyle(Theme.annotation)
                         }
                         HStack(spacing: 8) {
                             TextField("Qty", text: $row.qty).keyboardType(.numberPad).frame(width: 50)
@@ -241,7 +241,7 @@ struct ShaperProjectFormView: View {
 
             if let saveError {
                 Section {
-                    Text(saveError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
+                    Text(saveError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.danger)
                 }
             }
         }

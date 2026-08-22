@@ -61,7 +61,7 @@ struct ToastOverlay: View {
                     toast.style == .success
                         ? Color(red: 0.08, green: 0.31, blue: 0.18)
                         : Color(red: 0.50, green: 0.06, blue: 0.04),
-                    in: RoundedRectangle(cornerRadius: Theme.rFlap)
+                    in: RoundedRectangle(cornerRadius: Theme.rCompact)
                 )
                 .shadow(color: .black.opacity(0.28), radius: 6, y: 3)
                 .padding(.top, 8)

@@ -28,7 +28,7 @@ struct CutPlanSheetView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                        .strokeBorder(Theme.line, lineWidth: 1.5)
+                        .strokeBorder(Theme.divider, lineWidth: 1.5)
                 )
         }
     }
@@ -39,7 +39,7 @@ struct CutPlanSheetView: View {
             ForEach(Array(parts.enumerated()), id: \.offset) { i, part in
                 if i > 0 { Text("·").opacity(0.4) }
                 Text(part)
-                    .font(Theme.board(11, i == 0 ? .semibold : .regular))
+                    .font(Theme.rounded(11, i == 0 ? .semibold : .regular))
                     .foregroundStyle(i == 0 ? Theme.ink : Theme.muted)
             }
         }
@@ -92,10 +92,10 @@ struct CutPlanSheetView: View {
                     layer.rotate(by: .degrees(-90))
                     layer.translateBy(x: -cx, y: -cy)
                 }
-                layer.draw(Text(label).font(Theme.board(partFontSz, .semibold)).foregroundStyle(Color(hex: CutPlanBoard.ink)),
+                layer.draw(Text(label).font(Theme.rounded(partFontSz, .semibold)).foregroundStyle(Color(hex: CutPlanBoard.ink)),
                           at: CGPoint(x: cx, y: cy - vOff), anchor: .center)
                 if showDims {
-                    layer.draw(Text(dimLabel).font(Theme.board(dimFontSz)).foregroundStyle(Color(hex: CutPlanBoard.ink).opacity(0.55)),
+                    layer.draw(Text(dimLabel).font(Theme.rounded(dimFontSz)).foregroundStyle(Color(hex: CutPlanBoard.ink).opacity(0.55)),
                               at: CGPoint(x: cx, y: cy + vOff), anchor: .center)
                 }
             }

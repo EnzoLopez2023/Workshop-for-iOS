@@ -60,7 +60,7 @@ struct RootView: View {
             }
         }
         .overlay(alignment: .top) { ToastOverlay() }
-        .tint(Theme.accentDeep)
+        .tint(Theme.action)
         .animation(.easeInOut(duration: 0.2), value: theme.selection)
         .preferredColorScheme((Appearance(rawValue: appearanceRaw) ?? .system).scheme)
         .onChange(of: intentRouter.requestedTab?.id) { _, _ in
@@ -81,7 +81,7 @@ struct RootView: View {
                     .tag(dest.rawValue)
             }
         }
-        .tint(Theme.accentDeep)
+        .tint(Theme.action)
     }
 
     // MARK: iPad / wide windows — overlay sidebar split view
@@ -98,14 +98,12 @@ struct RootView: View {
                 .id(current)   // reset the detail's nav stack when switching sections
         }
         .navigationSplitViewStyle(.balanced)
-        .tint(Theme.accentDeep)
+        .tint(Theme.action)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 
-    /// The sidebar is the steel frame the board hangs on — the same face as the
-    /// toolbar, so the two meet as one continuous edge instead of a light column
-    /// butting into a dark bar. A system `.sidebar` list can't carry this: its
-    /// background, type and selection capsule are all platform chrome.
+    /// The sidebar is a persistent frosted workbench rail that meets the
+    /// navigation material as one continuous layer.
     private var sidebarRail: some View {
         VStack(spacing: 0) {
             sidebarHeader
@@ -126,14 +124,14 @@ struct RootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(
-            reduceTransparency ? AnyShapeStyle(Theme.flap) : AnyShapeStyle(.ultraThinMaterial),
+            reduceTransparency ? AnyShapeStyle(Theme.raised) : AnyShapeStyle(.ultraThinMaterial),
             in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
         )
         .overlay(
             RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                .strokeBorder(Theme.line.opacity(0.7), lineWidth: 1)
+                .strokeBorder(Theme.divider.opacity(0.7), lineWidth: 1)
         )
-        .shadow(color: Theme.steelDark.opacity(0.12), radius: 18, x: 0, y: 8)
+        .shadow(color: Theme.navigationDeep.opacity(0.12), radius: 18, x: 0, y: 8)
         .padding(12)
         .background(PlanCanvasBackground())
     }
@@ -143,9 +141,9 @@ struct RootView: View {
         HStack(spacing: 10) {
             Image(systemName: "hammer.fill")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Theme.accentDeep)
+                .foregroundStyle(Theme.action)
                 .frame(width: 34, height: 34)
-                .background(Theme.tint(Theme.accent), in: RoundedRectangle(cornerRadius: 11))
+                .background(Theme.tint(Theme.annotation), in: RoundedRectangle(cornerRadius: 11))
             Text("Workshop")
                 .font(.system(.title3, design: .rounded, weight: .bold))
                 .foregroundStyle(Theme.ink)
@@ -155,14 +153,14 @@ struct RootView: View {
         .padding(.top, 16)
         .padding(.bottom, 14)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(Theme.line.opacity(0.7)).frame(height: 1)
+            Rectangle().fill(Theme.divider.opacity(0.7)).frame(height: 1)
         }
     }
 
     /// Footer pinned below the rail — signed-in identity + version.
     private var sidebarFooter: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Rectangle().fill(Theme.line.opacity(0.7)).frame(height: 1)
+            Rectangle().fill(Theme.divider.opacity(0.7)).frame(height: 1)
                 .padding(.horizontal, -16)
             if let name = model.userName {
                 Text(name)
@@ -215,12 +213,12 @@ private struct SidebarDestinationButton: View {
                     .lineLimit(1)
                 Spacer(minLength: 0)
             }
-            .foregroundStyle(active ? Theme.accentDeep : Theme.ink.opacity(0.72))
+            .foregroundStyle(active ? Theme.action : Theme.ink.opacity(0.72))
             .padding(.horizontal, 13)
             .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
             .background(
                 active
-                    ? Theme.tint(Theme.accent)
+                    ? Theme.tint(Theme.annotation)
                     : Color.white.opacity(hovered ? 0.15 : 0),
                 in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
             )
@@ -240,7 +238,7 @@ private struct DemoModeRail: View {
         HStack(spacing: 9) {
             Image(systemName: "eye.fill")
                 .font(.caption)
-                .foregroundStyle(Theme.accentDeep)
+                .foregroundStyle(Theme.action)
             Text("Demo Workshop")
                 .font(.system(.caption, design: .rounded, weight: .semibold))
             Text("Read only")
@@ -254,7 +252,7 @@ private struct DemoModeRail: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(Theme.accentDeep, in: RoundedRectangle(cornerRadius: 10))
+            .background(Theme.action, in: RoundedRectangle(cornerRadius: 10))
             .buttonStyle(.plain)
             .accessibilityHint("Leaves the demo and returns to sign in")
         }
@@ -263,7 +261,7 @@ private struct DemoModeRail: View {
         .frame(minHeight: 44)
         .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(Theme.line.opacity(0.7)).frame(height: 1)
+            Rectangle().fill(Theme.divider.opacity(0.7)).frame(height: 1)
         }
     }
 }

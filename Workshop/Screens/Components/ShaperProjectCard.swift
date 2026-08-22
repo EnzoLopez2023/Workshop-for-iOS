@@ -10,7 +10,7 @@ struct ShaperProjectCard: View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topLeading) {
                 Rectangle()
-                    .fill(Theme.flapShade)
+                    .fill(Theme.recessed)
                     .aspectRatio(16.0 / 9.0, contentMode: .fit)
                     .overlay {
                         if heroURL != nil {
@@ -21,7 +21,7 @@ struct ShaperProjectCard: View {
                                 .overlay {
                                     Image(systemName: "cpu")
                                         .font(.system(size: 30, weight: .medium))
-                                        .foregroundStyle(Theme.accent.opacity(0.42))
+                                        .foregroundStyle(Theme.annotation.opacity(0.42))
                                 }
                         }
                     }
@@ -30,7 +30,7 @@ struct ShaperProjectCard: View {
 
                 Label("Shaper", systemImage: "cpu")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(.ultraThinMaterial, in: Capsule())
@@ -64,9 +64,9 @@ struct ShaperProjectCard: View {
         .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
         )
-        .shadow(color: Theme.steelDark.opacity(0.1), radius: 14, x: 0, y: 7)
+        .shadow(color: Theme.navigationDeep.opacity(0.1), radius: 14, x: 0, y: 7)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilitySummary)
     }

@@ -59,16 +59,16 @@ struct SketchCanvasSheet: View {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") { dismiss() }
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                     ToolbarItem(placement: .principal) {
                         Button("Clear") { canvasView.drawing = PKDrawing(); hasStrokes = false }
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Save") { save() }
                             .disabled(!hasStrokes)
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 }
         }
     }

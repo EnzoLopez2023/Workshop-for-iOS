@@ -11,7 +11,7 @@ struct InProgressWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SnapshotProvider()) { entry in
             InProgressWidgetView(snapshot: entry.snapshot)
-                .containerBackground(WSWidget.flap, for: .widget)
+                .containerBackground(WSWidget.raised, for: .widget)
         }
         .configurationDisplayName("In-Progress Projects")
         .description("Your active builds, one tap from their detail screen.")
@@ -24,8 +24,7 @@ private struct InProgressWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let snapshot: WorkshopWidgetSnapshot
 
-    /// The board always shows a fixed number of slots; unfilled ones stay
-    /// blank, the way a departure board reads between arrivals.
+    /// The widget keeps a fixed number of rows so the layout stays stable.
     private var maxRows: Int { family == .systemMedium ? 2 : 6 }
 
     var body: some View {
@@ -37,50 +36,47 @@ private struct InProgressWidgetView: View {
                 let shown = Array(snapshot.inProgress.prefix(maxRows))
                 VStack(spacing: 0) {
                     ForEach(Array(shown.enumerated()), id: \.element.id) { i, project in
-                        if i > 0 { Rectangle().fill(WSWidget.line).frame(height: 1) }
-                        row(project).frame(maxHeight: .infinity).background(WSWidget.flap)
+                        if i > 0 { Rectangle().fill(WSWidget.divider).frame(height: 1) }
+                        row(project).frame(maxHeight: .infinity).background(WSWidget.raised)
                     }
                     ForEach(shown.count..<maxRows, id: \.self) { i in
                         if i > 0 || !shown.isEmpty {
-                            Rectangle().fill(WSWidget.line).frame(height: 1)
+                            Rectangle().fill(WSWidget.divider).frame(height: 1)
                         }
                         emptySlot(first: shown.isEmpty && i == 0)
                     }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(WSWidget.flapShade)
+            .background(WSWidget.recessed)
         }
     }
 
-    /// An unfilled slot. The first one on an empty board says so; the rest
-    /// stay blank shaded board.
+    /// An unfilled row. The first one on an empty list explains the state.
     private func emptySlot(first: Bool) -> some View {
         HStack {
-            if first { WSCaps("No active builds", size: 9) }
+            if first { WSLabel("No active builds", size: 9) }
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    /// A departure row: title in tracked caps, parts on flaps at the platform
-    /// end — the same grammar as the app's project cards.
+    /// A compact project row with its parts count aligned at the trailing edge.
     private func row(_ project: WorkshopWidgetSnapshot.InProgressProject) -> some View {
         Link(destination: WSDeepLink.project(project.id)) {
             HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(project.title.uppercased())
-                        .font(WSWidget.board(11, .bold)).tracking(0.6)
+                        .font(WSWidget.rounded(11, .bold)).tracking(0.6)
                         .foregroundStyle(WSWidget.ink).lineLimit(1).minimumScaleFactor(0.7)
                     Text(project.difficulty)
-                        .font(WSWidget.ui(10)).foregroundStyle(WSWidget.subtle).lineLimit(1)
+                        .font(WSWidget.ui(10)).foregroundStyle(WSWidget.muted).lineLimit(1)
                 }
                 Spacer(minLength: 4)
-                WSFlapNumber(value: wsPad(project.partsCount), size: 10)
+                WSMetric(value: wsPad(project.partsCount), size: 10)
             }
             .padding(.horizontal, 10).padding(.vertical, 8)
         }
     }
 }
-

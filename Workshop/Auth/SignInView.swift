@@ -22,12 +22,12 @@ struct SignInView: View {
 
                 ScrollView {
                     VStack(spacing: 30) {
-                        titleBoard
+                        titlePanel
 
                         if let err = model.authError {
                             Text(err)
                                 .font(Theme.ui(13))
-                                .foregroundStyle(Theme.red)
+                                .foregroundStyle(Theme.danger)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: 460)
                         }
@@ -65,15 +65,15 @@ struct SignInView: View {
         }
     }
 
-    private var titleBoard: some View {
+    private var titlePanel: some View {
         VStack(alignment: .leading, spacing: 24) {
             HStack(spacing: 12) {
                 Image(systemName: "hammer.fill")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                     .frame(width: 44, height: 44)
                     .background(
-                        Theme.tint(Theme.accent),
+                        Theme.tint(Theme.annotation),
                         in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                     )
                 Text("Workshop")
@@ -114,12 +114,12 @@ struct SignInView: View {
             .foregroundStyle(complete ? .white : Theme.muted)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(complete ? Theme.accentDeep : Theme.flapShade, in: Capsule())
+            .background(complete ? Theme.action : Theme.recessed, in: Capsule())
     }
 
     private func connector(complete: Bool) -> some View {
         Capsule()
-            .fill(complete ? Theme.accentDeep : Theme.line)
+            .fill(complete ? Theme.action : Theme.divider)
             .frame(maxWidth: .infinity)
             .frame(height: 2)
     }
@@ -182,9 +182,9 @@ private enum SignInProvider {
 
     var fill: Color {
         switch self {
-        case .microsoft: Theme.accentDeep
+        case .microsoft: Theme.action
         case .apple:     Color(uiColor: UIColor(rgb: 0x14181A))
-        case .demo:      Theme.flap
+        case .demo:      Theme.raised
         }
     }
 
@@ -224,7 +224,7 @@ private struct SignInPlate: View {
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                     .strokeBorder(
-                        provider == .demo ? Theme.line.opacity(0.7) : .clear,
+                        provider == .demo ? Theme.divider.opacity(0.7) : .clear,
                         lineWidth: 1
                     )
             )
@@ -260,7 +260,7 @@ private struct WorkshopLoginBackdrop: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                Theme.steel
+                Theme.navigationMaterial
                 if let file = Bundle.main.url(
                     forResource: "plan-hand-tool-cabinet",
                     withExtension: "png"
@@ -279,9 +279,9 @@ private struct WorkshopLoginBackdrop: View {
 
                 LinearGradient(
                     colors: [
-                        Theme.concourse.opacity(reduceTransparency ? 0.96 : 0.82),
-                        Theme.concourse.opacity(reduceTransparency ? 0.90 : 0.66),
-                        Theme.concourse.opacity(reduceTransparency ? 0.96 : 0.86),
+                        Theme.canvas.opacity(reduceTransparency ? 0.96 : 0.82),
+                        Theme.canvas.opacity(reduceTransparency ? 0.90 : 0.66),
+                        Theme.canvas.opacity(reduceTransparency ? 0.96 : 0.86),
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -289,8 +289,8 @@ private struct WorkshopLoginBackdrop: View {
 
                 RadialGradient(
                     colors: [
-                        Theme.concourse.opacity(reduceTransparency ? 0.08 : 0.02),
-                        Theme.concourse.opacity(reduceTransparency ? 0.78 : 0.50),
+                        Theme.canvas.opacity(reduceTransparency ? 0.08 : 0.02),
+                        Theme.canvas.opacity(reduceTransparency ? 0.78 : 0.50),
                     ],
                     center: .center,
                     startRadius: 40,

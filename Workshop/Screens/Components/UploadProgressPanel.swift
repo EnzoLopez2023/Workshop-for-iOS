@@ -39,7 +39,7 @@ struct UploadProgressPanel: View {
                 case .done:
                     Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
                 case .error:
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Theme.red)
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Theme.danger)
                 }
                 Text(u.name).font(Theme.ui(13, .medium)).foregroundStyle(Theme.ink)
                     .lineLimit(1).truncationMode(.middle)
@@ -53,11 +53,11 @@ struct UploadProgressPanel: View {
                 }
             }
             if u.status == .uploading {
-                ProgressView(value: u.progress).tint(Theme.accent)
+                ProgressView(value: u.progress).tint(Theme.annotation)
                 Text("\(Int(u.progress * 100))%").font(Theme.ui(11, .regular)).foregroundStyle(Theme.muted)
             }
             if u.status == .error, let error = u.error {
-                Text(error).font(Theme.ui(12, .regular)).foregroundStyle(Theme.red)
+                Text(error).font(Theme.ui(12, .regular)).foregroundStyle(Theme.danger)
             }
         }
         .padding(12)

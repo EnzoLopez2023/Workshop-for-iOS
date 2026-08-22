@@ -13,7 +13,7 @@ struct SkeletonBlock: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(Theme.line)
+            .fill(Theme.divider)
             .opacity(reduceMotion ? 0.65 : (pulse ? 0.4 : 0.8))
             .frame(width: width, height: height)
             .frame(maxWidth: width == nil ? .infinity : nil)
@@ -49,7 +49,7 @@ struct ProjectCardSkeletonView: View {
         .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
         )
     }
 }

@@ -85,13 +85,13 @@ struct DimensionScannerSheet: View {
                     if let lastScanned {
                         Text("Filled \(target.rawValue): \(lastScanned)")
                             .font(Theme.ui(13, .medium, relativeTo: .footnote))
-                            .foregroundStyle(reduceTransparency ? Theme.onSteel : Theme.ink)
+                            .foregroundStyle(reduceTransparency ? Theme.onNavigation : Theme.ink)
                             .padding(.horizontal, 14).padding(.vertical, 8)
                             .background(
                                 reduceTransparency
-                                    ? AnyShapeStyle(Theme.steel)
+                                    ? AnyShapeStyle(Theme.navigationMaterial)
                                     : AnyShapeStyle(.thinMaterial),
-                                in: RoundedRectangle(cornerRadius: Theme.rFlap)
+                                in: RoundedRectangle(cornerRadius: Theme.rCompact)
                             )
                             .padding(.bottom, 24)
                     }
@@ -101,7 +101,7 @@ struct DimensionScannerSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
-                .boardToolbarItem()
+                .planToolbarItem()
             }
         }
     }

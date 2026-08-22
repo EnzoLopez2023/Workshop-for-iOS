@@ -25,14 +25,5 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>MartianMonoBoard-Regular.ttf</string>
-		<string>MartianMonoBoard-SemiBold.ttf</string>
-		<string>MartianMonoBoard-Bold.ttf</string>
-		<string>ArchivoWS-Regular.ttf</string>
-		<string>ArchivoWS-Medium.ttf</string>
-		<string>ArchivoWS-Bold.ttf</string>
-	</array>
 </dict>
 </plist>

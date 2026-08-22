@@ -3,18 +3,15 @@ import UIKit
 
 /// Living Plan Table: cool vellum, layered native glass, spruce drawing ink,
 /// pencil annotations, system typography, and continuous iOS geometry.
-///
-/// Legacy token/helper names remain source-compatible while screens migrate,
-/// but every value and primitive resolves into the approved visual world.
 enum Theme {
     /// The currently selected annotation palette.
     static var palette: Palette { ThemeManager.shared.palette }
 
     // MARK: Surfaces
 
-    static var concourse: Color { palette.concourse.color }  // plan canvas
-    static var flapShade: Color { palette.flapShade.color }  // recessed layer
-    static var flap: Color      { palette.flap.color }       // raised layer
+    static var canvas: Color   { palette.canvas.color }
+    static var recessed: Color { palette.recessed.color }
+    static var raised: Color   { palette.raised.color }
 
     // MARK: Text
 
@@ -23,56 +20,43 @@ enum Theme {
 
     // MARK: Structure
 
-    static var line: Color       { palette.line.color }
-    static var steel: Color      { palette.steel.color }
-    static var steelDark: Color  { palette.steelDark.color }
-    static var steelLight: Color { palette.steelLight.color }
-    static var onSteel: Color    { palette.onSteel.color }
+    static var divider: Color             { palette.divider.color }
+    static var navigationMaterial: Color  { palette.navigationMaterial.color }
+    static var navigationDeep: Color      { palette.navigationDeep.color }
+    static var navigationHighlight: Color { palette.navigationHighlight.color }
+    static var onNavigation: Color        { palette.onNavigation.color }
 
     // MARK: Annotation + semantic color
 
-    static var accent: Color     { palette.accent.color }
-    static var accentDeep: Color { palette.accentDeep.color }
-    static var accentFill: Color { palette.accentFill.color }
-    static var pencil: Color     { Palette.beacon.accent.color }
-    static var green: Color      { palette.green.color }
-    static var greenFill: Color  { palette.greenFill.color }
-    static var red: Color        { palette.red.color }
-    static var redFill: Color    { palette.redFill.color }
+    static var annotation: Color     { palette.annotation.color }
+    static var action: Color         { palette.action.color }
+    static var annotationFill: Color { palette.annotationFill.color }
+    static var pencilBlue: Color     { Palette.pencilBlue.annotation.color }
+    static var success: Color        { palette.success.color }
+    static var successFill: Color    { palette.successFill.color }
+    static var danger: Color         { palette.danger.color }
+    static var dangerFill: Color     { palette.dangerFill.color }
 
     /// Faint wash of an annotation color, for row tinting.
     static func tint(_ color: Color) -> Color { color.opacity(0.11) }
 
-    // MARK: Compatibility surfaces
-
-    static var flapFace: Color   { palette.flapFace.color }
-    static var flapFaceLo: Color { palette.flapFaceLo.color }
-    static var flapLetter: Color { palette.flapLetter.color }
-
     /// Navigation material fallback behind native blur.
-    static var steelFace: LinearGradient {
-        LinearGradient(colors: [steelLight.opacity(0.96), steel.opacity(0.82)],
-                       startPoint: .top, endPoint: .bottom)
-    }
-
-    /// Soft metric tile gradient retained for compatibility.
-    static var flapFaceGradient: LinearGradient {
-        LinearGradient(colors: [flapFace, flapFaceLo],
+    static var navigationGradient: LinearGradient {
+        LinearGradient(colors: [navigationHighlight.opacity(0.96), navigationMaterial.opacity(0.82)],
                        startPoint: .top, endPoint: .bottom)
     }
 
     // MARK: Radii
 
-    static let rFlap: CGFloat = 10
+    static let rCompact: CGFloat = 10
     static let rPanel: CGFloat = 14
     static let rHero: CGFloat = 24
 
     // MARK: Typography
 
-    /// Compatibility entry point for former board labels. It now resolves to
-    /// SF Rounded so labels stay native, open, and Dynamic Type-aware.
-    static func board(_ size: CGFloat, _ weight: BoardWeight = .semibold,
-                      relativeTo style: Font.TextStyle = .body) -> Font {
+    /// SF Rounded for focal labels, measurements, and compact data.
+    static func rounded(_ size: CGFloat, _ weight: RoundedWeight = .semibold,
+                       relativeTo style: Font.TextStyle = .body) -> Font {
         .system(
             size: scaledSize(size, relativeTo: style),
             weight: weight.fontWeight,
@@ -81,7 +65,7 @@ enum Theme {
     }
 
     /// Fixed sample type used only by the text-size picker.
-    static func boardFixed(_ size: CGFloat, _ weight: BoardWeight = .semibold) -> Font {
+    static func roundedFixed(_ size: CGFloat, _ weight: RoundedWeight = .semibold) -> Font {
         .system(size: size, weight: weight.fontWeight, design: .rounded)
     }
 
@@ -95,7 +79,7 @@ enum Theme {
         )
     }
 
-    enum BoardWeight {
+    enum RoundedWeight {
         case regular, semibold, bold
         var fontWeight: Font.Weight {
             switch self {
@@ -118,7 +102,7 @@ enum Theme {
     }
 
     /// Rounded system display face for project titles and focal moments.
-    static func display(_ size: CGFloat, _ weight: BoardWeight = .bold) -> Font {
+    static func display(_ size: CGFloat, _ weight: RoundedWeight = .bold) -> Font {
         .system(
             size: scaledSize(size, relativeTo: .title),
             weight: weight.fontWeight,
@@ -155,15 +139,15 @@ enum Theme {
     static func configureAppearance() {
         let inkColor = palette.ink.uiColor
         let mutedColor = palette.muted.uiColor
-        let accentColor = palette.accentDeep.uiColor
+        let accentColor = palette.action.uiColor
         let largeFont = roundedUIFont(size: 34, weight: .bold)
         let titleFont = roundedUIFont(size: 17, weight: .semibold)
 
         let nav = UINavigationBarAppearance()
         nav.configureWithTransparentBackground()
         nav.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        nav.backgroundColor = palette.flap.uiColor.withAlphaComponent(0.58)
-        nav.shadowColor = palette.line.uiColor.withAlphaComponent(0.45)
+        nav.backgroundColor = palette.raised.uiColor.withAlphaComponent(0.58)
+        nav.shadowColor = palette.divider.uiColor.withAlphaComponent(0.45)
         nav.largeTitleTextAttributes = [
             .font: largeFont, .foregroundColor: inkColor,
         ]
@@ -184,8 +168,8 @@ enum Theme {
         let tab = UITabBarAppearance()
         tab.configureWithTransparentBackground()
         tab.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterial)
-        tab.backgroundColor = palette.flap.uiColor.withAlphaComponent(0.66)
-        tab.shadowColor = palette.line.uiColor.withAlphaComponent(0.5)
+        tab.backgroundColor = palette.raised.uiColor.withAlphaComponent(0.66)
+        tab.shadowColor = palette.divider.uiColor.withAlphaComponent(0.5)
         for item in [tab.stackedLayoutAppearance, tab.inlineLayoutAppearance, tab.compactInlineLayoutAppearance] {
             item.normal.titleTextAttributes = [.font: tabFont, .foregroundColor: mutedColor]
             item.normal.iconColor = mutedColor
@@ -199,7 +183,7 @@ enum Theme {
         segmented.selectedSegmentTintColor = accentColor
         let selectedSegmentTextColor = UIColor { traits in
             traits.userInterfaceStyle == .dark
-                ? UIColor(rgb: palette.steelDark.dark)
+                ? UIColor(rgb: palette.navigationDeep.dark)
                 : .white
         }
         segmented.setTitleTextAttributes(
@@ -221,32 +205,31 @@ enum Theme {
 
 // MARK: - Shared components
 
-/// A compact glass toolbar control. The legacy tone names remain to avoid
-/// churn at call sites: `.amber` is the primary annotation action.
-struct BoardToolbarButton: View {
+/// A compact glass toolbar control.
+struct PlanToolbarButton: View {
     let symbol: String
     let label: String
-    var tone: Tone = .steel
+    var tone: Tone = .plain
     let action: () -> Void
 
-    enum Tone { case amber, steel, danger }
+    enum Tone { case accent, plain, danger }
 
     private var glyph: Color {
         switch tone {
-        case .steel: Theme.accentDeep
-        case .amber, .danger: .white
+        case .plain: Theme.action
+        case .accent, .danger: .white
         }
     }
 
     @ViewBuilder private var buttonBackground: some View {
         let shape = RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
         switch tone {
-        case .amber:
-            shape.fill(Theme.accentDeep)
-        case .steel:
+        case .accent:
+            shape.fill(Theme.action)
+        case .plain:
             shape.fill(.clear)
         case .danger:
-            shape.fill(Theme.redFill)
+            shape.fill(Theme.dangerFill)
         }
     }
 
@@ -270,9 +253,8 @@ struct BoardToolbarButton: View {
 }
 
 extension ToolbarContent {
-    /// Compatibility hook retained for call sites. Living Plan Table embraces
-    /// the system's shared toolbar material instead of hiding it.
-    @ToolbarContentBuilder func boardToolbarItem() -> some ToolbarContent {
+    /// Living Plan Table keeps the system's shared toolbar material visible.
+    @ToolbarContentBuilder func planToolbarItem() -> some ToolbarContent {
         self
     }
 }
@@ -287,25 +269,18 @@ extension View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
             )
             .shadow(
-                color: Theme.steelDark.opacity(elevated ? 0.12 : 0),
+                color: Theme.navigationDeep.opacity(elevated ? 0.12 : 0),
                 radius: elevated ? 16 : 0,
                 x: 0,
                 y: elevated ? 8 : 0
             )
     }
 
-    /// Compatibility card modifier, now rendered as a raised tracing layer.
-    func wsCard() -> some View {
-        self
-            .padding(16)
-            .planGlass()
-    }
-
     /// The vellum plan canvas behind scrolling content.
-    func boardBackground() -> some View {
+    func planBackground() -> some View {
         self
             .scrollContentBackground(.hidden)
             .background(PlanCanvasBackground().ignoresSafeArea())
@@ -338,7 +313,7 @@ struct PlanCanvasBackground: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Theme.concourse, Theme.flapShade.opacity(0.72), Theme.concourse],
+                colors: [Theme.canvas, Theme.recessed.opacity(0.72), Theme.canvas],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -353,7 +328,7 @@ struct PlanCanvasBackground: View {
                     path.move(to: CGPoint(x: 0, y: y))
                     path.addLine(to: CGPoint(x: size.width, y: y))
                 }
-                context.stroke(path, with: .color(Theme.line.opacity(0.18)), lineWidth: 0.5)
+                context.stroke(path, with: .color(Theme.divider.opacity(0.18)), lineWidth: 0.5)
             }
         }
         .accessibilityHidden(true)
@@ -432,12 +407,12 @@ struct Rail<Trailing: View>: View {
             if let count {
                 Text(count.formatted())
                     .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                     .monospacedDigit()
                     .padding(.horizontal, 9)
                     .padding(.vertical, 5)
                     .background(
-                        Theme.tint(Theme.accent),
+                        Theme.tint(Theme.annotation),
                         in: Capsule()
                     )
             }
@@ -453,68 +428,31 @@ extension Rail where Trailing == EmptyView {
     }
 }
 
-/// Compact semantic label used above values and within cards.
-struct BoardCaps: View {
-    let text: String
-    var size: CGFloat = 10
-    var color: Color?
-    init(_ text: String, size: CGFloat = 10, color: Color? = nil) {
-        self.text = text; self.size = size; self.color = color
-    }
-    var body: some View {
-        Text(text)
-            .font(
-                .system(
-                    size: size,
-                    weight: size >= 13 ? .semibold : .medium,
-                    design: .rounded
-                )
-            )
-            .foregroundStyle(color ?? (size >= 13 ? Theme.ink : Theme.muted))
-    }
-}
-
-/// Compact value with tabular figures where applicable.
-struct Readout: View {
-    let text: String
-    var size: CGFloat = 15
-    var color: Color?
-    init(_ text: String, size: CGFloat = 15, color: Color? = nil) {
-        self.text = text; self.size = size; self.color = color
-    }
-    var body: some View {
-        Text(text)
-            .font(.system(size: size, weight: .semibold, design: .rounded))
-            .monospacedDigit()
-            .foregroundStyle(color ?? Theme.ink)
-    }
-}
-
 /// Status capsule with semantic color and a text label.
-struct Flag: View {
-    enum Tone { case idle, steel, amber, green, red }
+struct StatusFlag: View {
+    enum Tone { case neutral, accent, accentStrong, success, danger }
     let text: String
     let tone: Tone
 
-    init(_ text: String, tone: Tone = .idle) { self.text = text; self.tone = tone }
+    init(_ text: String, tone: Tone = .neutral) { self.text = text; self.tone = tone }
 
     private var background: Color {
         switch tone {
-        case .idle:  Theme.flapShade.opacity(0.9)
-        case .steel: Theme.tint(Theme.accent)
-        case .amber: Theme.accentDeep
-        case .green: Theme.tint(Theme.green)
-        case .red:   Theme.tint(Theme.red)
+        case .neutral:      Theme.recessed.opacity(0.9)
+        case .accent:       Theme.tint(Theme.annotation)
+        case .accentStrong: Theme.action
+        case .success:      Theme.tint(Theme.success)
+        case .danger:       Theme.tint(Theme.danger)
         }
     }
 
     private var foreground: Color {
         switch tone {
-        case .idle:  Theme.muted
-        case .steel: Theme.accentDeep
-        case .amber: .white
-        case .green: Theme.green
-        case .red:   Theme.red
+        case .neutral:      Theme.muted
+        case .accent:       Theme.action
+        case .accentStrong: .white
+        case .success:      Theme.success
+        case .danger:       Theme.danger
         }
     }
 
@@ -529,7 +467,7 @@ struct Flag: View {
             .overlay(
                 Capsule()
                     .strokeBorder(
-                        tone == .idle ? Theme.line.opacity(0.7) : .clear,
+                        tone == .neutral ? Theme.divider.opacity(0.7) : .clear,
                         lineWidth: 1
                     )
             )
@@ -544,24 +482,4 @@ enum Appearance: String, CaseIterable, Identifiable {
     var scheme: ColorScheme? {
         switch self { case .light: .light; case .dark: .dark; case .system: nil }
     }
-}
-
-/// Compatibility style that now delegates to the native iOS switch.
-struct FlapToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        Toggle(
-            isOn: Binding(
-                get: { configuration.isOn },
-                set: { configuration.isOn = $0 }
-            )
-        ) {
-            configuration.label
-        }
-        .toggleStyle(.switch)
-        .tint(Theme.accentDeep)
-    }
-}
-
-extension ToggleStyle where Self == FlapToggleStyle {
-    static var flap: FlapToggleStyle { FlapToggleStyle() }
 }

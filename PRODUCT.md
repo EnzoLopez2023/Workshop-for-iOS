@@ -58,8 +58,8 @@ and CNC/Shaper work in one durable record.
 The product name is Workshop and it remains part of the Nintek app family. The
 hammer mark remains recognizable through visual redesigns. Its language should
 be practical, direct, and grounded in real woodworking tasks. The current
-Concourse Board visual world is not a binding commitment and is open to
-replacement.
+Living Plan Table system is the shipping visual direction: native system type,
+cool vellum surfaces, spruce drawing ink, and restrained drafting annotations.
 
 ## Evidence on Hand
 
@@ -68,7 +68,8 @@ replacement.
   and Shaper data models.
 - Bundled demo content and starter projects for realistic empty, populated, and
   read-only states.
-- Existing app screenshots and direct device-testing feedback.
+- Current simulator and physical-device captures of the shipping app; archived
+  marketing screenshots are historical evidence only.
 - No testimonials, performance claims, or external proof should be invented.
 
 ## Product Principles

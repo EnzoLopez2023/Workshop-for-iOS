@@ -29,11 +29,11 @@ struct MoreView: View {
                     Picker("Theme", selection: appearanceBinding) {
                         ForEach(Appearance.allCases) { a in Text(a.label).tag(a) }
                     }
-                    lampPicker
+                    annotationPicker
                     LabeledContent("Text Size", value: "Follows iOS Settings")
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
 
                 if !model.isDemoMode {
                     Section {
@@ -47,12 +47,12 @@ struct MoreView: View {
                         }
                         Toggle("Show Completed by Default", isOn: $showCompletedByDefault)
                             .toggleStyle(.switch)
-                            .tint(Theme.accentDeep)
+                            .tint(Theme.action)
                     } header: {
                         Text("Projects")
                     }
-                    .listRowBackground(Theme.flap.opacity(0.72))
-                    .listRowSeparatorTint(Theme.line)
+                    .listRowBackground(Theme.raised.opacity(0.72))
+                    .listRowSeparatorTint(Theme.divider)
                 }
 
                 Section {
@@ -62,8 +62,8 @@ struct MoreView: View {
                         Label("Insights", systemImage: "chart.bar.xaxis")
                     }
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
 
                 Section {
                     Button {
@@ -73,7 +73,7 @@ struct MoreView: View {
                     }
                     .disabled(exporting)
                     if let exportError {
-                        Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
+                        Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.danger)
                     }
                 } header: {
                     Text("Data")
@@ -82,8 +82,8 @@ struct MoreView: View {
                          ? "Downloads the demo starter-project metadata as a JSON file."
                          : "Downloads all your projects and their metadata as a JSON file.")
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
 
                 Section {
                     if model.isDemoMode {
@@ -111,20 +111,20 @@ struct MoreView: View {
                                 HStack(spacing: 10) {
                                     ProgressView()
                                         .controlSize(.small)
-                                        .tint(Theme.red)
+                                        .tint(Theme.danger)
                                     Text("Deleting Account…")
-                                        .foregroundStyle(Theme.red)
+                                        .foregroundStyle(Theme.danger)
                                 }
                             } else {
                                 Label("Delete Account", systemImage: "trash")
-                                    .foregroundStyle(Theme.red)
+                                    .foregroundStyle(Theme.danger)
                             }
                         }
                         .disabled(deletingAccount)
                         if let accountDeletionError {
                             Text(accountDeletionError)
                                 .font(Theme.ui(13, .regular, relativeTo: .footnote))
-                                .foregroundStyle(Theme.red)
+                                .foregroundStyle(Theme.danger)
                         }
                     }
                 } header: {
@@ -134,13 +134,13 @@ struct MoreView: View {
                          ? "Demo data stays on this device only for the current session."
                          : "Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a project summary first if you want a reference copy.")
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
                 Section {
                     LabeledContent("Version", value: AppInfo.version)
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
@@ -161,7 +161,7 @@ struct MoreView: View {
     }
 
     /// Annotation colors shown directly as clean material swatches.
-    private var lampPicker: some View {
+    private var annotationPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Annotation Color")
@@ -176,7 +176,7 @@ struct MoreView: View {
                     Button { theme.selection = p.id } label: {
                         ZStack {
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(p.accentFill.color)
+                                .fill(p.annotationFill.color)
                             if on {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 12, weight: .bold))
@@ -188,7 +188,7 @@ struct MoreView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
                                 .strokeBorder(
-                                    on ? Theme.ink : Theme.line.opacity(0.7),
+                                    on ? Theme.ink : Theme.divider.opacity(0.7),
                                     lineWidth: on ? 2 : 1
                                 )
                         )

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1430"
+   wasCreatedForAppExtension = "YES"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +16,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E0B3DC7823DC125C7DA3B73C"
-               BuildableName = "Workshop.app"
-               BlueprintName = "Workshop"
+               BlueprintIdentifier = "C751734FD96A07E3BD0E374A"
+               BuildableName = "WorkshopWidgetsExtension.appex"
+               BlueprintName = "WorkshopWidgetsExtension"
                ReferencedContainer = "container:Workshop.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,61 +33,36 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0B3DC7823DC125C7DA3B73C"
-            BuildableName = "Workshop.app"
-            BlueprintName = "Workshop"
+            BlueprintIdentifier = "C751734FD96A07E3BD0E374A"
+            BuildableName = "WorkshopWidgetsExtension.appex"
+            BlueprintName = "WorkshopWidgetsExtension"
             ReferencedContainer = "container:Workshop.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "32AA11E4E7D65C2040440C14"
-               BuildableName = "WorkshopTests.xctest"
-               BlueprintName = "WorkshopTests"
-               ReferencedContainer = "container:Workshop.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4F3BC295CA9E8B3833ACB8A5"
-               BuildableName = "WorkshopUITests.xctest"
-               BlueprintName = "WorkshopUITests"
-               ReferencedContainer = "container:Workshop.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
-      <CommandLineArguments>
-      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0B3DC7823DC125C7DA3B73C"
-            BuildableName = "Workshop.app"
-            BlueprintName = "Workshop"
+            BlueprintIdentifier = "C751734FD96A07E3BD0E374A"
+            BuildableName = "WorkshopWidgetsExtension.appex"
+            BlueprintName = "WorkshopWidgetsExtension"
             ReferencedContainer = "container:Workshop.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -98,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0B3DC7823DC125C7DA3B73C"
-            BuildableName = "Workshop.app"
-            BlueprintName = "Workshop"
+            BlueprintIdentifier = "C751734FD96A07E3BD0E374A"
+            BuildableName = "WorkshopWidgetsExtension.appex"
+            BlueprintName = "WorkshopWidgetsExtension"
             ReferencedContainer = "container:Workshop.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

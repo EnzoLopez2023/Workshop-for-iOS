@@ -32,30 +32,30 @@ struct CutListActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: CutListActivityAttributes.self) { context in
             CutListLockScreenView(context: context)
-                .activityBackgroundTint(WSWidget.concourse)
+                .activityBackgroundTint(WSWidget.canvas)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Image(systemName: "hammer.fill").foregroundStyle(WSWidget.accent)
+                    Image(systemName: "hammer.fill").foregroundStyle(WSWidget.annotation)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text(progressText(context.state, of: context.attributes))
-                        .font(WSWidget.board(11, .bold)).foregroundStyle(WSWidget.accentFill)
+                        .font(WSWidget.rounded(11, .bold)).foregroundStyle(WSWidget.annotationFill)
                 }
                 DynamicIslandExpandedRegion(.center) {
                     Text(context.attributes.projectTitle.uppercased())
-                        .font(WSWidget.board(11, .bold)).tracking(0.6).lineLimit(1)
+                        .font(WSWidget.rounded(11, .bold)).tracking(0.6).lineLimit(1)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     CutListChecklistView(context: context)
                 }
             } compactLeading: {
-                Image(systemName: "hammer.fill").foregroundStyle(WSWidget.accent)
+                Image(systemName: "hammer.fill").foregroundStyle(WSWidget.annotation)
             } compactTrailing: {
                 Text(progressText(context.state, of: context.attributes))
-                    .font(WSWidget.board(11, .bold)).foregroundStyle(WSWidget.accentFill)
+                    .font(WSWidget.rounded(11, .bold)).foregroundStyle(WSWidget.annotationFill)
             } minimal: {
-                Image(systemName: "hammer.fill").foregroundStyle(WSWidget.accent)
+                Image(systemName: "hammer.fill").foregroundStyle(WSWidget.annotation)
             }
             .widgetURL(WSDeepLink.project(context.attributes.projectId))
         }
@@ -74,15 +74,15 @@ private struct CutListLockScreenView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: "hammer.fill")
-                    .font(.system(size: 9)).foregroundStyle(WSWidget.accentFill)
+                    .font(.system(size: 9)).foregroundStyle(WSWidget.annotationFill)
                 Text(context.attributes.projectTitle.uppercased())
-                    .font(WSWidget.board(12, .bold)).tracking(0.8)
+                    .font(WSWidget.rounded(12, .bold)).tracking(0.8)
                     .foregroundStyle(WSWidget.ink).lineLimit(1).minimumScaleFactor(0.7)
                 Spacer(minLength: 6)
-                // Cut progress is the one live figure here, so it gets flaps.
-                WSFlapNumber(value: "\(context.state.checkedPartIds.count)", size: 11,
-                             tone: WSWidget.accentFill)
-                WSCaps("of \(context.attributes.parts.count)", size: 8.5)
+                // Cut progress is the one live figure in the header.
+                WSMetric(value: "\(context.state.checkedPartIds.count)", size: 11,
+                             tone: WSWidget.annotationFill)
+                WSLabel("of \(context.attributes.parts.count)", size: 8.5)
             }
             CutListChecklistView(context: context, maxRows: 5)
         }
@@ -103,27 +103,27 @@ private struct CutListChecklistView: View {
                 let checked = context.state.checkedPartIds.contains(part.id)
                 Button(intent: ToggleCutPartIntent(partId: part.id)) {
                     HStack(spacing: 8) {
-                        RoundedRectangle(cornerRadius: WSWidget.rFlap)
-                            .fill(checked ? WSWidget.accentFill : .clear)
+                        RoundedRectangle(cornerRadius: WSWidget.rCompact)
+                            .fill(checked ? WSWidget.annotationFill : .clear)
                             .frame(width: 13, height: 13)
-                            .overlay(RoundedRectangle(cornerRadius: WSWidget.rFlap)
-                                .strokeBorder(checked ? WSWidget.accentFill : WSWidget.subtle,
+                            .overlay(RoundedRectangle(cornerRadius: WSWidget.rCompact)
+                                .strokeBorder(checked ? WSWidget.annotationFill : WSWidget.muted,
                                               lineWidth: 1.5))
                         Text(part.partName)
                             .font(WSWidget.ui(13, .medium))
-                            .foregroundStyle(checked ? WSWidget.subtle : WSWidget.ink)
+                            .foregroundStyle(checked ? WSWidget.muted : WSWidget.ink)
                             .strikethrough(checked)
                             .lineLimit(1)
                         Spacer(minLength: 4)
                         Text("×\(part.qty)")
-                            .font(WSWidget.board(11, .semibold))
-                            .foregroundStyle(WSWidget.subtle)
+                            .font(WSWidget.rounded(11, .semibold))
+                            .foregroundStyle(WSWidget.muted)
                     }
                 }
                 .buttonStyle(.plain)
             }
             if context.attributes.parts.count > maxRows {
-                WSCaps("+ \(context.attributes.parts.count - maxRows) more", size: 8.5)
+                WSLabel("+ \(context.attributes.parts.count - maxRows) more", size: 8.5)
             }
         }
     }

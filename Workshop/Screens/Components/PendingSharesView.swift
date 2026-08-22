@@ -30,7 +30,7 @@ struct PendingSharesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
-                .boardToolbarItem()
+                .planToolbarItem()
             }
             .task { projects = (try? await api.listProjects()) ?? [] }
         }
@@ -82,7 +82,7 @@ struct PendingSharesView: View {
                     }
                 }
                 if attachError != nil, attachingItem?.id == item.id {
-                    Text(attachError!).font(Theme.ui(11, .regular)).foregroundStyle(Theme.red)
+                    Text(attachError!).font(Theme.ui(11, .regular)).foregroundStyle(Theme.danger)
                 }
             }
             .padding(.vertical, 4)
