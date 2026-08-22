@@ -354,7 +354,7 @@ struct DashboardView: View {
                     }
                     .frame(minHeight: 380)
                 } else {
-                    VStack(spacing: -34) {
+                    VStack(spacing: -18) {
                         projectPlanVisual(project)
                             .frame(height: 310)
                         nextActionLayer(project)
@@ -410,6 +410,9 @@ struct DashboardView: View {
                 Text(focusLabel(for: project))
                     .font(.system(.caption, design: .rounded, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.78))
+                if hSize != .regular {
+                    StatusBadge(status: project.status, withBackdrop: true)
+                }
                 Text(project.title)
                     .font(
                         .system(
@@ -421,9 +424,14 @@ struct DashboardView: View {
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
-                StatusBadge(status: project.status, withBackdrop: true)
+                if hSize == .regular {
+                    StatusBadge(status: project.status, withBackdrop: true)
+                }
             }
-            .padding(hSize == .regular ? 28 : 22)
+            .padding(.vertical, hSize == .regular ? 28 : 22)
+            .padding(.leading, hSize == .regular ? 28 : 22)
+            .padding(.trailing, hSize == .regular ? 436 : 22)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .accessibilityHidden(true)
     }
@@ -481,6 +489,10 @@ struct DashboardView: View {
             )
         }
         .padding(20)
+        .background(
+            Theme.raised.opacity(hSize == .regular ? 0.94 : 0),
+            in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
+        )
         .planGlass()
     }
 

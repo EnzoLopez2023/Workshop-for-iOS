@@ -30,6 +30,26 @@ final class ShippingResidueTests: XCTestCase {
         XCTAssertTrue(customFonts.isEmpty, "Unexpected custom fonts in app bundle: \(customFonts)")
     }
 
+    func testAccentColorUsesLivingPlanSpruceFill() throws {
+        let repositoryRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let url = repositoryRoot
+            .appendingPathComponent("Workshop/Assets.xcassets/AccentColor.colorset/Contents.json")
+        let data = try Data(contentsOf: url)
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let colors = try XCTUnwrap(root["colors"] as? [[String: Any]])
+
+        XCTAssertEqual(
+            try colorComponents(at: 0, in: colors),
+            ["red": "0x1E", "green": "0x76", "blue": "0x66", "alpha": "1.000"]
+        )
+        XCTAssertEqual(
+            try colorComponents(at: 1, in: colors),
+            ["red": "0x2A", "green": "0x92", "blue": "0x7E", "alpha": "1.000"]
+        )
+    }
+
     func testShippingSourceContainsNoRetiredVisualMarkers() throws {
         let repositoryRoot = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
@@ -77,7 +97,7 @@ final class ShippingResidueTests: XCTestCase {
             return [url]
         }
 
-        let allowedExtensions = Set(["swift", "plist", "yml"])
+        let allowedExtensions = Set(["swift", "plist", "yml", "json"])
         let enumerator = FileManager.default.enumerator(
             at: url,
             includingPropertiesForKeys: [.isRegularFileKey]
@@ -91,5 +111,20 @@ final class ShippingResidueTests: XCTestCase {
             files.append(file)
         }
         return files
+    }
+
+    private func colorComponents(
+        at index: Int,
+        in colors: [[String: Any]]
+    ) throws -> [String: String] {
+        let entry = try XCTUnwrap(colors[safe: index])
+        let color = try XCTUnwrap(entry["color"] as? [String: Any])
+        return try XCTUnwrap(color["components"] as? [String: String])
+    }
+}
+
+private extension Collection {
+    subscript(safe index: Index) -> Element? {
+        indices.contains(index) ? self[index] : nil
     }
 }

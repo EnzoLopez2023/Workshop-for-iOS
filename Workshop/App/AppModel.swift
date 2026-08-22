@@ -84,17 +84,17 @@ final class AppModel: ObservableObject {
         }
         #endif
 
+        #if DEBUG
         // Dev/local: a pasted access token via env skips MSAL (used to exercise
-        // the API without a signed build). Never set in production.
+        // the API without a signed build).
         if let devToken = env["WORKSHOP_DEV_TOKEN"] {
-            #if DEBUG
             self.devUserKey = env["WORKSHOP_DEV_USER_KEY"]
-            #endif
             self.msalAuth = nil
             self.api = WorkshopAPI(baseURL: base, tokenProvider: StaticTokenProvider(devToken))
             self.isSignedIn = true
             return
         }
+        #endif
 
         // Always construct MSAL so "Sign in with Microsoft" stays available, but
         // an existing Apple session takes precedence for the initial state.
@@ -115,8 +115,10 @@ final class AppModel: ObservableObject {
     }
 
     private static func baseURL() -> URL {
+        #if DEBUG
         if let override = ProcessInfo.processInfo.environment["WORKSHOP_API_BASE"],
            let url = URL(string: override) { return url }
+        #endif
         return WorkshopAPI.productionBaseURL
     }
 

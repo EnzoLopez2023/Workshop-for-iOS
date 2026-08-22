@@ -1,6 +1,12 @@
 import SwiftUI
 import NintekKit
 
+private enum WorkshopLinks {
+    static let support = URL(string: "https://www.nintek.com/workshop/support")!
+    static let privacy = URL(string: "https://www.nintek.com/workshop/privacy")!
+    static let terms = URL(string: "https://www.nintek.com/terms")!
+}
+
 /// Settings tab — parity with the web's `Settings.tsx`: appearance (theme,
 /// accent, text size), project defaults (default status, dashboard sort,
 /// show-completed), project-summary export, signed-in identity + sign out,
@@ -85,6 +91,20 @@ struct MoreView: View {
                 .listRowBackground(Theme.raised.opacity(0.72))
                 .listRowSeparatorTint(Theme.divider)
 
+                Section("Help & Legal") {
+                    Link(destination: WorkshopLinks.support) {
+                        Label("Workshop Support", systemImage: "questionmark.circle")
+                    }
+                    Link(destination: WorkshopLinks.privacy) {
+                        Label("Privacy Policy", systemImage: "hand.raised")
+                    }
+                    Link(destination: WorkshopLinks.terms) {
+                        Label("Terms of Use", systemImage: "doc.text")
+                    }
+                }
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
+
                 Section {
                     if model.isDemoMode {
                         LabeledContent("Mode", value: "Demo · Read only")
@@ -120,6 +140,7 @@ struct MoreView: View {
                                     .foregroundStyle(Theme.danger)
                             }
                         }
+
                         .disabled(deletingAccount)
                         if let accountDeletionError {
                             Text(accountDeletionError)
@@ -127,6 +148,7 @@ struct MoreView: View {
                                 .foregroundStyle(Theme.danger)
                         }
                     }
+
                 } header: {
                     Text("Account")
                 } footer: {
