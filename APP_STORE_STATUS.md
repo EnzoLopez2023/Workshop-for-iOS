@@ -19,8 +19,9 @@ The reusable process lives in the
 | Devices | iPhone and iPad, iOS 17+ |
 | Version/project authority | `project.yml` |
 | Design authority | `DESIGN.md`, `Shared/LivingPlanTokens.swift` |
-| Current App Store screenshots | Five local 6.9-inch iPhone and five local 13-inch iPad candidates; generated outputs are ignored |
-| Upload or submission performed here | No |
+| Release source | `a6d80030d9ee3c0f1c96dcc02883710de6215d54` |
+| Current App Store screenshots | Five `APP_IPHONE_67` and five `APP_IPAD_PRO_3GEN_129` assets, all `COMPLETE` |
+| Upload or submission performed here | Build 12 uploaded and `VALID` in internal TestFlight; no App Review submission or public release |
 
 ## Source readiness
 
@@ -39,6 +40,21 @@ The reusable process lives in the
 - `Scripts/check-shipping-residue.sh` runs before every shipping target build,
   and unit tests inspect both source markers and the built bundle.
 
+## Impeccable native audit
+
+| Dimension | Score | Result |
+|---|---:|---|
+| Accessibility | 3/4 | Source labels, Dynamic Type, Reduce Motion, and Reduce Transparency paths are present; final hardware passes remain |
+| Performance | 4/4 | Lazy/native containers, bounded image handling, and no launch-blocking work found |
+| Appearance and theming | 4/4 | Living Plan Table tokens, dark/light assets, opaque icon renditions, and current extension adaptations |
+| Platform conformance | 4/4 | Native tabs/split view, system Apple sign-in button, SF Symbols, sheets, and controls |
+| Adaptivity | 3/4 | Current portrait iPhone and portrait iPad sets pass; physical iPad rotation/multitasking remains |
+| **Total** | **18/20** | **Excellent; native conformance pass** |
+
+The release pass corrected the iPad hero-title occlusion and action-layer
+contrast, the compact hero status overlap, Apple/Microsoft sign-in treatment,
+the retired accent color, and the tinted icon polarity.
+
 ## Automated evidence
 
 Verified on iOS 26.5 Simulator on 2026-08-22:
@@ -55,11 +71,46 @@ Verified on iOS 26.5 Simulator on 2026-08-22:
 - The Release binary contains no `WORKSHOP_API_BASE`, `WORKSHOP_DEV_TOKEN`, or
   other debug launch override; MSAL is exact-pinned at 1.9.0 and NintekKit at
   revision `e425ea6b955c7a1599193fb94a8f0fba1ef16a48`.
+- A signed archive was created at `2026-08-22T21:02:17Z`. The exported
+  Apple Distribution IPA is 8,637,347 bytes with SHA-256
+  `214338c3afbf8a5c64a0f243b0eea0a79235eba7a115705a1a95f553ecce2296`;
+  Apple's pre-upload validation returned no errors.
+- The app, widget, and share extension export as arm64, version `2.2.1 (12)`,
+  with `get-task-allow=false`, the expected App Group, Sign in with Apple and
+  Keychain entitlements, `ITSAppUsesNonExemptEncryption=false`, and no secret
+  files.
+- App, widget, share, MSAL, and package privacy manifests are present. App,
+  widget, share, and MSAL dSYM UUIDs match their archived binaries.
+- Endpoint inspection found the production Workshop API, Microsoft identity,
+  the user-facing plan/support links, and intentional `workshop-demo.invalid`
+  local-demo data. The monolithic pinned NintekKit binary also retains an
+  unreachable ShopKeep endpoint/Cairn resource bundle; no Workshop path calls
+  them and no secret or debug endpoint override ships.
 - The source cleanup removes 4,046,078 bytes of obsolete screenshot outputs and
   522,191 bytes of font files. Regenerated starter plans shrink from 8,258,517
   to 655,564 bytes while retaining all seven 1600x1100 runtime assets. Including
   retired tooling and documentation, the resulting tracked repository tree is
   12,238,533 bytes smaller than the audited base.
+
+## App Store Connect and TestFlight
+
+| Resource | State |
+|---|---|
+| App | `6793709356`, primary name `Nintek Workshop` (`Workshop` was unavailable) |
+| Version | `ab8c64ab-bf76-4c14-9b63-ab58630a59db`, `2.2.1`, `PREPARE_FOR_SUBMISSION`, `AFTER_APPROVAL` |
+| Build | `363cc8ef-641d-451e-9ae7-5f0542ff5700`, build 12, `VALID`, `APP_STORE_ELIGIBLE`, internal `IN_BETA_TESTING` |
+| iPhone screenshots | Set `918e928d-f1df-4b86-80f7-7a20be86df98`, five ordered `1320x2868` assets, all `COMPLETE` |
+| iPad screenshots | Set `81034025-b164-44b2-a8e2-eafbcc1b1267`, five ordered `2064x2752` assets, all `COMPLETE`; three stale title-art assets deleted |
+| Metadata | Current Shaper Hub, Tables, Insights, Dynamic Type/themes, support URL, keywords, and no-IAP/free review notes |
+| Commercial | Existing USA base price `0.0`, 174 automatic zero-price points, zero IAPs/subscriptions; not mutated |
+| Availability | Existing 175 territories available and new-territory opt-in; not mutated |
+| Review | No new `reviewSubmission`, item, or `appStoreVersionSubmission` |
+
+Public URLs are privacy
+`https://www.nintek.com/workshop/privacy`, support
+`https://www.nintek.com/workshop/support`, marketing
+`https://www.nintek.com/workshop`, and terms
+`https://www.nintek.com/terms`.
 
 ## Remaining release work
 
@@ -68,10 +119,19 @@ Verified on iOS 26.5 Simulator on 2026-08-22:
   drag-and-drop, widgets, Live Activities, and the system share sheet.
 - Run VoiceOver, largest Dynamic Type, Increased Contrast, Reduce Motion, and
   Reduce Transparency checks on hardware.
-- Create and inspect a fresh signed archive/export, then complete TestFlight,
-  replace the stale ASC screenshots, and complete draft metadata.
 - Verify and publish App Privacy in the signed-in App Store Connect UI.
+- Create, seed, and clean-device verify the protected reviewer account described
+  in `AppStore/REVIEWER_ACCOUNT_CHECKLIST.md`.
+- Record the exact TestFlight build on current physical iPhone and iPad hardware
+  and complete every placeholder in `AppStore/GUIDELINE_2_1_TEMPLATE.txt`.
+- Complete EU trader status for the 27 affected territories in App Store
+  Connect, or deliberately remove those territories before review.
 - Update the public privacy/support release-state copy before any App Review
   submission; it currently and intentionally says the native release is
   withdrawn during rework.
-- Upload or submit only after those gates pass.
+- Confirm `USES_THIRD_PARTY_CONTENT` remains the intended declaration for
+  user-submitted plan links even though bundled art is original.
+- Keep the `Nintek Workshop` fallback name or pursue the separate ownership path
+  for `Workshop`.
+- Synchronize this verified state into the cross-repo release ledger.
+- Do not create or submit App Review until all external gates pass.

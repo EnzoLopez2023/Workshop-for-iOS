@@ -14,6 +14,9 @@ evidence. Generated captures and screenshot files stay local and ignored.
   mask and writes opaque JPEG files. The expected local sets are five
   `1320x2868` files under `AppStore/Screenshots/iPhone-6.9/` and five
   `2064x2752` files under `AppStore/Screenshots/iPad-13/`.
+- `AppStore/SCREENSHOT_MANIFEST.json` records their exact order, dimensions,
+  byte sizes, SHA-256 hashes, device/OS, source commit, and synthetic-data
+  privacy classification.
 - App Store screenshots must show the actual release UI. Simulator captures are
   listing candidates; complete Guideline 2.1 recording evidence on physical
   iPhone and iPad hardware as required by the
@@ -23,4 +26,5 @@ evidence. Generated captures and screenshot files stay local and ignored.
   git history at commit `5e1d064`; they are not current product or submission
   assets and must not be uploaded.
 
-No upload or review submission is performed by source cleanup work.
+Current upload and draft metadata state is recorded in `APP_STORE_STATUS.md`.
+Source cleanup itself never creates an App Review submission.

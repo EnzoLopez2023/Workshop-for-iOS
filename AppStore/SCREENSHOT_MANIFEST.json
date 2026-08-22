@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "app": "Workshop",
+  "bundleId": "com.nintek.workshop",
+  "version": "2.2.1",
+  "build": "12",
+  "sourceCommit": "a6d80030d9ee3c0f1c96dcc02883710de6215d54",
+  "captureDateUTC": "2026-08-22",
+  "locale": "en-US",
+  "content": "Synthetic read-only Demo Workshop data; no credentials or personal data.",
+  "sets": [
+    {
+      "displayType": "APP_IPHONE_67",
+      "appStoreConnectSetId": "918e928d-f1df-4b86-80f7-7a20be86df98",
+      "device": "iPhone 17 Pro Max",
+      "operatingSystem": "iOS 26.5 (23F77)",
+      "assets": [
+        {
+          "order": 1,
+          "appStoreConnectId": "1624294a-6a86-47ba-84c4-d0c0b3e92acc",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "01-dashboard.jpg",
+          "byteSize": 432689,
+          "sha256": "c3e2f63f194ef6160d9bbe290ab4f8db3da0c53b815d31c602aa52c3fd9e027f",
+          "width": 1320,
+          "height": 2868,
+          "hasAlpha": false
+        },
+        {
+          "order": 2,
+          "appStoreConnectId": "c0e8d02f-0337-4fa9-9d61-43a9b835876e",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "02-project-detail.jpg",
+          "byteSize": 494682,
+          "sha256": "6be5c0ecb6a64fe3a48c44df23377256d08d33cef09ed757a5debfab2cb6a8b7",
+          "width": 1320,
+          "height": 2868,
+          "hasAlpha": false
+        },
+        {
+          "order": 3,
+          "appStoreConnectId": "cc6b7e36-dbae-4fe1-861a-06b05f9734b2",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "03-shopping-list.jpg",
+          "byteSize": 498291,
+          "sha256": "8396807882da69718df6b055f9971689c8da0d97eb40e927282874e92a85f926",
+          "width": 1320,
+          "height": 2868,
+          "hasAlpha": false
+        },
+        {
+          "order": 4,
+          "appStoreConnectId": "42adf5ec-dcb3-4e54-af5a-b291be678d73",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "04-conversion-tables.jpg",
+          "byteSize": 475827,
+          "sha256": "c0244ddff654b309b017a9659e6982cff4409968b5958204f01cd9035ca3900e",
+          "width": 1320,
+          "height": 2868,
+          "hasAlpha": false
+        },
+        {
+          "order": 5,
+          "appStoreConnectId": "7bdd51ed-b04c-4f95-8bef-3a8b6d75eb84",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "05-insights.jpg",
+          "byteSize": 405805,
+          "sha256": "577f9c5b5b51e4c80ef221be1538466e0b97236ca254451da41d556103e2eeaa",
+          "width": 1320,
+          "height": 2868,
+          "hasAlpha": false
+        }
+      ]
+    },
+    {
+      "displayType": "APP_IPAD_PRO_3GEN_129",
+      "appStoreConnectSetId": "81034025-b164-44b2-a8e2-eafbcc1b1267",
+      "device": "iPad Pro 13-inch (M5)",
+      "operatingSystem": "iPadOS 26.5 (23F77)",
+      "assets": [
+        {
+          "order": 1,
+          "appStoreConnectId": "e18a7e01-128d-4a60-9eb4-50d11230c676",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "01-dashboard.jpg",
+          "byteSize": 658480,
+          "sha256": "2f722d5d69a53e6272dfd1be5d3780a17cd7fc728314e11e1b5d65269aeb0855",
+          "width": 2064,
+          "height": 2752,
+          "hasAlpha": false
+        },
+        {
+          "order": 2,
+          "appStoreConnectId": "21c1ef8f-1b81-4c16-9a88-0478c33fd6a1",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "02-project-detail.jpg",
+          "byteSize": 913882,
+          "sha256": "f9f45341dafef296dbb29b4e65c2a999a8fc6016d7f1857190fe02c0451edc9f",
+          "width": 2064,
+          "height": 2752,
+          "hasAlpha": false
+        },
+        {
+          "order": 3,
+          "appStoreConnectId": "3e25038e-5bc8-4eb7-b6bf-f74796d00ddf",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "03-shopping-list.jpg",
+          "byteSize": 622652,
+          "sha256": "491022fa00efa9284da4989389e9a1e3aea442bae1972f61bafc9c88f89d2938",
+          "width": 2064,
+          "height": 2752,
+          "hasAlpha": false
+        },
+        {
+          "order": 4,
+          "appStoreConnectId": "97165540-d459-4499-b14c-17897ac0429a",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "04-conversion-tables.jpg",
+          "byteSize": 613513,
+          "sha256": "1b8f088c67058c26e1c65597bfb142b56f3adf1fc45b9acea8c8a3f0925dd605",
+          "width": 2064,
+          "height": 2752,
+          "hasAlpha": false
+        },
+        {
+          "order": 5,
+          "appStoreConnectId": "345f7c9f-55fb-4a10-823a-45f7927d46f3",
+          "appStoreConnectState": "COMPLETE",
+          "fileName": "05-insights.jpg",
+          "byteSize": 528255,
+          "sha256": "da1ac09abc00ba23808c8be423ee05227a000902a2f9429afa0c7b753386f9f3",
+          "width": 2064,
+          "height": 2752,
+          "hasAlpha": false
+        }
+      ]
+    }
+  ]
+}
