@@ -16,8 +16,15 @@ options:
     iOS: "17.0"
 
 packages:
+  # Keep the remote revision committed so clean clones and CI resolve the same
+  # code. For local NintekKit development, leave this entry intact and use
+  # Xcode's File > Add Package Dependencies... > Add Local... to select a local
+  # checkout. The matching local package temporarily overrides this dependency;
+  # do not commit that project.pbxproj change, and delete the local reference to
+  # return to the pinned remote revision.
   NintekKit:
-    path: ../NintekKit
+    url: https://github.com/EnzoLopez2023/NintekKit
+    revision: e425ea6b955c7a1599193fb94a8f0fba1ef16a48
   MSAL:
     url: https://github.com/AzureAD/microsoft-authentication-library-for-objc
     from: "1.5.0"

@@ -173,7 +173,6 @@
 		5A667D8225FE6D72AAFE0EB3 /* StarterProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterProjects.swift; sourceTree = "<group>"; };
 		5D5777FE57DB4A9B4C99493D /* CutPlanOptimizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutPlanOptimizerView.swift; sourceTree = "<group>"; };
 		6274F57A8CA35EDEB0067DB8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		64F4CB70E3C122071AD83DA2 /* NintekKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NintekKit; path = ../NintekKit; sourceTree = SOURCE_ROOT; };
 		68CDE27BE8BA34D2FE8FD906 /* PDFViewerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewerSheet.swift; sourceTree = "<group>"; };
 		6EFEA177EA1366D9CA438E41 /* plan-bread-box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-bread-box.png"; sourceTree = "<group>"; };
 		70402D41911248F2517937B6 /* Workshop.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Workshop.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -291,7 +290,6 @@
 			isa = PBXGroup;
 			children = (
 				01F4FCC888A0A331EEC11083 /* Fonts */,
-				D7414950DCE8EE8D5F614E7C /* Packages */,
 				839868694421DF70652EA9D8 /* Workshop */,
 				3548FEECF2FEFE8F0FAD1BFF /* WorkshopShareExtension */,
 				0C773C9E85E2EF89B7B03A23 /* WorkshopTests */,
@@ -407,14 +405,6 @@
 				EE7FDD7B4F17851DBE8D24B3 /* plan-serving-tray.png */,
 			);
 			path = StarterPlans;
-			sourceTree = "<group>";
-		};
-		D7414950DCE8EE8D5F614E7C /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				64F4CB70E3C122071AD83DA2 /* NintekKit */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		D8AC1E10764C6B29F638774C /* WorkshopWidgets */ = {
@@ -575,7 +565,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				39372E0BA146F5E41F2C10F0 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */,
-				801627758FB9BBC41B0894D1 /* XCLocalSwiftPackageReference "../NintekKit" */,
+				4E1E138EDADA7BFDAC285A0B /* XCRemoteSwiftPackageReference "NintekKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8ABB469673BA690888B8AAE7 /* Products */;
@@ -1124,13 +1114,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		801627758FB9BBC41B0894D1 /* XCLocalSwiftPackageReference "../NintekKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../NintekKit;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		39372E0BA146F5E41F2C10F0 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1140,19 +1123,30 @@
 				minimumVersion = 1.5.0;
 			};
 		};
+		4E1E138EDADA7BFDAC285A0B /* XCRemoteSwiftPackageReference "NintekKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EnzoLopez2023/NintekKit";
+			requirement = {
+				kind = revision;
+				revision = e425ea6b955c7a1599193fb94a8f0fba1ef16a48;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		1C854373FC6BB16226E36396 /* NintekKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 4E1E138EDADA7BFDAC285A0B /* XCRemoteSwiftPackageReference "NintekKit" */;
 			productName = NintekKit;
 		};
 		7877A30098F9A178C3E5F7A9 /* NintekKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 4E1E138EDADA7BFDAC285A0B /* XCRemoteSwiftPackageReference "NintekKit" */;
 			productName = NintekKit;
 		};
 		8CA77F591CC948B68AD9F1B1 /* NintekKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 4E1E138EDADA7BFDAC285A0B /* XCRemoteSwiftPackageReference "NintekKit" */;
 			productName = NintekKit;
 		};
 		C3230F2228F4DBCC175B8B36 /* MSAL */ = {
