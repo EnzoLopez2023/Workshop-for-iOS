@@ -6,6 +6,7 @@ struct SignInView: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// Which provider is mid-flight, so only that plate shows the busy state.
     @State private var signingIn: SignInProvider?
     @State private var appleSignIn = AppleSignInController()
@@ -42,6 +43,16 @@ struct SignInView: View {
                                 startAppleSignIn()
                             }
                             .disabled(busy)
+
+                            Text(WorkshopAccountCopy.signInDisclosure)
+                                .font(.footnote)
+                                .foregroundStyle(Theme.muted)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 4)
+                                .accessibilityIdentifier("provider-scope-disclosure")
 
                             SignInPlate(style: .demo, busy: false) {
                                 model.enterDemo()
@@ -93,6 +104,26 @@ struct SignInView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
+            stageTrack
+        }
+        .frame(maxWidth: 660)
+        .padding(28)
+        .planGlass()
+    }
+
+    @ViewBuilder private var stageTrack: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    stage("Idea", complete: true)
+                    stage("Plan", complete: true)
+                }
+                HStack(spacing: 8) {
+                    stage("Build", complete: false)
+                    stage("Finish", complete: false)
+                }
+            }
+        } else {
             HStack(spacing: 8) {
                 stage("Idea", complete: true)
                 connector(complete: true)
@@ -103,9 +134,6 @@ struct SignInView: View {
                 stage("Finish", complete: false)
             }
         }
-        .frame(maxWidth: 660)
-        .padding(28)
-        .planGlass()
     }
 
     private func stage(_ label: String, complete: Bool) -> some View {
@@ -117,6 +145,7 @@ struct SignInView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
             .background(complete ? Theme.action : Theme.recessed, in: Capsule())
+            .accessibilityLabel("\(label), \(complete ? "complete" : "upcoming")")
     }
 
     private func connector(complete: Bool) -> some View {
@@ -216,6 +245,7 @@ private struct SignInPlate: View {
                 }
                 Text(busy ? "Signing in…" : style.title)
                     .font(.system(.body, design: .rounded, weight: .semibold))
+                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
             }

@@ -2,6 +2,66 @@ import XCTest
 
 @MainActor
 final class WorkshopVisualUITests: XCTestCase {
+    func testSignInExplainsProviderScopedWorkspaces() {
+        assertProviderScopedSignIn()
+    }
+
+    func testSignInDisclosureAtAccessibilityTextSize() {
+        assertProviderScopedSignIn(dynamicType: "accessibility3")
+    }
+
+    private func assertProviderScopedSignIn(dynamicType: String? = nil) {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-test-sign-in"]
+        if let dynamicType {
+            app.launchEnvironment["WORKSHOP_UI_TEST_DYNAMIC_TYPE"] = dynamicType
+        }
+        app.launch()
+
+        XCTAssertTrue(app.buttons["Sign in with Microsoft"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Sign in with Apple"].exists)
+        let disclosure = app.staticTexts["provider-scope-disclosure"]
+        XCTAssertTrue(disclosure.exists)
+        for _ in 0..<6 where !disclosure.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(disclosure.isHittable)
+        XCTAssertEqual(
+            disclosure.label,
+            "Apple and Microsoft create separate Workshop workspaces. Use the same sign-in each time to return to your projects. Apple and Microsoft workspaces are not linked or merged automatically."
+        )
+        attachScreenshot(named: "Provider Sign-In Disclosure")
+    }
+
+    func testAppleAccountShowsProviderScopedDeletion() {
+        assertProviderScopedAccount(
+            provider: "apple",
+            displayName: "Apple",
+            otherProvider: "Microsoft",
+            underlyingAccount: "Apple Account"
+        )
+    }
+
+    func testMicrosoftAccountShowsProviderScopedDeletion() {
+        assertProviderScopedAccount(
+            provider: "microsoft",
+            displayName: "Microsoft",
+            otherProvider: "Apple",
+            underlyingAccount: "Microsoft account"
+        )
+    }
+
+    func testAppleAccountScopeAtAccessibilityTextSize() {
+        assertProviderScopedAccount(
+            provider: "apple",
+            displayName: "Apple",
+            otherProvider: "Microsoft",
+            underlyingAccount: "Apple Account",
+            dynamicType: "accessibility3"
+        )
+    }
+
     func testAppStoreScreenshotStory() {
         continueAfterFailure = false
         XCUIDevice.shared.orientation = .portrait
@@ -80,6 +140,73 @@ final class WorkshopVisualUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 0.5)
         if !app.buttons[name].isSelected {
             app.buttons[name].tap()
+        }
+    }
+
+    private func assertProviderScopedAccount(
+        provider: String,
+        displayName: String,
+        otherProvider: String,
+        underlyingAccount: String,
+        dynamicType: String? = nil
+    ) {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["WORKSHOP_UI_TEST_ACCOUNT_PROVIDER"] = provider
+        app.launchEnvironment["WORKSHOP_START_TAB"] = "more"
+        if let dynamicType {
+            app.launchEnvironment["WORKSHOP_UI_TEST_DYNAMIC_TYPE"] = dynamicType
+        }
+        app.launch()
+
+        XCTAssertTrue(app.navigationBars["More"].waitForExistence(timeout: 5))
+        let providerRow = app.descendants(matching: .any)["account-provider"]
+        scrollUntilExists(providerRow, in: app)
+        XCTAssertTrue(providerRow.exists)
+        XCTAssertEqual(providerRow.label, "Provider")
+        XCTAssertEqual(providerRow.value as? String, displayName)
+
+        let workspaceDisclosure = app.staticTexts["provider-workspace-disclosure"]
+        XCTAssertTrue(workspaceDisclosure.exists)
+        XCTAssertTrue(workspaceDisclosure.label.contains("\(displayName) sign-in"))
+        XCTAssertTrue(workspaceDisclosure.label.contains("not linked or merged"))
+
+        let footer = app.descendants(matching: .any)["provider-deletion-scope"]
+        scrollUntilExists(footer, in: app)
+        XCTAssertTrue(footer.exists)
+        XCTAssertTrue(footer.label.contains("only this \(displayName)-backed"))
+        XCTAssertTrue(footer.label.contains(underlyingAccount))
+        XCTAssertTrue(footer.label.contains("\(otherProvider)-backed"))
+        attachScreenshot(named: "\(displayName) Account Provider")
+
+        let deleteButton = app.buttons["Delete Account"]
+        scrollUntilHittable(deleteButton, in: app)
+        XCTAssertTrue(deleteButton.isHittable)
+        deleteButton.tap()
+        let alert = app.alerts["Delete \(displayName) Workspace?"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+        let messageElement = alert.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS %@", "Deletes only this \(displayName)")
+        ).firstMatch
+        XCTAssertTrue(messageElement.exists)
+        let message = messageElement.label
+        XCTAssertTrue(message.contains("Deletes only this \(displayName)"))
+        XCTAssertTrue(message.contains("\(otherProvider) Workshop workspace"))
+        XCTAssertTrue(message.contains("starter projects"))
+        XCTAssertTrue(message.contains("deleted content does not return"))
+        attachScreenshot(named: "\(displayName) Deletion Confirmation")
+        alert.buttons["Cancel"].tap()
+    }
+
+    private func scrollUntilExists(_ element: XCUIElement, in app: XCUIApplication) {
+        for _ in 0..<10 where !element.exists {
+            app.swipeUp()
+        }
+    }
+
+    private func scrollUntilHittable(_ element: XCUIElement, in app: XCUIApplication) {
+        for _ in 0..<10 where !element.isHittable {
+            app.swipeUp()
         }
     }
 

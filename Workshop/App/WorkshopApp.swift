@@ -14,7 +14,7 @@ struct WorkshopApp: App {
 
     var body: some Scene {
         WindowGroup {
-            launchView
+            configuredLaunchView
                 .environmentObject(model)
                 .environmentObject(theme)
                 .onOpenURL { url in
@@ -43,6 +43,19 @@ struct WorkshopApp: App {
         }
 
         @ViewBuilder
+        private var configuredLaunchView: some View {
+    #if DEBUG
+            if ProcessInfo.processInfo.environment["WORKSHOP_UI_TEST_DYNAMIC_TYPE"] == "accessibility3" {
+                launchView.environment(\.dynamicTypeSize, .accessibility3)
+            } else {
+                launchView
+            }
+    #else
+            launchView
+    #endif
+        }
+
+        @ViewBuilder
         private var launchView: some View {
     #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("-ui-test-share-confirmation") {
@@ -50,6 +63,8 @@ struct WorkshopApp: App {
                     message: "Open Workshop to add this link as a new project.",
                     ok: true
                 )
+            } else if ProcessInfo.processInfo.arguments.contains("-ui-test-sign-in") {
+                SignInView()
             } else {
                 RootView()
             }

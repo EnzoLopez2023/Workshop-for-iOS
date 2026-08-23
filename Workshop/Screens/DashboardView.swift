@@ -401,18 +401,17 @@ struct DashboardView: View {
                 .clipped()
 
             LinearGradient(
-                colors: [.clear, Theme.navigationDeep.opacity(0.78)],
-                startPoint: .center,
+                stops: [
+                    .init(color: .clear, location: 0.18),
+                    .init(color: Theme.navigationDeep.opacity(0.42), location: 0.56),
+                    .init(color: Theme.navigationDeep.opacity(0.9), location: 1),
+                ],
+                startPoint: .top,
                 endPoint: .bottom
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(focusLabel(for: project))
-                    .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.78))
-                if hSize != .regular {
-                    StatusBadge(status: project.status, withBackdrop: true)
-                }
+                StatusBadge(status: project.status, withBackdrop: true)
                 Text(project.title)
                     .font(
                         .system(
@@ -424,9 +423,6 @@ struct DashboardView: View {
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
-                if hSize == .regular {
-                    StatusBadge(status: project.status, withBackdrop: true)
-                }
             }
             .padding(.vertical, hSize == .regular ? 28 : 22)
             .padding(.leading, hSize == .regular ? 28 : 22)

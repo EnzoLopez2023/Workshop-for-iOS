@@ -120,6 +120,18 @@ struct MoreView: View {
                         if let name = model.userName {
                             LabeledContent("Signed in as", value: name)
                         }
+                        if let provider = model.accountProvider {
+                            LabeledContent("Provider", value: provider.displayName)
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel("Provider")
+                                .accessibilityValue(provider.displayName)
+                                .accessibilityIdentifier("account-provider")
+                            Text(WorkshopAccountCopy.workspaceDisclosure(for: provider))
+                                .font(.footnote)
+                                .foregroundStyle(Theme.muted)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("provider-workspace-disclosure")
+                        }
                         Button("Sign Out", role: .destructive) {
                             Task { await model.signOut() }
                         }
@@ -154,7 +166,8 @@ struct MoreView: View {
                 } footer: {
                     Text(model.isDemoMode
                          ? "Demo data stays on this device only for the current session."
-                         : "Delete Account permanently removes your Workshop projects, photos, lists, and account data. Export a project summary first if you want a reference copy.")
+                         : accountDeletionFooter)
+                        .accessibilityIdentifier("provider-deletion-scope")
                 }
                 .listRowBackground(Theme.raised.opacity(0.72))
                 .listRowSeparatorTint(Theme.divider)
@@ -171,13 +184,14 @@ struct MoreView: View {
             .navigationTitle("More")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
-            .alert("Permanently Delete Account?", isPresented: $showingDeleteAccountConfirmation) {
+            .alert(accountDeletionTitle, isPresented: $showingDeleteAccountConfirmation) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete Account", role: .destructive) {
                     Task { await deleteAccount() }
                 }
             } message: {
-                Text("All projects, photos, cut lists, materials, Shaper projects, templates, and account data will be permanently deleted. This cannot be undone.")
+                Text(accountDeletionConfirmation)
+                    .accessibilityIdentifier("provider-deletion-confirmation")
             }
         }
     }
@@ -235,6 +249,27 @@ struct MoreView: View {
     private var dashboardSortBinding: Binding<DashboardSort> {
         Binding(get: { DashboardSort(rawValue: dashboardSortRaw) ?? .updated },
                set: { dashboardSortRaw = $0.rawValue })
+    }
+
+    private var accountDeletionTitle: String {
+        guard let provider = model.accountProvider else {
+            return "Delete Current Workshop Account?"
+        }
+        return "Delete \(provider.displayName) Workspace?"
+    }
+
+    private var accountDeletionFooter: String {
+        guard let provider = model.accountProvider else {
+            return WorkshopAccountCopy.unknownDeletionFooter
+        }
+        return WorkshopAccountCopy.deletionFooter(for: provider)
+    }
+
+    private var accountDeletionConfirmation: String {
+        guard let provider = model.accountProvider else {
+            return WorkshopAccountCopy.unknownDeletionConfirmation
+        }
+        return WorkshopAccountCopy.deletionConfirmation(for: provider)
     }
 
     // MARK: Export
