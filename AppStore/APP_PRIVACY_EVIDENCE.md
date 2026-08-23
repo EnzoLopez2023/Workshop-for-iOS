@@ -19,13 +19,17 @@ be opened, compared with this record, published, and read back before review.
 Evidence:
 
 - `Workshop/PrivacyInfo.xcprivacy` declares the five types above.
-- Microsoft Entra and Sign in with Apple provide account identity. Apple may
-  provide a private relay address.
+- Microsoft Entra and Sign in with Apple provide independent provider-scoped
+  account identities. Matching email addresses do not link or merge their
+  Workshop data. Apple may provide a private relay address.
 - Projects, Shaper projects, parts, cut lists, materials, shopping lists,
   finish records, build logs, notes, links, photos, PDFs, and imported project
   drafts are retained in the signed-in Workshop account.
 - Optional project URL analysis sends the user-selected public page through the
   Workshop service to Anthropic only after the user requests analysis.
+- Deletion applies only to the current provider-scoped Workshop account. It
+  leaves the underlying Apple/Microsoft account and any Workshop account created
+  through the other provider intact.
 - There is no advertising, analytics SDK, ATT prompt, cross-app tracking,
   StoreKit purchase, subscription, or in-app purchase.
 

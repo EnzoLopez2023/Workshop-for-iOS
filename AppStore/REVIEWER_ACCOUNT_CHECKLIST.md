@@ -16,10 +16,14 @@ password, recovery codes, tokens, or private video access secret to git.
       Information username/password fields.
 - [ ] Verify sign-in, refresh, foreground/background, force-quit/relaunch,
       offline error handling, and sign-out.
+- [ ] Confirm the UI identifies Microsoft as the active provider and states that
+      Apple and Microsoft open separate, unlinked Workshop workspaces.
 - [ ] Record permanent account deletion, then recreate/reseed the principal and
       immediately reverify the credentials Apple will receive.
 - [ ] Exercise Sign in with Apple separately without sharing a personal Apple
       ID in notes, source, screenshots, or recordings.
+- [ ] Verify each provider's deletion removes only its own Workshop identity and
+      leaves the other provider's workspace intact.
 - [ ] Keep the reviewer account and production services available throughout
       review.
 - [ ] Before App Review submission, update the public privacy/support

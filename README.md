@@ -4,6 +4,10 @@ Workshop is a native SwiftUI planner for woodworking projects. It shares the
 Workshop Azure backend and Microsoft identity registration with the
 [web client](https://github.com/EnzoLopez2023/workshop).
 
+Apple and Microsoft sign-in create independent provider-scoped Workshop
+accounts. They are never linked automatically, even when the provider email
+addresses match, and deleting one Workshop account does not delete the other.
+
 ## Source of truth
 
 | Surface | Authority |
@@ -14,6 +18,7 @@ Workshop Azure backend and Microsoft identity registration with the
 | Share confirmation | `Shared/ShareConfirmationView.swift` |
 | Starter-plan artwork | `Scripts/make-starter-plans.swift` and packaged PNGs |
 | App Store readiness | `APP_STORE_STATUS.md` and the [shared submission playbook](https://github.com/EnzoLopez2023/azure-infra/blob/main/APP_STORE_SUBMISSION.md) |
+| Provider-scoped account audit | `AppStore/P2-09_PROVIDER_SCOPED_ACCOUNTS.md` |
 
 The app, widgets, and share extension use Apple system fonts. The build-time
 shipping-residue check rejects retired font resources, palette values, and

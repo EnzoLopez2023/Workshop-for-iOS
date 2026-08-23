@@ -6,7 +6,7 @@ Video: {{ASC_ATTACHMENT_OR_STABLE_PRIVATE_HTTPS_LINK}}
 SHA-256: {{VIDEO_SHA256}}
 Captured {{UTC_DATE}} on {{IPHONE_MODEL}} with iOS {{IOS_VERSION}} ({{IOS_BUILD}}).
 The continuous recording begins with launch and shows Microsoft sign-in, dashboard, project create/edit, materials and cut-plan optimization, shopping, tables, insights, photo/PDF/build-log flows, camera and finish-reminder permission prompts, widgets, Live Activity, share extension, sign-out, and permanent account deletion.
-Account lifecycle: The recording uses the dedicated seeded reviewer account, including sign-in, sign-out, deletion, recreation/reseeding, and reverified access. Sign in with Apple was tested separately without providing a personal Apple ID.
+Account lifecycle: Apple and Microsoft create separate provider-scoped Workshop accounts, even when their email addresses match; there is no automatic linking or merge. The recording uses the dedicated Microsoft reviewer account, including sign-in, sign-out, deletion of only that Microsoft-backed Workshop identity, recreation/reseeding, and reverified access. Sign in with Apple and deletion of only the Apple-backed Workshop identity were tested separately without providing a personal Apple ID.
 Paid content/subscription: Not applicable. Workshop is free and the submitted build has no StoreKit in-app purchase or subscription.
 User-generated content/reporting/blocking: Workshop projects, photos, PDFs, notes, imported links, and logs are private account content. There is no public feed or user-to-user publishing surface, so reporting and blocking are not applicable.
 Sensitive permissions/capabilities: The recording shows the camera prompt and denial/recovery for project/build photos or dimension scanning, plus notification permission for finish reminders. PhotosPicker and Files/PDF import do not request broad library access.
@@ -27,14 +27,14 @@ Steps:
 2. Choose Sign in with Microsoft and use the protected reviewer credentials.
 3. Open the seeded Hand Tool Storage Cabinet from Dashboard.
 4. Follow the project, cut-plan, shopping, Tables, More -> Insights, upload, export, share, widget, and Live Activity paths shown in the recording.
-5. Open More -> Account -> Delete Account for permanent deletion.
+5. Confirm More -> Account identifies Microsoft as the active provider, then choose Delete Account. Deletion permanently removes only that Microsoft-backed Workshop identity and data; it does not delete the Microsoft account or any Apple-backed Workshop account.
 Sample files: {{SAFE_IMAGE_PDF_URL_FILENAMES_AND_SHA256_OR_NOT_APPLICABLE}}.
 After recording deletion, the account was reseeded and login was reverified on {{UTC_DATE}}.
 
 5. External services, tools, and platforms
 Workshop Azure API - authenticated project storage and bidirectional web/iOS CRUD; required for signed-in account data.
 Microsoft Entra/MSAL - Microsoft authentication.
-Sign in with Apple - alternate authentication to the same account class.
+Sign in with Apple - an independent provider-scoped Workshop account; it is not automatically linked or merged with Microsoft-backed data.
 Anthropic through the Workshop service - optional public project URL analysis requested by the user; not required for ordinary navigation.
 Apple WidgetKit, ActivityKit, share extension, PhotosPicker, Files, Spotlight, Handoff, and UserNotifications - native extensions, imports, discovery, continuity, and reminders present in the submitted build.
 

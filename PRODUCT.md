@@ -45,7 +45,10 @@ and CNC/Shaper work in one durable record.
   existing product capabilities.
 - Notebook is deferred to v2; Insights is native-only.
 - Microsoft Entra and Sign in with Apple authentication must retain the current
-  shared-backend identity contract.
+  shared-backend identity contract. They are independent provider-scoped
+  Workshop accounts: the same email can have separate Apple and Microsoft
+  workspaces, no automatic linking or merge occurs, and deletion affects only
+  the currently authenticated provider identity.
 - API and schema changes must remain compatible with the Workshop web client.
 - The cut-plan optimizer must preserve exact layout parity with the web
   implementation through NintekKit.

@@ -1,6 +1,6 @@
 # Workshop App Store readiness
 
-Last source audit: 2026-08-22
+Last source audit: 2026-08-23
 
 This file records Workshop-specific source readiness. Current App Store
 Connect, TestFlight, pricing, storefront, and review state remain authoritative
@@ -114,6 +114,17 @@ Public URLs are privacy
 
 ## Remaining release work
 
+- **P2-09 next-build blocker:** build 12 implements separate Apple and
+  Microsoft/Entra identities correctly, but its sign-in screen does not disclose
+  that the providers create separate unlinked workspaces, More -> Account does
+  not name the active provider, and deletion copy does not explicitly limit
+  deletion to the current provider-scoped Workshop account. Do not submit build
+  12 for App Review. Implement and verify the exact copy/test contract in
+  `AppStore/P2-09_PROVIDER_SCOPED_ACCOUNTS.md`, increment the build, and replace
+  build 12 only after the successor is `VALID`.
+- Correct the public Workshop Support deletion path from the stale
+  `Settings -> Account & Data` wording to the shipped `More -> Account` path
+  while preserving its accurate provider-scoped deletion explanation.
 - Complete hands-on smoke tests on a physical iPhone and iPad, including
   Microsoft and Apple sign-in, account deletion, camera/photo/PDF paths,
   drag-and-drop, widgets, Live Activities, and the system share sheet.
