@@ -1,5 +1,5 @@
 Guideline 2.1 - Information Needed
-App/build: Workshop 2.2.1 (12); source {{40_CHARACTER_GIT_SHA}}
+App/build: Workshop 2.2.1 (13); source c3e6aab6b8fe081d5b9eee9781bd59378e0ed07a
 
 1. Physical-device recording
 Video: {{ASC_ATTACHMENT_OR_STABLE_PRIVATE_HTTPS_LINK}}
@@ -23,7 +23,7 @@ Reviewer account reference: workshop-asc-reviewer.
 Credentials are stored only in the App Review Information username/password fields.
 MFA/conditional access: {{CLEAN_DEVICE_EXTERNAL_NETWORK_RESULT}}.
 Steps:
-1. Install Workshop 2.2.1 (12) from TestFlight and launch it.
+1. Install Workshop 2.2.1 (13) from TestFlight and launch it.
 2. Choose Sign in with Microsoft and use the protected reviewer credentials.
 3. Open the seeded Hand Tool Storage Cabinet from Dashboard.
 4. Follow the project, cut-plan, shopping, Tables, More -> Insights, upload, export, share, widget, and Live Activity paths shown in the recording.

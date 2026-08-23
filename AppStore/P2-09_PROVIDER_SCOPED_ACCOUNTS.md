@@ -2,6 +2,9 @@
 
 Audit date: 2026-08-23
 
+Central decision authority:
+<https://github.com/EnzoLopez2023/azure-infra/commit/1a5df344141b3d210e1f20a850f6fa72eebfad80>
+
 Audited release: Workshop 2.2.1 (12), source
 `a6d80030d9ee3c0f1c96dcc02883710de6215d54`
 
@@ -37,15 +40,15 @@ The storage and deletion behavior is correctly provider-scoped:
 - `WorkshopTests/EntraIdentityTests.swift` covers the home-tenant compatibility
   rule, external-tenant namespacing, personal Microsoft-account namespacing,
   normalization, and malformed claims.
-- No native automated test currently asserts the Apple `apple_<sha256(sub)>`
+- Build 12 had no native automated test asserting the Apple `apple_<sha256(sub)>`
   namespace, cross-provider non-collision, provider labeling, or provider-scoped
   deletion copy. Those are next-build evidence gaps, not proof of linking.
 - The public privacy and support pages explicitly describe separate accounts,
   separate data/deletion scopes, and the lack of automatic linking.
 
-The public support page's provider boundary is correct, but its deletion
-navigation is stale: it says `Settings -> Account & Data` while build 12 uses
-`More -> Account`. Correct that external page before review.
+At the build-12 audit, the public support page's provider boundary was correct
+but its deletion navigation still said `Settings -> Account & Data`. The
+build-13 release gate corrected it to the shipped `More -> Account` path.
 
 ## Build 12 release verdict
 
@@ -67,9 +70,36 @@ provider selection and before a destructive action.
 No source, build, TestFlight, screenshot, metadata, price, territory, or review
 submission mutation was made by this audit.
 
-## Exact next-build requirements
+## Build 13 remediation
 
-The next binary must add all of the following before it replaces build 12:
+Workshop 2.2.1 (13), source
+`c3e6aab6b8fe081d5b9eee9781bd59378e0ed07a`, closes the binary P2-09 gap:
+
+- sign-in states that Apple and Microsoft create separate workspaces, that the
+  same provider returns to the same projects, and that no automatic link or
+  merge occurs;
+- More -> Account names the active provider and repeats the separate-workspace
+  boundary;
+- the deletion footer and confirmation name only the active provider-backed
+  Workshop workspace, preserve the underlying Apple/Microsoft account and other
+  provider workspace, and explain that signing in again creates a fresh
+  workspace with starter projects while deleted content does not return;
+- pure copy/state tests cover both providers, Entra tenant normalization and
+  non-collision, and provider-scoped starter-content markers;
+- UI tests cover both providers plus deterministic accessibility Dynamic Type;
+  and
+- the public support page now uses the shipped `More -> Account` path.
+
+Build 13 is `VALID`, `APP_STORE_ELIGIBLE`, attached to version 2.2.1, and
+`IN_BETA_TESTING` internally. Build 12 remains valid for history but is not the
+attached candidate and must never be submitted.
+
+The P2-09 binary blocker is closed. Physical-device account/deletion recording
+and reviewer-access verification remain external review-evidence gates.
+
+## Build 13 acceptance contract
+
+Build 13 had to add all of the following before replacing build 12:
 
 1. **Sign-in disclosure**
 
@@ -119,13 +149,17 @@ The next binary must add all of the following before it replaces build 12:
 
 ## Acceptance checklist
 
-- [ ] Apple sign-in creates/returns to only the Apple-backed workspace.
-- [ ] Microsoft sign-in creates/returns to only the selected Entra-backed
+- [ ] Physical Apple sign-in creates/returns to only the Apple-backed workspace.
+- [ ] Physical Microsoft sign-in creates/returns to only the selected Entra-backed
       workspace.
-- [ ] Switching providers does not merge projects, uploads, or exports.
-- [ ] Account settings visibly identify the current provider.
+- [x] Native identity keys and provider state do not merge projects, uploads, or
+      exports.
+- [x] Account settings visibly identify the current provider.
 - [ ] Deleting Apple-backed data leaves the Microsoft-backed workspace intact.
 - [ ] Deleting Microsoft-backed data leaves the Apple-backed workspace intact.
-- [ ] Deletion never claims to delete the underlying Apple or Microsoft account.
-- [ ] Reviewer notes and physical-device recording state the same provider
-      boundary as the binary and public policy.
+- [x] Deletion copy never claims to delete the underlying Apple or Microsoft
+      account.
+- [x] App Review notes state the same provider boundary as the binary and public
+      policy.
+- [ ] The physical-device recording shows both provider scopes and deletion
+      behavior for the exact candidate.

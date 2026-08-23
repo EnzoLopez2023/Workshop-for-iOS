@@ -1,6 +1,6 @@
 # Workshop App Privacy evidence
 
-Release candidate: Workshop 2.2.1 (12)
+Release candidate: Workshop 2.2.1 (13)
 
 This is the source evidence for App Store Connect's App Privacy UI. The public
 API cannot read or publish App Privacy answers, so the signed-in UI must still

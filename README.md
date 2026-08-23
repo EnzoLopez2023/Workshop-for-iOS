@@ -19,6 +19,7 @@ addresses match, and deleting one Workshop account does not delete the other.
 | Starter-plan artwork | `Scripts/make-starter-plans.swift` and packaged PNGs |
 | App Store readiness | `APP_STORE_STATUS.md` and the [shared submission playbook](https://github.com/EnzoLopez2023/azure-infra/blob/main/APP_STORE_SUBMISSION.md) |
 | Provider-scoped account audit | `AppStore/P2-09_PROVIDER_SCOPED_ACCOUNTS.md` |
+| Release icons, target variants, screenshots and handoff | `AppStore/RELEASE_VISUAL_MANIFEST.json` |
 
 The app, widgets, and share extension use Apple system fonts. The build-time
 shipping-residue check rejects retired font resources, palette values, and

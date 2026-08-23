@@ -13,15 +13,15 @@ The reusable process lives in the
 
 | Fact | Value |
 |---|---|
-| Marketing version / build | 2.2.1 (12) |
+| Marketing version / build | 2.2.1 (13) |
 | Bundle | `com.nintek.workshop` |
 | Extensions | `com.nintek.workshop.widgets`, `com.nintek.workshop.share` |
 | Devices | iPhone and iPad, iOS 17+ |
 | Version/project authority | `project.yml` |
 | Design authority | `DESIGN.md`, `Shared/LivingPlanTokens.swift` |
-| Release source | `a6d80030d9ee3c0f1c96dcc02883710de6215d54` |
+| Release source | `c3e6aab6b8fe081d5b9eee9781bd59378e0ed07a` |
 | Current App Store screenshots | Five `APP_IPHONE_67` and five `APP_IPAD_PRO_3GEN_129` assets, all `COMPLETE` |
-| Upload or submission performed here | Build 12 uploaded and `VALID` in internal TestFlight; no App Review submission or public release |
+| Upload or submission performed here | Build 13 uploaded, `VALID`, attached and in internal TestFlight; no App Review submission or public release |
 
 ## Source readiness
 
@@ -30,6 +30,8 @@ The reusable process lives in the
 - Sign in with Apple uses Apple's system button; Microsoft uses the official
   four-square mark on a brand-compliant dark plate at equal size.
 - More exposes the public Workshop support, privacy, and terms pages.
+- Apple and Microsoft sign-in disclose separate unlinked workspaces; More names
+  the active provider and scopes deletion/recreation copy to that workspace.
 - No custom font files or font registrations are packaged.
 - The seven starter-plan images are original generated runtime assets. Their
   generator uses the current light vellum, spruce, Pencil Blue, and system-type
@@ -53,15 +55,15 @@ The reusable process lives in the
 
 The release pass corrected the iPad hero-title occlusion and action-layer
 contrast, the compact hero status overlap, Apple/Microsoft sign-in treatment,
-the retired accent color, and the tinted icon polarity.
+the retired accent color, the tinted icon polarity, and the lead hero scrim.
 
 ## Automated evidence
 
-Verified on iOS 26.5 Simulator on 2026-08-22:
+Verified on iOS 26.5 Simulator on 2026-08-23:
 
 - App, widget-extension, share-extension, and test-bundle builds succeeded from
   the generated Xcode project in Debug and Release.
-- The integrated scheme passed 11 tests: 8 unit and 3 UI tests.
+- The integrated scheme passed 24 tests: 16 unit and 8 UI tests.
 - UI tests captured the Settings surface, the exact shared confirmation view
   used by the Share Extension, and a five-screen App Store story. The story also
   passed on a 13-inch iPad simulator.
@@ -71,11 +73,11 @@ Verified on iOS 26.5 Simulator on 2026-08-22:
 - The Release binary contains no `WORKSHOP_API_BASE`, `WORKSHOP_DEV_TOKEN`, or
   other debug launch override; MSAL is exact-pinned at 1.9.0 and NintekKit at
   revision `e425ea6b955c7a1599193fb94a8f0fba1ef16a48`.
-- A signed archive was created at `2026-08-22T21:02:17Z`. The exported
-  Apple Distribution IPA is 8,637,347 bytes with SHA-256
-  `214338c3afbf8a5c64a0f243b0eea0a79235eba7a115705a1a95f553ecce2296`;
+- A signed archive was created at `2026-08-23T15:24:20Z`. The exported
+  Apple Distribution IPA is 8,658,906 bytes with SHA-256
+  `61410660f2dc9490ad12e22e02bd90998888848c03c96bff1d69398fdc1b18cd`;
   Apple's pre-upload validation returned no errors.
-- The app, widget, and share extension export as arm64, version `2.2.1 (12)`,
+- The app, widget, and share extension export as arm64, version `2.2.1 (13)`,
   with `get-task-allow=false`, the expected App Group, Sign in with Apple and
   Keychain entitlements, `ITSAppUsesNonExemptEncryption=false`, and no secret
   files.
@@ -98,10 +100,11 @@ Verified on iOS 26.5 Simulator on 2026-08-22:
 |---|---|
 | App | `6793709356`, primary name `Nintek Workshop` (`Workshop` was unavailable) |
 | Version | `ab8c64ab-bf76-4c14-9b63-ab58630a59db`, `2.2.1`, `PREPARE_FOR_SUBMISSION`, `AFTER_APPROVAL` |
-| Build | `363cc8ef-641d-451e-9ae7-5f0542ff5700`, build 12, `VALID`, `APP_STORE_ELIGIBLE`, internal `IN_BETA_TESTING` |
-| iPhone screenshots | Set `918e928d-f1df-4b86-80f7-7a20be86df98`, five ordered `1320x2868` assets, all `COMPLETE` |
-| iPad screenshots | Set `81034025-b164-44b2-a8e2-eafbcc1b1267`, five ordered `2064x2752` assets, all `COMPLETE`; three stale title-art assets deleted |
-| Metadata | Current Shaper Hub, Tables, Insights, Dynamic Type/themes, support URL, keywords, and no-IAP/free review notes |
+| Build | `d8a3bc9c-22c3-4f16-98d4-66683edca97a`, build 13, `VALID`, `APP_STORE_ELIGIBLE`, attached, internal `IN_BETA_TESTING` |
+| Historical build | Build 12 `363cc8ef-641d-451e-9ae7-5f0542ff5700` remains `VALID` internally but is detached and non-submittable |
+| iPhone screenshots | Set `918e928d-f1df-4b86-80f7-7a20be86df98`, five ordered build-13 `1320x2868` assets, all `COMPLETE`; prior build-12 assets deleted |
+| iPad screenshots | Set `81034025-b164-44b2-a8e2-eafbcc1b1267`, five ordered build-13 `2064x2752` assets, all `COMPLETE`; prior build-12 assets deleted |
+| Metadata | Current Shaper Hub, Tables, Insights, Dynamic Type/themes, support URL, keywords, free/no-IAP facts, and provider-scoped reviewer notes |
 | Commercial | Existing USA base price `0.0`, 174 automatic zero-price points, zero IAPs/subscriptions; not mutated |
 | Availability | Existing 175 territories available and new-territory opt-in; not mutated |
 | Review | No new `reviewSubmission`, item, or `appStoreVersionSubmission` |
@@ -112,19 +115,11 @@ Public URLs are privacy
 `https://www.nintek.com/workshop`, and terms
 `https://www.nintek.com/terms`.
 
+`AppStore/RELEASE_VISUAL_MANIFEST.json` owns the final icon, target-variant,
+screenshot, ASC-asset, capture-command, and nintek/social handoff evidence.
+
 ## Remaining release work
 
-- **P2-09 next-build blocker:** build 12 implements separate Apple and
-  Microsoft/Entra identities correctly, but its sign-in screen does not disclose
-  that the providers create separate unlinked workspaces, More -> Account does
-  not name the active provider, and deletion copy does not explicitly limit
-  deletion to the current provider-scoped Workshop account. Do not submit build
-  12 for App Review. Implement and verify the exact copy/test contract in
-  `AppStore/P2-09_PROVIDER_SCOPED_ACCOUNTS.md`, increment the build, and replace
-  build 12 only after the successor is `VALID`.
-- Correct the public Workshop Support deletion path from the stale
-  `Settings -> Account & Data` wording to the shipped `More -> Account` path
-  while preserving its accurate provider-scoped deletion explanation.
 - Complete hands-on smoke tests on a physical iPhone and iPad, including
   Microsoft and Apple sign-in, account deletion, camera/photo/PDF paths,
   drag-and-drop, widgets, Live Activities, and the system share sheet.
@@ -137,9 +132,9 @@ Public URLs are privacy
   and complete every placeholder in `AppStore/GUIDELINE_2_1_TEMPLATE.txt`.
 - Complete EU trader status for the 27 affected territories in App Store
   Connect, or deliberately remove those territories before review.
-- Update the public privacy/support release-state copy before any App Review
-  submission; it currently and intentionally says the native release is
-  withdrawn during rework.
+- Update the public Workshop Support release-state copy from historical build
+  12/remediation-in-progress wording to build 13 after the remaining physical
+  gates pass and before any App Review submission.
 - Confirm `USES_THIRD_PARTY_CONTENT` remains the intended declaration for
   user-submitted plan links even though bundled art is original.
 - Keep the `Nintek Workshop` fallback name or pursue the separate ownership path
