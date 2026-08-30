@@ -24,7 +24,7 @@ the resulting knowledge without splitting the work across unrelated tools.
 Workshop is a woodworking-specific project system rather than a generic task
 manager. Each project joins plans, wood and tools, parts and optimized cuts,
 materials and purchases, finish records, build notes, photos, related projects,
-and CNC/Shaper work in one durable record.
+CNC/Shaper work, and public 3D-model references in one durable record.
 
 ## Operating Context
 
@@ -40,12 +40,17 @@ and CNC/Shaper work in one durable record.
 
 - Native SwiftUI application targeting iOS 17.
 - Dashboard, project detail and editing, shopping, conversion tables, cut
-  planning, Shaper/CNC projects, insights, settings, sharing, widgets, Live
+  planning, Shaper/CNC projects, Bambu Hub imports from public MakerWorld,
+  Thingiverse, and Printables pages, insights, settings, sharing, widgets, Live
   Activities, Spotlight, deep links, Handoff, and photo/PDF workflows are
   existing product capabilities.
 - Notebook is deferred to v2; Insights is native-only.
 - Microsoft Entra and Sign in with Apple authentication must retain the current
   shared-backend identity contract.
+- Official Thingiverse API tokens are write-only account connections: they are
+  encrypted by the backend, never returned, and never persisted by the iOS app.
+  Workshop never collects MakerWorld credentials or cookies; protected
+  MakerWorld originals are downloaded by the user and added as local files.
 - API and schema changes must remain compatible with the Workshop web client.
 - The cut-plan optimizer must preserve exact layout parity with the web
   implementation through NintekKit.
@@ -65,7 +70,7 @@ replacement.
 
 - The production SwiftUI implementation and its shared backend contract.
 - Real project, material, cut-list, shopping, finish-log, build-log, image, PDF,
-  and Shaper data models.
+  Shaper, and imported 3D-project data models.
 - Bundled demo content and starter projects for realistic empty, populated, and
   read-only states.
 - Existing app screenshots and direct device-testing feedback.

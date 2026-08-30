@@ -18,10 +18,11 @@ import NintekKit
 enum DashboardRoute: Hashable {
     case project(Int)
     case shaper(Int)
+    case bambu(Int)
 }
 
 /// The home screen: active build and next action first, followed by the
-/// searchable project library, Shaper work, templates, and inspiration.
+/// searchable project library, Shaper work, 3D imports, templates, and inspiration.
 struct DashboardView: View {
     let api: WorkshopAPI
     @EnvironmentObject private var model: AppModel
@@ -30,19 +31,24 @@ struct DashboardView: View {
 
     @State private var projects: [WSProject] = []
     @State private var shaper: [ShaperProject] = []
+    @State private var bambu: [BambuProject] = []
     @State private var templates: [WSTemplate] = []
     @State private var loading = true
     @State private var loadError: String?
+    @State private var bambuLoading = true
+    @State private var bambuLoadError: String?
     @State private var filter: StatusFilter = .all
     @State private var showProjectFilters = false
     @State private var pendingFilter: StatusFilter?
     @SceneStorage("ws.dashboard.page") private var dashboardPageRaw = DashboardPage.projects.rawValue
     @State private var projectSearch = ""
     @State private var shaperSearch = ""
+    @State private var bambuSearch = ""
     @State private var path: [DashboardRoute] = []
     @State private var showNewProject = false
     @State private var newProjectSourceURL: String?
     @State private var showNewShaper = false
+    @State private var showNewBambu = false
     @State private var cloningTemplateId: Int?
     @State private var confirmDeleteTemplateId: Int?
     @State private var pendingShares: [PendingShareItem] = []
@@ -61,9 +67,9 @@ struct DashboardView: View {
                     if !model.isDemoMode, !pendingShares.isEmpty {
                         sharedItemsBanner.padding(.bottom, 20)
                     }
-                    if loading {
+                    if currentPageIsLoading {
                         loadingPage
-                    } else if let err = loadError {
+                    } else if let err = currentPageLoadError {
                         errorState(err)
                     } else {
                         dashboardContent
@@ -117,6 +123,12 @@ struct DashboardView: View {
                             } label: {
                                 Label("New Shaper Hub Project", systemImage: "cpu")
                             }
+                            Button {
+                                selectDashboardPage(.bambuHub)
+                                showNewBambu = true
+                            } label: {
+                                Label("Import Bambu Hub Project", systemImage: "cube.fill")
+                            }
                         } label: {
                             createMenuLabel
                         }
@@ -129,6 +141,10 @@ struct DashboardView: View {
                 switch route {
                 case .project(let id): ProjectDetailView(api: api, projectId: id)
                 case .shaper(let id):  ShaperDetailView(api: api, shaperId: id)
+                case .bambu(let id):
+                    BambuDetailView(api: api, bambuId: id) {
+                        Task { await load() }
+                    }
                 }
             }
             .sheet(isPresented: $showNewProject) {
@@ -144,6 +160,13 @@ struct DashboardView: View {
                     selectDashboardPage(.shaperHub)
                     Task { await load() }
                     path.append(.shaper(newId))
+                }
+            }
+            .sheet(isPresented: $showNewBambu) {
+                BambuProjectFormView(api: api, bambuId: nil) { newId in
+                    selectDashboardPage(.bambuHub)
+                    Task { await load() }
+                    path.append(.bambu(newId))
                 }
             }
             .sheet(isPresented: $showProjectFilters, onDismiss: commitPendingFilter) {
@@ -179,6 +202,14 @@ struct DashboardView: View {
         DashboardPage(rawValue: dashboardPageRaw) ?? .projects
     }
 
+    private var currentPageIsLoading: Bool {
+        dashboardPage == .bambuHub ? bambuLoading : loading
+    }
+
+    private var currentPageLoadError: String? {
+        dashboardPage == .bambuHub ? bambuLoadError : loadError
+    }
+
     private var dashboardPageBinding: Binding<DashboardPage> {
         Binding(
             get: { dashboardPage },
@@ -205,11 +236,11 @@ struct DashboardView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .frame(maxWidth: 420)
+            .frame(maxWidth: 520)
             .accessibilityValue(dashboardPage.label)
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, hSize == .compact ? 12 : 20)
         .padding(.vertical, 10)
         .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
@@ -256,6 +287,9 @@ struct DashboardView: View {
         case .shaperHub:
             shaperHubPage
                 .transition(.opacity)
+        case .bambuHub:
+            bambuHubPage
+                .transition(.opacity)
         }
     }
 
@@ -276,6 +310,13 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 0) {
             shaperSearchField.padding(.bottom, 26)
             shaperLibrary
+        }
+    }
+
+    private var bambuHubPage: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            bambuSearchField.padding(.bottom, 26)
+            bambuLibrary
         }
     }
 
@@ -694,6 +735,105 @@ struct DashboardView: View {
         }
     }
 
+    private var bambuSearchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 13))
+                .foregroundStyle(Theme.muted)
+            TextField("Search 3D projects, creators, providers...", text: $bambuSearch)
+                .font(.body)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+        }
+        .padding(.horizontal, 14)
+        .frame(minHeight: 50)
+        .planGlass(elevated: false)
+    }
+
+    private var bambuLibrary: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Rail(
+                bambuSearch.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    ? "Bambu Hub Projects"
+                    : "Results",
+                count: filteredBambuProjects.count
+            )
+            bambuGrid
+        }
+    }
+
+    @ViewBuilder private var bambuGrid: some View {
+        if bambu.isEmpty {
+            VStack(spacing: 12) {
+                Image(systemName: "cube.fill")
+                    .font(.system(size: 28, weight: .medium))
+                    .foregroundStyle(Theme.accentDeep)
+                Text(model.isDemoMode
+                     ? "No Bambu Hub projects in this demo"
+                     : "No Bambu Hub projects yet")
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(Theme.ink)
+                Text(model.isDemoMode
+                     ? "Bambu Hub is ready for public MakerWorld, Thingiverse, and Printables imports after you sign in. The demo stays read only."
+                     : "Import a public MakerWorld, Thingiverse, or Printables page to keep its available images and 3D files together in Workshop.")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                if !model.isDemoMode {
+                    Button {
+                        showNewBambu = true
+                    } label: {
+                        Label("Import a 3D Project", systemImage: "plus")
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 48)
+                            .background(
+                                Theme.accentDeep,
+                                in: RoundedRectangle(
+                                    cornerRadius: Theme.rPanel,
+                                    style: .continuous
+                                )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(28)
+            .planGlass(elevated: false)
+        } else if filteredBambuProjects.isEmpty {
+            VStack(spacing: 10) {
+                Text("No Bambu Hub projects match that search.")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.muted)
+                Button("Clear Search") {
+                    bambuSearch = ""
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.accentDeep)
+                .minimumHitTarget()
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 32)
+        } else {
+            LazyVGrid(columns: grid, spacing: 16) {
+                ForEach(filteredBambuProjects) { project in
+                    NavigationLink(value: DashboardRoute.bambu(project.id)) {
+                        BambuProjectCard(
+                            project: project,
+                            heroURL: bambuHeroURL(project)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel))
+                    .hoverEffect(.highlight)
+                }
+            }
+        }
+    }
+
     private var templatesSection: some View {
         VStack(alignment: .leading, spacing: 18) {
             Rail("Project Templates", count: templates.count)
@@ -812,9 +952,11 @@ struct DashboardView: View {
     }
 
     private func errorState(_ msg: String) -> some View {
-        let title = dashboardPage == .projects
-            ? "Couldn’t load projects"
-            : "Couldn’t load Shaper Hub"
+        let title = switch dashboardPage {
+        case .projects: "Couldn’t load projects"
+        case .shaperHub: "Couldn’t load Shaper Hub"
+        case .bambuHub: "Couldn’t load Bambu Hub"
+        }
         return VStack(spacing: 8) {
             Image(systemName: "wifi.exclamationmark").font(Theme.ui(34, .bold, relativeTo: .largeTitle)).foregroundStyle(Theme.muted)
             Text(title).font(Theme.ui(17, .bold, relativeTo: .headline)).foregroundStyle(Theme.ink)
@@ -875,6 +1017,26 @@ struct DashboardView: View {
         return matching.sorted { $0.updatedAt > $1.updatedAt }
     }
 
+    private var filteredBambuProjects: [BambuProject] {
+        let query = bambuSearch.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let matching = bambu.filter { project in
+            guard !query.isEmpty else { return true }
+            let haystack = [
+                project.title,
+                project.description ?? "",
+                project.creatorName ?? "",
+                project.licenseName ?? "",
+                project.sourceSite.workshopDisplayName,
+                project.sourceModelId ?? "",
+                project.sourceUrl,
+            ]
+            .joined(separator: " ")
+            .lowercased()
+            return haystack.contains(query)
+        }
+        return matching.sorted { $0.updatedAt > $1.updatedAt }
+    }
+
     private var filteredProjects: [WSProject] {
         let q = projectSearch.trimmingCharacters(in: .whitespaces).lowercased()
         let base = projects.filter { p in
@@ -902,9 +1064,16 @@ struct DashboardView: View {
         return nil
     }
 
+    private func bambuHeroURL(_ project: BambuProject) -> URL? {
+        guard let assetId = project.heroAssetId, let userKey = model.userKey else { return nil }
+        return api.bambuAssetURL(assetId: assetId, userKey: userKey)
+    }
+
     private func load() async {
         loading = projects.isEmpty && shaper.isEmpty
+        bambuLoading = bambu.isEmpty
         loadError = nil
+        bambuLoadError = nil
         // Reconcile any "check off" taps the shopping-list widget or the
         // shopping Live Activity recorded while backgrounded (see
         // ToggleShoppingItemIntent / ToggleShoppingActivityItemIntent) —
@@ -915,10 +1084,12 @@ struct DashboardView: View {
                 catch { NSLog("[Workshop] Widget shopping-toggle reconciliation failed for id=%d: %@", pendingId, String(describing: error)) }
             }
         }
+        async let p = api.listProjects()
+        async let s = api.listShaperProjects()
+        async let t = api.listTemplates()
+        async let b = api.listBambuProjects()
+
         do {
-            async let p = api.listProjects()
-            async let s = api.listShaperProjects()
-            async let t = api.listTemplates()
             (projects, shaper, templates) = try await (p, s, t)
             if !model.isDemoMode {
                 await seedStarterContentIfNeeded()
@@ -931,7 +1102,13 @@ struct DashboardView: View {
         } catch {
             loadError = error.localizedDescription
         }
+        do {
+            bambu = try await b
+        } catch {
+            bambuLoadError = error.localizedDescription
+        }
         loading = false
+        bambuLoading = false
     }
 
     /// A new account otherwise opens on "No projects yet", which asks the user
@@ -986,6 +1163,7 @@ struct DashboardView: View {
 private enum DashboardPage: String, CaseIterable, Identifiable {
     case projects
     case shaperHub
+    case bambuHub
 
     var id: String { rawValue }
 
@@ -993,6 +1171,7 @@ private enum DashboardPage: String, CaseIterable, Identifiable {
         switch self {
         case .projects: "Projects"
         case .shaperHub: "Shaper Hub"
+        case .bambuHub: "Bambu Hub"
         }
     }
 }

@@ -25,6 +25,7 @@
 		2C75E0EC30260C2B37F4C077 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B244A66E3B3AAD5F322343 /* BackgroundRefresh.swift */; };
 		3085D3F2503EF434AA1B2884 /* PresentationAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */; };
 		38960C94B65E68A270FFE719 /* PendingSharesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B53809FC88CFF262AC05A4A /* PendingSharesView.swift */; };
+		3EDAB7054194632FE4DD1DBD /* BambuHubTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4D4C12122EC7506706D208 /* BambuHubTests.swift */; };
 		3F4777EBDAE3AFA101B4199F /* plan-kapex-fence.png in Resources */ = {isa = PBXBuildFile; fileRef = 237C9398DF9C4BDC9A70E9A0 /* plan-kapex-fence.png */; };
 		3F8D5BCBE44E0DE2CA469062 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
 		4C5147A20ABACD9DAD292A74 /* plan-serving-tray.png in Resources */ = {isa = PBXBuildFile; fileRef = EE7FDD7B4F17851DBE8D24B3 /* plan-serving-tray.png */; };
@@ -42,6 +43,7 @@
 		6099E621FB1EFB57E421C0DB /* MSALAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62D52D667D9A3438FA8B1C /* MSALAuth.swift */; };
 		6149A88CB571B0728B25C62A /* WorkshopWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9B7EA9605705254B4B015142 /* WorkshopWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		65CF72CEDF63EAC2B9E7B438 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148AA1B27DF3EF0320FE04EB /* Theme.swift */; };
+		66A31C025B4936DA1006ECAC /* BambuProjectFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC31CE2D4D310752671D8A40 /* BambuProjectFormView.swift */; };
 		688CF527C82F30D46B4248BC /* MartianMonoBoard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589AF011AB22CC4FA6CC359C /* MartianMonoBoard-SemiBold.ttf */; };
 		6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */; };
 		6C674978DB0E50B8AC55EB88 /* ArchivoWS-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBC2B2AECAEBA20F1DE0F575 /* ArchivoWS-Regular.ttf */; };
@@ -61,6 +63,7 @@
 		8C5974CBDC16865EA6A31597 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3649EBAF123246F0A52AAD5C /* StatsWidget.swift */; };
 		8D4AD3667275111EAF75773E /* MartianMonoBoard-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99CE238FBD7B9324E5EDB6E6 /* MartianMonoBoard-Regular.ttf */; };
 		8DA6826172D2CF4E86B6CA94 /* plan-clamping-squares.png in Resources */ = {isa = PBXBuildFile; fileRef = A214C72A3C96318A6C630456 /* plan-clamping-squares.png */; };
+		8F8A72FD188389894AA57F48 /* BambuDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8499A395F59B33D3C2C1DF4 /* BambuDetailView.swift */; };
 		96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F535AE4520ED4A65FEA35D5 /* AuthImage.swift */; };
 		980B2CBA96339E9F1B0CDEA7 /* ShaperDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */; };
 		9B002885CBE9E3B660708DAF /* SplitFlap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F75F91A9390BB731A7B898 /* SplitFlap.swift */; };
@@ -82,9 +85,11 @@
 		CC5D73AEF358946C442B5C20 /* ArchivoWS-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */; };
 		CDF95BA6803FD0113D013B7F /* plan-push-sticks.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2FB61CF4C4AF58B8ABF314 /* plan-push-sticks.png */; };
 		D1A396DD5CA5532496E0EDF1 /* WidgetSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2473E9E66BEF2F9E2D7591 /* WidgetSupport.swift */; };
+		D2BE6A7F9F108D8AC4488645 /* BambuSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36381407692F545F75A00CA7 /* BambuSupport.swift */; };
 		DAD877F8C12D5772E1ECD93D /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567419A91AFD83464561320 /* AppModel.swift */; };
 		DB764F22BC7AAD02BFE3AB07 /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD1366C665EF510EA7A526B /* MoreView.swift */; };
 		DD142445BAC86506934FD0EF /* ShoppingListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B86FF4B801E181077A6D19C /* ShoppingListWidget.swift */; };
+		DDF3680CF5FDF11EC2D27EF9 /* BambuProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE92C802FC0FB9194D797E4C /* BambuProjectCard.swift */; };
 		E1448FA81D4C4367D102778B /* ProjectCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6F48A0761D786BDEF5A74D /* ProjectCard.swift */; };
 		E3575F0652173805ABE21EAF /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73282C72252EF835CE9FDDC6 /* ShoppingView.swift */; };
 		EE90CEF4BBFA749B33E8EFE8 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A3EE9656F690ED9F24E4FC /* SignInView.swift */; };
@@ -158,8 +163,10 @@
 		2CFFADA93B84BFD3E8F726C4 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
 		2D06BFB6DF6D8C5AF58E7459 /* DemoWorkshopData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoWorkshopData.swift; sourceTree = "<group>"; };
 		306EB402BF2EE8B261EE4157 /* AppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShortcuts.swift; sourceTree = "<group>"; };
+		36381407692F545F75A00CA7 /* BambuSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BambuSupport.swift; sourceTree = "<group>"; };
 		3649EBAF123246F0A52AAD5C /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
 		3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionTablesView.swift; sourceTree = "<group>"; };
+		3B4D4C12122EC7506706D208 /* BambuHubTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BambuHubTests.swift; sourceTree = "<group>"; };
 		3B555B6D01EF9BA2AD056E9B /* PresentationAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationAnchor.swift; sourceTree = "<group>"; };
 		3B86FF4B801E181077A6D19C /* ShoppingListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListWidget.swift; sourceTree = "<group>"; };
 		3E5969AADBB8555BD6F2F67E /* ArchivoWS-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ArchivoWS-Bold.ttf"; sourceTree = "<group>"; };
@@ -214,6 +221,7 @@
 		C4B245BD3F4E06008743C8CD /* ToastCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastCenter.swift; sourceTree = "<group>"; };
 		CD2FB61CF4C4AF58B8ABF314 /* plan-push-sticks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "plan-push-sticks.png"; sourceTree = "<group>"; };
 		CD38C0B98FB9AC1499181C5B /* ShaperDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaperDetailView.swift; sourceTree = "<group>"; };
+		CE92C802FC0FB9194D797E4C /* BambuProjectCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BambuProjectCard.swift; sourceTree = "<group>"; };
 		D3A2D2CA601E57D23EA6E423 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DD0089FF8FF3B1ED7A62D0F5 /* HandoffActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandoffActivity.swift; sourceTree = "<group>"; };
 		DDB33D2B5BFAE7B6939382F2 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
@@ -225,7 +233,9 @@
 		F13623EDDF4C567E31761B93 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		F56776AF5FAD57A470C4AC68 /* ShoppingListPDFExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListPDFExporter.swift; sourceTree = "<group>"; };
 		F61B26C7EAFF608737C0AC53 /* SettingsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKeys.swift; sourceTree = "<group>"; };
+		F8499A395F59B33D3C2C1DF4 /* BambuDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BambuDetailView.swift; sourceTree = "<group>"; };
 		F95D18C2D2B29AE22ABFE739 /* CSVExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExport.swift; sourceTree = "<group>"; };
+		FC31CE2D4D310752671D8A40 /* BambuProjectFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BambuProjectFormView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,6 +283,7 @@
 		0C773C9E85E2EF89B7B03A23 /* WorkshopTests */ = {
 			isa = PBXGroup;
 			children = (
+				3B4D4C12122EC7506706D208 /* BambuHubTests.swift */,
 				9E309222E1888B453A25F598 /* EntraIdentityTests.swift */,
 			);
 			path = WorkshopTests;
@@ -303,6 +314,8 @@
 		4A7898CA7EF555EC1F71606E /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				CE92C802FC0FB9194D797E4C /* BambuProjectCard.swift */,
+				36381407692F545F75A00CA7 /* BambuSupport.swift */,
 				F13623EDDF4C567E31761B93 /* CameraPicker.swift */,
 				F95D18C2D2B29AE22ABFE739 /* CSVExport.swift */,
 				109E3064F652C4C1AC2051B8 /* CutPlanBoard.swift */,
@@ -329,6 +342,8 @@
 		517951C5E68B35AD8FFD05DF /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				F8499A395F59B33D3C2C1DF4 /* BambuDetailView.swift */,
+				FC31CE2D4D310752671D8A40 /* BambuProjectFormView.swift */,
 				3A2D5E0567C3E6781216EDC0 /* ConversionTablesView.swift */,
 				1FDAE0CADA73515A7292C5E1 /* DashboardView.swift */,
 				870B71A12FCBD7C5C2E9CE16 /* InsightsView.swift */,
@@ -666,6 +681,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EDAB7054194632FE4DD1DBD /* BambuHubTests.swift in Sources */,
 				A2027D361874D49574CC618A /* EntraIdentityTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -703,6 +719,10 @@
 				5C46D338A16821D6CF6092D8 /* AppleAuth.swift in Sources */,
 				96AFB220AAE187880E85B9F5 /* AuthImage.swift in Sources */,
 				2C75E0EC30260C2B37F4C077 /* BackgroundRefresh.swift in Sources */,
+				8F8A72FD188389894AA57F48 /* BambuDetailView.swift in Sources */,
+				DDF3680CF5FDF11EC2D27EF9 /* BambuProjectCard.swift in Sources */,
+				66A31C025B4936DA1006ECAC /* BambuProjectFormView.swift in Sources */,
+				D2BE6A7F9F108D8AC4488645 /* BambuSupport.swift in Sources */,
 				0D9F89CA7C7EEA7068E43E8D /* CSVExport.swift in Sources */,
 				0D9F084B92AA2B58BF5A7932 /* CameraPicker.swift in Sources */,
 				6AFB1DFBB2953642CEE171F9 /* ConversionTablesView.swift in Sources */,
@@ -778,7 +798,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -787,7 +807,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.widgets;
 				PRODUCT_NAME = WorkshopWidgets;
 				SDKROOT = iphoneos;
@@ -824,7 +844,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -832,7 +852,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop;
 				PRODUCT_NAME = Workshop;
 				SDKROOT = iphoneos;
@@ -846,7 +866,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -855,7 +875,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.share;
 				PRODUCT_NAME = WorkshopShareExtension;
 				SDKROOT = iphoneos;
@@ -953,7 +973,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopShareExtension/WorkshopShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -962,7 +982,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.share;
 				PRODUCT_NAME = WorkshopShareExtension;
 				SDKROOT = iphoneos;
@@ -976,7 +996,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = WorkshopWidgets/WorkshopWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = WorkshopWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -985,7 +1005,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop.widgets;
 				PRODUCT_NAME = WorkshopWidgets;
 				SDKROOT = iphoneos;
@@ -1001,7 +1021,7 @@
 				CODE_SIGN_ENTITLEMENTS = Workshop/Workshop.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 3KB968X34U;
 				INFOPLIST_FILE = Workshop/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1009,7 +1029,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nintek.workshop;
 				PRODUCT_NAME = Workshop;
 				SDKROOT = iphoneos;

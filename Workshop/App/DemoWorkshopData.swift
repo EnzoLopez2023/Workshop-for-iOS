@@ -42,6 +42,8 @@ enum DemoWorkshopData {
             return json(projectRows)
         case "/api/shaper-projects":
             return json(shaperRows)
+        case "/api/bambu-projects":
+            return json([])
         case "/api/templates":
             return json([])
         case "/api/shopping-list":

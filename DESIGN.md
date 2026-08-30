@@ -200,22 +200,30 @@ The global spatial model is a centered plan canvas with an adaptive reading colu
 
 The plan canvas is a top-leading to bottom-trailing gradient of canvas and recessed tones. A 24pt orthogonal grid is drawn with 0.5pt divider strokes at 18% opacity and hidden from accessibility.
 
-The dashboard keeps one navigation stack but exposes two sibling content pages
+The dashboard keeps one navigation stack but exposes three sibling content pages
 through a persistent native segmented switcher directly below the navigation
 bar. The switcher is the only project-type filter and remains visible while page
-content scrolls. Its selected page persists per scene; Projects search, Shaper
-Hub search, and the Projects-only status filter remain independent local state.
+content scrolls. Its selected page persists per scene; Projects, Shaper Hub, and
+Bambu Hub searches and the Projects-only status filter remain independent local
+state.
 
 - **Projects page:** Active build, next action, status filter, regular project
   library, templates, and inspiration.
 - **Shaper Hub page:** Contextual search followed immediately by the Shaper/CNC
   project library, with a dedicated count and distinct empty and no-results
   states; no active-project hero, summary wall, or regular status controls.
+- **Bambu Hub page:** Contextual search followed by an image-forward library of
+  public MakerWorld, Thingiverse, and Printables imports. Cards identify the
+  provider and local image/file counts; detail preserves provider warnings and
+  exposes every stored non-image asset through authenticated disk download and
+  the native share sheet. The detail's Add Files action accepts protected
+  originals through the native multi-file importer.
 
 Project deep links, shared-item intake, and regular-project creation select
 Projects before presenting or pushing. Shaper routes and creation select Shaper
-Hub. Both route types append to the same navigation path, so returning from
-detail preserves the selected dashboard context.
+Hub. Bambu creation and routes select Bambu Hub. All three route types append to
+the same navigation path, so returning from detail preserves the selected
+dashboard context.
 
 The Projects page's active-project composition is intentionally different by size class:
 
@@ -223,15 +231,15 @@ The Projects page's active-project composition is intentionally different by siz
 - **Regular / iPad:** The plan and action layer share a minimum 380pt hero. The action layer floats on the trailing side at 300–380pt wide with a 28pt inset.
 - **Library:** Project cards use an adaptive grid with a 280pt minimum and 16pt gaps; template cards use a 220pt minimum.
 
-iPhone is portrait-only in `Workshop/Info.plist` and `project.yml` and always uses the four-destination native tab shell. iPad supports portrait, upside-down portrait, and both landscape orientations. At regular width it uses a persistent `NavigationSplitView` with `.balanced` behavior and a 216–272pt sidebar; narrow split or Slide Over falls back to tabs. The split view and its native collapse behavior remain intact in both iPad orientations. Every shell uses the same two-page dashboard model and switcher behavior.
+iPhone is portrait-only in `Workshop/Info.plist` and `project.yml` and always uses the four-destination native tab shell. iPad supports portrait, upside-down portrait, and both landscape orientations. At regular width it uses a persistent `NavigationSplitView` with `.balanced` behavior and a 216–272pt sidebar; narrow split or Slide Over falls back to tabs. The split view and its native collapse behavior remain intact in both iPad orientations. Every shell uses the same three-page dashboard model and switcher behavior.
 
 **The Active Layer Rule.** On the Projects page, the first useful viewport
 belongs to the active project and its next action. Counts, search, remaining
 projects, templates, and inspiration follow rather than competing above it.
 
-**The Type Separation Rule.** Regular and Shaper Hub projects never share one
-grid. The dashboard switcher changes the whole project context; regular status
-filter state and each page's search query remain independent.
+**The Type Separation Rule.** Regular, Shaper Hub, and Bambu Hub projects never
+share one grid. The dashboard switcher changes the whole project context;
+regular status-filter state and each page's search query remain independent.
 
 **The Platform Shell Rule.** Device idiom and size class select the shell. Do not infer iPad behavior from orientation or let an iPhone replace its navigation tree during rotation.
 
@@ -287,6 +295,9 @@ Borders are 1pt adaptive divider strokes, usually softened to 62–70% opacity o
 - **Border:** One-point adaptive divider, commonly at 62%.
 - **Internal Padding:** 16pt for standard cards, 20pt for the next-action sheet.
 - **Project Card:** A bounded 16:9 image or plan surface, optional material-backed status, then title, description, wood, parts, and hours. The card merges children into one useful accessibility summary.
+- **Bambu Project Card:** The same bounded image-forward library layer, with a
+  provider capsule and local image/file counts instead of woodworking status.
+  Missing imagery falls back to the plan canvas and a 3D-model symbol.
 
 ### Inputs / Fields
 
@@ -294,9 +305,29 @@ Borders are 1pt adaptive divider strokes, usually softened to 62–70% opacity o
 - **Focus:** System keyboard, focus, correction, and selection behavior wins. Search disables capitalization and autocorrection because it matches project and material names.
 - **Error / Disabled:** Errors use danger color and explanatory text. Disabled controls retain their label and native disabled semantics.
 
+### Bambu Hub Imports and Provider Access
+
+Bambu analysis shows the public provider, model identifier, preview, counts,
+complete filename manifest, and durable warnings before import. MakerWorld
+protected originals are added only through the native multi-file importer after
+the user downloads them from MakerWorld; Workshop never requests provider
+credentials or cookies. Security-scoped access ends as soon as each selected
+file is copied into its multipart request, and upload progress remains visible.
+
+Thingiverse account tokens live under Provider Connections in More. The field is
+a native `SecureField`; the token is sent once to encrypted backend storage,
+cleared after save, never persisted locally, and never returned. A shared server
+token is named honestly and cannot be disconnected from the app. Configuration
+and validation failures remain visible beside the connection controls.
+
+Auth-exempt Bambu asset URLs are image-only. Every model, CAD, archive, PDF, or
+other non-image asset is streamed with bearer authentication into a safely named
+temporary file before the native share sheet opens; remote file URLs are never
+shared directly.
+
 ### Navigation
 
-iPhone uses the native four-tab shell; iPad uses the balanced split view and persistent frosted sidebar. Within the single Dashboard destination, a frosted safe-area inset pins the native Projects / Shaper Hub segmented control directly below navigation. The selected segment uses the current annotation action tint with white text in light mode and deep navigation ink in dark mode, so the active project type is unmistakable without abandoning the native control. Selection persists through scene storage and crossfades sibling content without replacing the `NavigationStack`; the crossfade is removed under Reduce Motion. Projects alone exposes the status-filter toolbar item. The add toolbar item is a native menu that always offers both project types and selects the matching page before presentation. Project deep links, shared-item intake, and regular quick creation select Projects; Shaper routes and creation select Shaper Hub. Both route types use one path, preserving native back and return behavior. Navigation stacks, sheets, back buttons, edge-swipe gestures, tab behavior, toolbar placement, sheet detents, and drag indicators stay native. The hammer mark and annotation tint identify Workshop without replacing platform interaction.
+iPhone uses the native four-tab shell; iPad uses the balanced split view and persistent frosted sidebar. Within the single Dashboard destination, a frosted safe-area inset pins the native Projects / Shaper Hub / Bambu Hub segmented control directly below navigation. The selected segment uses the current annotation action tint with white text in light mode and deep navigation ink in dark mode, so the active project type is unmistakable without abandoning the native control. Selection persists through scene storage and crossfades sibling content without replacing the `NavigationStack`; the crossfade is removed under Reduce Motion. Projects alone exposes the status-filter toolbar item. The add toolbar item is a native menu that offers all three project types and selects the matching page before presentation. Project deep links, shared-item intake, and regular quick creation select Projects; Shaper routes and creation select Shaper Hub; Bambu routes and imports select Bambu Hub. All route types use one path, preserving native back and return behavior. Navigation stacks, sheets, back buttons, edge-swipe gestures, tab behavior, toolbar placement, sheet detents, and drag indicators stay native. The hammer mark and annotation tint identify Workshop without replacing platform interaction.
 
 ### Active Project Layer
 
@@ -326,7 +357,8 @@ Every custom action preserves a 44pt minimum target. Important image cards combi
 
 - **Do** start with `Palette.swift` and `Theme.swift`; reuse adaptive roles rather than embedding new light-only colors.
 - **Do** keep the active plan/photo and next-action layer dominant before search and library content.
-- **Do** keep regular and Shaper Hub libraries on separate sibling dashboard pages; persist the selected page per scene while retaining independent search and Projects-only status state.
+- **Do** keep regular, Shaper Hub, and Bambu Hub libraries on separate sibling dashboard pages; persist the selected page per scene while retaining independent search and Projects-only status state.
+- **Do** keep provider secrets write-only, use security-scoped native file intake for protected originals, and use authenticated disk downloads for non-image Bambu assets.
 - **Do** use semantic SwiftUI type styles or the `Theme` helpers so `UIFontMetrics` and Dynamic Type remain active.
 - **Do** use native material only for an actual raised layer and provide the shipped Reduce Transparency behavior.
 - **Do** preserve the 14pt default geometry, 44pt targets, native navigation, VoiceOver summaries, and pointer-as-enhancement behavior.
@@ -340,5 +372,6 @@ Every custom action preserves a 44pt minimum target. Important image cards combi
 - **Don't** stack ornamental glass layers; every blur must explain chrome, tracing, selection, or containment.
 - **Don't** use hover to disclose required controls, replace native back/tab/sheet behavior, or key responsive structure to orientation alone.
 - **Don't** duplicate project type inside the status filter or create a second dashboard navigation stack.
+- **Don't** collect MakerWorld credentials or cookies, persist a Thingiverse token on device, or expose an unsigned remote model-file URL.
 - **Don't** use fixed custom font sizes without `UIFontMetrics`, hide state in color alone, or ship a custom control below 44pt.
 - **Don't** treat legacy helper names or stale generator prose as permission to reintroduce a retired visual device.
