@@ -12,6 +12,7 @@ struct WSColor {
     /// A token that reads the same in both renditions.
     init(_ both: UInt) { self.light = both; self.dark = both }
     init(light: UInt, dark: UInt) { self.light = light; self.dark = dark }
+    init(_ value: AdaptiveRGB) { self.init(light: value.light, dark: value.dark) }
 
     var uiColor: UIColor {
         UIColor { $0.userInterfaceStyle == .dark ? UIColor(rgb: dark) : UIColor(rgb: light) }
@@ -32,44 +33,37 @@ extension UIColor {
 
 // MARK: - Palette
 
-/// A complete adaptive palette for the Living Plan Table world. The field names
-/// remain source-compatible with existing views while their roles now describe
-/// vellum, glass, ink, and annotation layers rather than board hardware.
+/// A complete adaptive palette for the Living Plan Table world.
 struct Palette: Identifiable, Equatable {
     let id: String
     let name: String
 
     // Surfaces
-    let concourse: WSColor   // app background — the plan canvas
-    let flapShade: WSColor   // recessed / secondary layer
-    let flap: WSColor        // glass fallback / raised layer
+    let canvas: WSColor
+    let recessed: WSColor
+    let raised: WSColor
 
     // Text
-    let ink: WSColor         // primary text and drawing ink
-    let muted: WSColor       // muted / secondary
+    let ink: WSColor
+    let muted: WSColor
 
     // Structure
-    let line: WSColor
-    let steel: WSColor       // sidebar / navigation material tint
-    let steelDark: WSColor
-    let steelLight: WSColor
-    let onSteel: WSColor     // text over navigation material
+    let divider: WSColor
+    let navigationMaterial: WSColor
+    let navigationDeep: WSColor
+    let navigationHighlight: WSColor
+    let onNavigation: WSColor
 
     // Annotation color (the user-swappable axis)
-    let accent: WSColor      // legible annotation ink
-    let accentDeep: WSColor
-    let accentFill: WSColor  // saturated control fill
+    let annotation: WSColor
+    let action: WSColor
+    let annotationFill: WSColor
 
-    // Semantic signals (shared across lamps)
-    let green: WSColor
-    let greenFill: WSColor
-    let red: WSColor
-    let redFill: WSColor
-
-    /// Compatibility tokens used by the legacy animated metric component.
-    let flapFace = WSColor(light: 0xF7FAF9, dark: 0x1A2B26)
-    let flapFaceLo = WSColor(light: 0xE5EFEC, dark: 0x12201D)
-    let flapLetter = WSColor(light: 0x15332E, dark: 0xF2F8F6)
+    // Semantic signals
+    let success: WSColor
+    let successFill: WSColor
+    let danger: WSColor
+    let dangerFill: WSColor
 
     static func == (lhs: Palette, rhs: Palette) -> Bool { lhs.id == rhs.id }
 }
@@ -81,62 +75,64 @@ extension Palette {
     /// stable so an existing selection migrates without resetting preferences.
     private static func plan(
         id: String, name: String,
-        accent: WSColor, accentDeep: WSColor, accentFill: WSColor
+        annotation: AdaptiveRGB, action: AdaptiveRGB, annotationFill: AdaptiveRGB
     ) -> Palette {
         Palette(
             id: id, name: name,
-            concourse: WSColor(light: 0xEEF4F2, dark: 0x0C1513),
-            flapShade: WSColor(light: 0xE0EBE7, dark: 0x12201D),
-            flap:      WSColor(light: 0xFAFCFB, dark: 0x182823),
-            ink:       WSColor(light: 0x15332E, dark: 0xF3F8F6),
-            muted:     WSColor(light: 0x58716B, dark: 0x9CB2AC),
-            line:       WSColor(light: 0xC9DAD5, dark: 0x2A423C),
-            steel:      WSColor(light: 0xE7F0ED, dark: 0x172923),
-            steelDark:  WSColor(light: 0x15332E, dark: 0x09110F),
-            steelLight: WSColor(light: 0xFFFFFF, dark: 0x254039),
-            onSteel:    WSColor(light: 0x15332E, dark: 0xF3F8F6),
-            accent: accent, accentDeep: accentDeep, accentFill: accentFill,
-            green:     WSColor(light: 0x2F7657, dark: 0x76CFA5),
-            greenFill: WSColor(light: 0x3F936D, dark: 0x4DAE81),
-            red:       WSColor(light: 0xA64139, dark: 0xF28A80),
-            redFill:   WSColor(light: 0xC75A50, dark: 0xD86C62)
+            canvas: WSColor(LivingPlanTokens.canvas),
+            recessed: WSColor(LivingPlanTokens.recessed),
+            raised: WSColor(LivingPlanTokens.raised),
+            ink: WSColor(LivingPlanTokens.ink),
+            muted: WSColor(LivingPlanTokens.mutedInk),
+            divider: WSColor(LivingPlanTokens.divider),
+            navigationMaterial: WSColor(LivingPlanTokens.navigationMaterial),
+            navigationDeep: WSColor(LivingPlanTokens.navigationDeep),
+            navigationHighlight: WSColor(LivingPlanTokens.navigationHighlight),
+            onNavigation: WSColor(LivingPlanTokens.onNavigation),
+            annotation: WSColor(annotation),
+            action: WSColor(action),
+            annotationFill: WSColor(annotationFill),
+            success: WSColor(LivingPlanTokens.success),
+            successFill: WSColor(LivingPlanTokens.successFill),
+            danger: WSColor(LivingPlanTokens.danger),
+            dangerFill: WSColor(LivingPlanTokens.dangerFill)
         )
     }
 
     /// Default annotation: the deep spruce ink from the approved direction.
-    static let amber = plan(
+    static let spruce = plan(
         id: "amber", name: "Spruce",
-        accent:     WSColor(light: 0x176B5B, dark: 0x68C7B0),
-        accentDeep: WSColor(light: 0x125447, dark: 0x8AD8C5),
-        accentFill: WSColor(light: 0x1E7666, dark: 0x2A927E)
+        annotation: LivingPlanTokens.spruceAnnotation,
+        action: LivingPlanTokens.spruceAction,
+        annotationFill: LivingPlanTokens.spruceFill
     )
-    static let signal = plan(
+    static let clay = plan(
         id: "signal", name: "Clay",
-        accent:     WSColor(light: 0x96513E, dark: 0xE9A08A),
-        accentDeep: WSColor(light: 0x743D2F, dark: 0xF0B6A5),
-        accentFill: WSColor(light: 0xA95F49, dark: 0xC97C65)
+        annotation: LivingPlanTokens.clayAnnotation,
+        action: LivingPlanTokens.clayAction,
+        annotationFill: LivingPlanTokens.clayFill
     )
-    static let platform = plan(
+    static let moss = plan(
         id: "platform", name: "Moss",
-        accent:     WSColor(light: 0x557A43, dark: 0x9BCB82),
-        accentDeep: WSColor(light: 0x3F5E32, dark: 0xB5DEA0),
-        accentFill: WSColor(light: 0x668E50, dark: 0x79A962)
+        annotation: LivingPlanTokens.mossAnnotation,
+        action: LivingPlanTokens.mossAction,
+        annotationFill: LivingPlanTokens.mossFill
     )
-    static let beacon = plan(
+    static let pencilBlue = plan(
         id: "beacon", name: "Pencil Blue",
-        accent:     WSColor(light: 0x356D85, dark: 0x7AB9D3),
-        accentDeep: WSColor(light: 0x29566A, dark: 0xA0D0E2),
-        accentFill: WSColor(light: 0x477F97, dark: 0x5B9DB8)
+        annotation: LivingPlanTokens.pencilBlueAnnotation,
+        action: LivingPlanTokens.pencilBlueAction,
+        annotationFill: LivingPlanTokens.pencilBlueFill
     )
-    static let violet = plan(
+    static let iris = plan(
         id: "violet", name: "Iris",
-        accent:     WSColor(light: 0x66568E, dark: 0xB5A4DE),
-        accentDeep: WSColor(light: 0x4D416D, dark: 0xCFC3EB),
-        accentFill: WSColor(light: 0x7868A2, dark: 0x9281BD)
+        annotation: LivingPlanTokens.irisAnnotation,
+        action: LivingPlanTokens.irisAction,
+        annotationFill: LivingPlanTokens.irisFill
     )
 
     /// Every selectable annotation color, in display order.
-    static let all: [Palette] = [.amber, .signal, .platform, .beacon, .violet]
+    static let all: [Palette] = [.spruce, .clay, .moss, .pencilBlue, .iris]
 }
 
 // MARK: - Theme manager
@@ -161,13 +157,13 @@ final class ThemeManager: ObservableObject {
     }
 
     var palette: Palette {
-        Palette.all.first { $0.id == selection } ?? .amber
+        Palette.all.first { $0.id == selection } ?? .spruce
     }
 
     private init() {
         let stored = UserDefaults.standard.string(forKey: Self.key)
         // Unknown or retired ids fall back rather than persisting a selection
         // that no longer resolves.
-        selection = Palette.all.first { $0.id == stored }?.id ?? Palette.amber.id
+        selection = Palette.all.first { $0.id == stored }?.id ?? Palette.spruce.id
     }
 }

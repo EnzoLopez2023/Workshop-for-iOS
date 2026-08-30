@@ -41,7 +41,7 @@ struct CutPlanOptimizerView: View {
                     Image(systemName: "exclamationmark.circle").font(.system(size: 13))
                     Text(inputError).font(Theme.ui(13, .regular))
                 }
-                .foregroundStyle(Theme.red)
+                .foregroundStyle(Theme.danger)
             }
             if let result { resultsSection(result) }
         }
@@ -75,7 +75,7 @@ struct CutPlanOptimizerView: View {
                     .font(Theme.ui(12, .regular))
                     .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(
-                        Theme.flap,
+                        Theme.raised,
                         in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
                     .overlay(
@@ -83,7 +83,7 @@ struct CutPlanOptimizerView: View {
                             .strokeBorder(
                                 style: StrokeStyle(lineWidth: 1, dash: [3, 2])
                             )
-                            .foregroundStyle(Theme.line)
+                            .foregroundStyle(Theme.divider)
                     )
                 }
                 if hasSavedConfig {
@@ -111,7 +111,7 @@ struct CutPlanOptimizerView: View {
                     stockRows.removeAll { $0.id == row.wrappedValue.id }
                 } label: {
                     Image(systemName: "trash").font(.system(size: 13))
-                        .foregroundStyle(stockRows.count == 1 ? Theme.line : Theme.muted)
+                        .foregroundStyle(stockRows.count == 1 ? Theme.divider : Theme.muted)
                 }
                 .disabled(stockRows.count == 1)
             }
@@ -120,12 +120,12 @@ struct CutPlanOptimizerView: View {
         .font(Theme.ui(13, .regular))
         .padding(10)
         .background(
-            Theme.flap,
+            Theme.raised,
             in: RoundedRectangle(cornerRadius: 12, style: .continuous)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
         )
     }
 
@@ -150,7 +150,7 @@ struct CutPlanOptimizerView: View {
                     .padding(.horizontal, 14).padding(.vertical, 9)
             }
             .background(
-                Theme.accentDeep,
+                Theme.action,
                 in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
             )
             .foregroundStyle(.white)
@@ -172,15 +172,15 @@ struct CutPlanOptimizerView: View {
                 PlanStat(label: "Total Cuts", value: "\(result.totalCuts)")
             }
             .padding(.bottom, 16)
-            .overlay(alignment: .bottom) { Divider().overlay(Theme.line) }
+            .overlay(alignment: .bottom) { Divider().overlay(Theme.divider) }
 
             if !skipped.isEmpty {
-                banner(color: Theme.accent, bg: Theme.tint(Theme.accentFill), icon: "exclamationmark.triangle") {
+                banner(color: Theme.annotation, bg: Theme.tint(Theme.annotationFill), icon: "exclamationmark.triangle") {
                     "\(skipped.count) piece\(skipped.count == 1 ? "" : "s") skipped (missing dimensions): \(orderedUniqueJoin(skipped))"
                 }
             }
             if !result.unplacedPieces.isEmpty {
-                banner(color: Theme.red, bg: Theme.tint(Theme.red), icon: "exclamationmark.circle") {
+                banner(color: Theme.danger, bg: Theme.tint(Theme.danger), icon: "exclamationmark.circle") {
                     "\(result.unplacedPieces.count) piece\(result.unplacedPieces.count == 1 ? "" : "s") could not be placed (too large or no matching stock): \(result.unplacedPieces.joined(separator: ", "))"
                 }
             }
@@ -230,7 +230,7 @@ struct CutPlanOptimizerView: View {
                     }
                 }
                 .padding(.top, 16)
-                .overlay(alignment: .top) { Divider().overlay(Theme.line) }
+                .overlay(alignment: .top) { Divider().overlay(Theme.divider) }
             }
         }
     }
@@ -364,7 +364,7 @@ private struct PlanStat: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
         .background(
-            Theme.flapShade.opacity(0.72),
+            Theme.recessed.opacity(0.72),
             in: RoundedRectangle(cornerRadius: 12, style: .continuous)
         )
     }

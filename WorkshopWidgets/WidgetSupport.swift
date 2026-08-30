@@ -8,29 +8,24 @@ import NintekKit
 /// can't reach the app's `ThemeManager` (palettes live in the app target and are
 /// user-selectable at runtime), so widgets use the default spruce annotation.
 enum WSWidget {
-    static let concourse = wsAdaptive(0xEEF4F2, 0x0C1513)
-    static let flap      = wsAdaptive(0xFAFCFB, 0x182823)
-    static let flapShade = wsAdaptive(0xE0EBE7, 0x12201D)
-    static let ink       = wsAdaptive(0x15332E, 0xF3F8F6)
-    static let subtle    = wsAdaptive(0x58716B, 0x9CB2AC)
-    static let line      = wsAdaptive(0xC9DAD5, 0x2A423C)
-    static let steel     = wsAdaptive(0xE7F0ED, 0x172923)
-    static let onSteel   = wsAdaptive(0x15332E, 0xF3F8F6)
+    static let canvas = wsAdaptive(LivingPlanTokens.canvas)
+    static let raised = wsAdaptive(LivingPlanTokens.raised)
+    static let recessed = wsAdaptive(LivingPlanTokens.recessed)
+    static let ink = wsAdaptive(LivingPlanTokens.ink)
+    static let muted = wsAdaptive(LivingPlanTokens.mutedInk)
+    static let divider = wsAdaptive(LivingPlanTokens.divider)
+    static let navigationMaterial = wsAdaptive(LivingPlanTokens.navigationMaterial)
 
-    static let accent     = wsAdaptive(0x176B5B, 0x68C7B0)
-    static let accentFill = wsAdaptive(0x1E7666, 0x2A927E)
-    static let green      = wsAdaptive(0x2F7657, 0x76CFA5)
-    static let red        = wsAdaptive(0xA64139, 0xF28A80)
+    static let annotation = wsAdaptive(LivingPlanTokens.spruceAnnotation)
+    static let annotationFill = wsAdaptive(LivingPlanTokens.spruceFill)
+    static let success = wsAdaptive(LivingPlanTokens.success)
+    static let danger = wsAdaptive(LivingPlanTokens.danger)
 
-    static let flapFace   = wsAdaptive(0xF7FAF9, 0x1A2B26)
-    static let flapFaceLo = wsAdaptive(0xE5EFEC, 0x12201D)
-    static let flapLetter = wsAdaptive(0x15332E, 0xF2F8F6)
-
-    static let rFlap: CGFloat = 10
+    static let rCompact: CGFloat = 10
     static let rPanel: CGFloat = 14
 
     /// SF Rounded for compact labels and data.
-    static func board(_ size: CGFloat, _ weight: BoardWeight = .regular) -> Font {
+    static func rounded(_ size: CGFloat, _ weight: RoundedWeight = .regular) -> Font {
         .system(size: size, weight: weight.fontWeight, design: .rounded)
     }
     /// SF Pro for body copy.
@@ -38,7 +33,7 @@ enum WSWidget {
         .system(size: size, weight: weight.fontWeight)
     }
 
-    enum BoardWeight {
+    enum RoundedWeight {
         case regular, semibold, bold
         var fontWeight: Font.Weight {
             switch self {
@@ -71,9 +66,9 @@ enum WSWidget {
 
 /// A light/dark pair resolved through the active trait collection — the widget's
 /// stand-in for the app's `WSColor`.
-func wsAdaptive(_ light: UInt, _ dark: UInt) -> Color {
+func wsAdaptive(_ value: AdaptiveRGB) -> Color {
     Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(wsHex: dark) : UIColor(wsHex: light) })
+        ? UIColor(wsHex: value.dark) : UIColor(wsHex: value.light) })
 }
 
 extension UIColor {
@@ -84,55 +79,31 @@ extension UIColor {
     }
 }
 
-extension Color {
-    /// Build a Color from a 0xRRGGBB literal (parity with the app's Palette).
-    init(hex: UInt) {
-        self.init(.sRGB,
-                  red: Double((hex >> 16) & 0xFF) / 255,
-                  green: Double((hex >> 8) & 0xFF) / 255,
-                  blue: Double(hex & 0xFF) / 255,
-                  opacity: 1)
-    }
-}
-
 /// Compact semantic label.
-struct WSCaps: View {
+struct WSLabel: View {
     let text: String
     var size: CGFloat = 9.5
-    var color: Color = WSWidget.subtle
-    init(_ text: String, size: CGFloat = 9.5, color: Color = WSWidget.subtle) {
+    var color: Color = WSWidget.muted
+    init(_ text: String, size: CGFloat = 9.5, color: Color = WSWidget.muted) {
         self.text = text; self.size = size; self.color = color
     }
     var body: some View {
         Text(text)
-            .font(WSWidget.board(size, .semibold))
+            .font(WSWidget.rounded(size, .semibold))
             .foregroundStyle(color)
             .lineLimit(1)
             .minimumScaleFactor(0.75)
     }
 }
 
-/// Source-compatible single character without the retired split-flap hardware.
-struct WSFlap: View {
-    let char: String
-    var size: CGFloat = 15
-    var tone: Color = WSWidget.flapLetter
-    var body: some View {
-        Text(char)
-            .font(WSWidget.board(size, .bold))
-            .foregroundStyle(tone)
-            .monospacedDigit()
-    }
-}
-
 /// A compact tabular metric.
-struct WSFlapNumber: View {
+struct WSMetric: View {
     let value: String
     var size: CGFloat = 15
-    var tone: Color = WSWidget.flapLetter
+    var tone: Color = WSWidget.ink
     var body: some View {
         Text(value)
-            .font(WSWidget.board(size, .bold))
+            .font(WSWidget.rounded(size, .bold))
             .foregroundStyle(tone)
             .monospacedDigit()
     }
@@ -183,17 +154,14 @@ struct SnapshotProvider: TimelineProvider {
 
 // MARK: - Shared bits
 
-/// A "sign in to Workshop" prompt shown when no session snapshot exists — the
-/// board with nothing scheduled on it.
+/// A "sign in to Workshop" prompt shown when no session snapshot exists.
 struct SignedOutView: View {
     var body: some View {
         VStack(spacing: 10) {
-            HStack(spacing: 2) {
-                ForEach(0..<4, id: \.self) { _ in
-                    WSFlap(char: "-", size: 13, tone: WSWidget.flapLetter.opacity(0.45))
-                }
-            }
-            WSCaps("Sign in to Workshop", size: 9)
+            Image(systemName: "hammer.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(WSWidget.annotation)
+            WSLabel("Sign in to Workshop", size: 9)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -208,19 +176,19 @@ struct WSHeader: View {
         HStack(spacing: 6) {
             Image(systemName: "hammer.fill")
                 .font(.system(size: 8))
-                .foregroundStyle(WSWidget.accentFill)
-            WSCaps(title, size: 9, color: WSWidget.ink)
+                .foregroundStyle(WSWidget.annotationFill)
+            WSLabel(title, size: 9, color: WSWidget.ink)
             Spacer(minLength: 4)
             if let trailing {
-                WSCaps(trailing, size: 8, color: WSWidget.accent)
+                WSLabel(trailing, size: 8, color: WSWidget.annotation)
             }
         }
         .padding(.horizontal, 9)
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity)
-        .background(WSWidget.steel.opacity(0.86))
+        .background(WSWidget.navigationMaterial.opacity(0.86))
         .overlay(alignment: .bottom) {
-            Rectangle().fill(WSWidget.line.opacity(0.7)).frame(height: 0.5)
+            Rectangle().fill(WSWidget.divider.opacity(0.7)).frame(height: 0.5)
         }
     }
 }

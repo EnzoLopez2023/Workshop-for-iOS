@@ -51,7 +51,7 @@ struct BambuProjectFormView: View {
                     form
                 }
             }
-            .boardBackground()
+            .planBackground()
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -62,20 +62,20 @@ struct BambuProjectFormView: View {
                         }
                         .fontWeight(.semibold)
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 } else {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") { dismiss() }
                             .disabled(saving)
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                     ToolbarItem(placement: .confirmationAction) {
                         Button(saveButtonLabel) {
                             Task { await save() }
                         }
                         .disabled(!canSave)
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 }
             }
             .task {
@@ -145,7 +145,7 @@ struct BambuProjectFormView: View {
                     HStack(alignment: .top, spacing: 12) {
                         ProgressView()
                             .controlSize(.regular)
-                            .tint(Theme.accentDeep)
+                            .tint(Theme.action)
                         VStack(alignment: .leading, spacing: 5) {
                             Text(editing ? "Saving metadata" : "Importing public files")
                                 .font(.system(.body, design: .rounded, weight: .semibold))
@@ -263,7 +263,7 @@ struct BambuProjectFormView: View {
                 ForEach(Array(result.files.enumerated()), id: \.offset) { _, file in
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: file.kind.workshopSymbol)
-                            .foregroundStyle(Theme.accentDeep)
+                            .foregroundStyle(Theme.action)
                             .frame(width: 24, height: 24)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 3) {
@@ -321,7 +321,7 @@ struct BambuProjectFormView: View {
                 ForEach(project.workshopFileAssets) { asset in
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: asset.kind.workshopSymbol)
-                            .foregroundStyle(Theme.accentDeep)
+                            .foregroundStyle(Theme.action)
                             .frame(width: 24, height: 24)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 3) {
@@ -367,7 +367,7 @@ struct BambuProjectFormView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 38, weight: .semibold))
-                        .foregroundStyle(Theme.green)
+                        .foregroundStyle(Theme.success)
                     Text("Project imported with notes")
                         .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(Theme.ink)
@@ -396,7 +396,7 @@ struct BambuProjectFormView: View {
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 48)
                         .background(
-                            Theme.accentDeep,
+                            Theme.action,
                             in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                         )
                 }
@@ -425,7 +425,7 @@ struct BambuProjectFormView: View {
     private func errorText(_ message: String) -> some View {
         Text(message)
             .font(.footnote)
-            .foregroundStyle(Theme.red)
+            .foregroundStyle(Theme.danger)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityLabel("Error: \(message)")
     }

@@ -14,7 +14,7 @@ struct ShoppingListWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SnapshotProvider()) { entry in
             ShoppingListWidgetView(snapshot: entry.snapshot)
-                .containerBackground(WSWidget.flap, for: .widget)
+                .containerBackground(WSWidget.raised, for: .widget)
         }
         .configurationDisplayName("Shopping List")
         .description("Check off materials as you pick them up — right from the Home Screen.")
@@ -40,18 +40,18 @@ private struct ShoppingListWidgetView: View {
                 let shown = Array(snapshot.shoppingItems.prefix(maxRows))
                 VStack(spacing: 0) {
                     ForEach(Array(shown.enumerated()), id: \.element.id) { i, item in
-                        if i > 0 { Rectangle().fill(WSWidget.line).frame(height: 1) }
+                        if i > 0 { Rectangle().fill(WSWidget.divider).frame(height: 1) }
                         Button(intent: ToggleShoppingItemIntent(itemId: item.id)) {
                             HStack(spacing: 8) {
-                                RoundedRectangle(cornerRadius: WSWidget.rFlap)
-                                    .strokeBorder(WSWidget.subtle, lineWidth: 1.5)
+                                RoundedRectangle(cornerRadius: WSWidget.rCompact)
+                                    .strokeBorder(WSWidget.muted, lineWidth: 1.5)
                                     .frame(width: 13, height: 13)
                                 VStack(alignment: .leading, spacing: 0) {
                                     Text(item.name).font(WSWidget.ui(12, .medium))
                                         .foregroundStyle(WSWidget.ink).lineLimit(1)
                                     if let q = item.qtyLabel, !q.isEmpty {
-                                        Text(q).font(WSWidget.board(9))
-                                            .foregroundStyle(WSWidget.subtle).lineLimit(1)
+                                        Text(q).font(WSWidget.rounded(9))
+                                            .foregroundStyle(WSWidget.muted).lineLimit(1)
                                     }
                                 }
                                 Spacer(minLength: 0)
@@ -61,14 +61,14 @@ private struct ShoppingListWidgetView: View {
                         }
                         .buttonStyle(.plain)
                         .frame(maxHeight: .infinity)
-                        .background(WSWidget.flap)
+                        .background(WSWidget.raised)
                     }
                     ForEach(shown.count..<maxRows, id: \.self) { i in
                         if i > 0 || !shown.isEmpty {
-                            Rectangle().fill(WSWidget.line).frame(height: 1)
+                            Rectangle().fill(WSWidget.divider).frame(height: 1)
                         }
                         HStack {
-                            if shown.isEmpty && i == 0 { WSCaps("All caught up", size: 9) }
+                            if shown.isEmpty && i == 0 { WSLabel("All caught up", size: 9) }
                             Spacer(minLength: 0)
                         }
                         .padding(.horizontal, 10)
@@ -77,7 +77,7 @@ private struct ShoppingListWidgetView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(WSWidget.flapShade)
+            .background(WSWidget.recessed)
             .widgetURL(WSDeepLink.dashboard)
         }
     }

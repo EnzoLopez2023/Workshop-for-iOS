@@ -1,6 +1,12 @@
 import SwiftUI
 import NintekKit
 
+private enum WorkshopLinks {
+    static let support = URL(string: "https://www.nintek.com/workshop/support")!
+    static let privacy = URL(string: "https://www.nintek.com/workshop/privacy")!
+    static let terms = URL(string: "https://www.nintek.com/terms")!
+}
+
 /// Settings tab — parity with the web's `Settings.tsx`: appearance (theme,
 /// accent, text size), project defaults (default status, dashboard sort,
 /// show-completed), project-summary export, signed-in identity + sign out,
@@ -36,11 +42,11 @@ struct MoreView: View {
                     Picker("Theme", selection: appearanceBinding) {
                         ForEach(Appearance.allCases) { a in Text(a.label).tag(a) }
                     }
-                    lampPicker
+                    annotationPicker
                     LabeledContent("Text Size", value: "Follows iOS Settings")
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
 
                 if !model.isDemoMode {
                     Section {
@@ -54,12 +60,12 @@ struct MoreView: View {
                         }
                         Toggle("Show Completed by Default", isOn: $showCompletedByDefault)
                             .toggleStyle(.switch)
-                            .tint(Theme.accentDeep)
+                            .tint(Theme.action)
                     } header: {
                         Text("Projects")
                     }
-                    .listRowBackground(Theme.flap.opacity(0.72))
-                    .listRowSeparatorTint(Theme.line)
+                    .listRowBackground(Theme.raised.opacity(0.72))
+                    .listRowSeparatorTint(Theme.divider)
                 }
 
                 if !model.isDemoMode {
@@ -73,8 +79,8 @@ struct MoreView: View {
                         Label("Insights", systemImage: "chart.bar.xaxis")
                     }
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
 
                 Section {
                     Button {
@@ -84,7 +90,7 @@ struct MoreView: View {
                     }
                     .disabled(exporting)
                     if let exportError {
-                        Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.red)
+                        Text(exportError).font(Theme.ui(13, .regular, relativeTo: .footnote)).foregroundStyle(Theme.danger)
                     }
                 } header: {
                     Text("Data")
@@ -93,8 +99,22 @@ struct MoreView: View {
                          ? "Downloads the demo starter-project metadata as a JSON file."
                          : "Downloads woodworking project metadata as a JSON file. Bambu Hub files are not included; download or share those from each imported project.")
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
+
+                Section("Help & Legal") {
+                    Link(destination: WorkshopLinks.support) {
+                        Label("Workshop Support", systemImage: "questionmark.circle")
+                    }
+                    Link(destination: WorkshopLinks.privacy) {
+                        Label("Privacy Policy", systemImage: "hand.raised")
+                    }
+                    Link(destination: WorkshopLinks.terms) {
+                        Label("Terms of Use", systemImage: "doc.text")
+                    }
+                }
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
 
                 Section {
                     if model.isDemoMode {
@@ -111,6 +131,18 @@ struct MoreView: View {
                         if let name = model.userName {
                             LabeledContent("Signed in as", value: name)
                         }
+                        if let provider = model.accountProvider {
+                            LabeledContent("Provider", value: provider.displayName)
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel("Provider")
+                                .accessibilityValue(provider.displayName)
+                                .accessibilityIdentifier("account-provider")
+                            Text(WorkshopAccountCopy.workspaceDisclosure(for: provider))
+                                .font(.footnote)
+                                .foregroundStyle(Theme.muted)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("provider-workspace-disclosure")
+                        }
                         Button("Sign Out", role: .destructive) {
                             Task { await model.signOut() }
                         }
@@ -122,36 +154,39 @@ struct MoreView: View {
                                 HStack(spacing: 10) {
                                     ProgressView()
                                         .controlSize(.small)
-                                        .tint(Theme.red)
+                                        .tint(Theme.danger)
                                     Text("Deleting Account…")
-                                        .foregroundStyle(Theme.red)
+                                        .foregroundStyle(Theme.danger)
                                 }
                             } else {
                                 Label("Delete Account", systemImage: "trash")
-                                    .foregroundStyle(Theme.red)
+                                    .foregroundStyle(Theme.danger)
                             }
                         }
+
                         .disabled(deletingAccount)
                         if let accountDeletionError {
                             Text(accountDeletionError)
                                 .font(Theme.ui(13, .regular, relativeTo: .footnote))
-                                .foregroundStyle(Theme.red)
+                                .foregroundStyle(Theme.danger)
                         }
                     }
+
                 } header: {
                     Text("Account")
                 } footer: {
                     Text(model.isDemoMode
                          ? "Demo data stays on this device only for the current session."
-                         : "Delete Account permanently removes your Workshop projects, photos, lists, Bambu Hub imports and their stored 3D files, and account data. Export woodworking project metadata and share any Bambu files you want to keep first.")
+                         : accountDeletionFooter)
+                        .accessibilityIdentifier("provider-deletion-scope")
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
                 Section {
                     LabeledContent("Version", value: AppInfo.version)
                 }
-                .listRowBackground(Theme.flap.opacity(0.72))
-                .listRowSeparatorTint(Theme.line)
+                .listRowBackground(Theme.raised.opacity(0.72))
+                .listRowSeparatorTint(Theme.divider)
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
@@ -180,13 +215,14 @@ struct MoreView: View {
             } message: {
                 Text("Workshop will delete your encrypted account token. A shared server token, when available, remains active.")
             }
-            .alert("Permanently Delete Account?", isPresented: $showingDeleteAccountConfirmation) {
+            .alert(accountDeletionTitle, isPresented: $showingDeleteAccountConfirmation) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete Account", role: .destructive) {
                     Task { await deleteAccount() }
                 }
             } message: {
-                Text("All projects, photos, cut lists, materials, Shaper projects, Bambu Hub imports and their stored images and 3D files, templates, and account data will be permanently deleted. This cannot be undone.")
+                Text(accountDeletionConfirmation)
+                    .accessibilityIdentifier("provider-deletion-confirmation")
             }
         }
     }
@@ -207,7 +243,7 @@ struct MoreView: View {
                         status.connected ? "Connected" : "Not connected",
                         systemImage: status.connected ? "checkmark.circle.fill" : "circle"
                     )
-                    .foregroundStyle(status.connected ? Theme.green : Theme.muted)
+                    .foregroundStyle(status.connected ? Theme.success : Theme.muted)
                 }
 
                 LabeledContent("Connection source", value: thingiverseSourceLabel(status.source))
@@ -258,7 +294,7 @@ struct MoreView: View {
                         systemImage: "exclamationmark.triangle.fill"
                     )
                     .font(.footnote)
-                    .foregroundStyle(Theme.red)
+                    .foregroundStyle(Theme.danger)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityLabel(
                         "Configuration error: Secure account-token storage is not configured on this Workshop server."
@@ -292,7 +328,7 @@ struct MoreView: View {
             if let providerConnectionError {
                 Text(providerConnectionError)
                     .font(.footnote)
-                    .foregroundStyle(Theme.red)
+                    .foregroundStyle(Theme.danger)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityLabel("Provider connection error: \(providerConnectionError)")
             }
@@ -301,12 +337,12 @@ struct MoreView: View {
         } footer: {
             Text("Use an official Thingiverse API token. Workshop sends it directly to encrypted server storage, never returns it, and never persists it on this device. Workshop never asks for MakerWorld credentials or cookies; add protected MakerWorld downloads from the imported project's Add Files action.")
         }
-        .listRowBackground(Theme.flap.opacity(0.72))
-        .listRowSeparatorTint(Theme.line)
+        .listRowBackground(Theme.raised.opacity(0.72))
+        .listRowSeparatorTint(Theme.divider)
     }
 
     /// Annotation colors shown directly as clean material swatches.
-    private var lampPicker: some View {
+    private var annotationPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Annotation Color")
@@ -321,7 +357,7 @@ struct MoreView: View {
                     Button { theme.selection = p.id } label: {
                         ZStack {
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(p.accentFill.color)
+                                .fill(p.annotationFill.color)
                             if on {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 12, weight: .bold))
@@ -333,7 +369,7 @@ struct MoreView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
                                 .strokeBorder(
-                                    on ? Theme.ink : Theme.line.opacity(0.7),
+                                    on ? Theme.ink : Theme.divider.opacity(0.7),
                                     lineWidth: on ? 2 : 1
                                 )
                         )
@@ -471,6 +507,27 @@ struct MoreView: View {
             return "\(prefix) \(message)"
         }
         return "\(prefix) \(apiError.localizedDescription)"
+    }
+
+    private var accountDeletionTitle: String {
+        guard let provider = model.accountProvider else {
+            return "Delete Current Workshop Account?"
+        }
+        return "Delete \(provider.displayName) Workspace?"
+    }
+
+    private var accountDeletionFooter: String {
+        guard let provider = model.accountProvider else {
+            return WorkshopAccountCopy.unknownDeletionFooter
+        }
+        return WorkshopAccountCopy.deletionFooter(for: provider)
+    }
+
+    private var accountDeletionConfirmation: String {
+        guard let provider = model.accountProvider else {
+            return WorkshopAccountCopy.unknownDeletionConfirmation
+        }
+        return WorkshopAccountCopy.deletionConfirmation(for: provider)
     }
 
     // MARK: Export

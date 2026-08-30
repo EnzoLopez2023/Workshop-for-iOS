@@ -19,6 +19,7 @@ final class AppModel: ObservableObject {
 
     @Published var isSignedIn: Bool
     @Published private(set) var isDemoMode = false
+    @Published private(set) var accountProvider: WorkshopAccountProvider?
     @Published var authError: String?
     @Published var selectedTab = AppDestination.dashboard.rawValue
     /// Set by a deep link (`workshop://project/<id>`); the projects list consumes
@@ -36,8 +37,17 @@ final class AppModel: ObservableObject {
 
     var userName: String? {
         if isDemoMode { return "Demo Workshop" }
-        if let session = AppleSessionStore.load() { return session.displayName ?? "Apple user" }
-        return msalAuth?.accountName
+        #if DEBUG
+        if let uiTestUserName { return uiTestUserName }
+        #endif
+        switch accountProvider {
+        case .apple:
+            return AppleSessionStore.load()?.displayName ?? "Apple user"
+        case .microsoft:
+            return msalAuth?.accountName
+        case nil:
+            return nil
+        }
     }
 
     /// The signed-in user's backend per-user key (legacy Entra `oid`, namespaced
@@ -45,11 +55,13 @@ final class AppModel: ObservableObject {
     /// `?oid=` image URLs. nil when signed out.
     var userKey: String? {
         if isDemoMode { return DemoWorkshopData.userKey }
-        if let session = AppleSessionStore.load() { return session.userKey }
+        if accountProvider == .apple, let session = AppleSessionStore.load() {
+            return session.userKey
+        }
         #if DEBUG
         if let dev = devUserKey { return dev }
         #endif
-        return msalAuth?.userKey
+        return accountProvider == .microsoft ? msalAuth?.userKey : nil
     }
 
     #if DEBUG
@@ -58,6 +70,7 @@ final class AppModel: ObservableObject {
     /// photos at all and image layout bugs ship unseen. Set this alongside the
     /// dev token to exercise the real image paths.
     private var devUserKey: String?
+    private var uiTestUserName: String?
     #endif
 
     init() {
@@ -80,21 +93,32 @@ final class AppModel: ObservableObject {
             self.api = DemoWorkshopData.makeAPI()
             self.isSignedIn = true
             self.isDemoMode = true
+            self.accountProvider = nil
+            return
+        }
+        if let rawProvider = env["WORKSHOP_UI_TEST_ACCOUNT_PROVIDER"],
+           let provider = WorkshopAccountProvider(rawValue: rawProvider) {
+            self.msalAuth = try? MSALAuth()
+            self.api = DemoWorkshopData.makeAPI()
+            self.isSignedIn = true
+            self.accountProvider = provider
+            self.uiTestUserName = "\(provider.displayName) Reviewer"
             return
         }
         #endif
 
+        #if DEBUG
         // Dev/local: a pasted access token via env skips MSAL (used to exercise
-        // the API without a signed build). Never set in production.
+        // the API without a signed build).
         if let devToken = env["WORKSHOP_DEV_TOKEN"] {
-            #if DEBUG
             self.devUserKey = env["WORKSHOP_DEV_USER_KEY"]
-            #endif
             self.msalAuth = nil
             self.api = WorkshopAPI(baseURL: base, tokenProvider: StaticTokenProvider(devToken))
             self.isSignedIn = true
+            self.accountProvider = nil
             return
         }
+        #endif
 
         // Always construct MSAL so "Sign in with Microsoft" stays available, but
         // an existing Apple session takes precedence for the initial state.
@@ -105,18 +129,23 @@ final class AppModel: ObservableObject {
         if AppleSessionStore.hasSession, !automaticSignInSuppressed {
             self.api = WorkshopAPI(baseURL: base, tokenProvider: SessionTokenProvider(service: appleAuth))
             self.isSignedIn = true
+            self.accountProvider = .apple
         } else if let auth, !automaticSignInSuppressed {
             self.api = WorkshopAPI(baseURL: base, tokenProvider: MSALTokenProvider(auth: auth))
             self.isSignedIn = auth.hasAccount
+            self.accountProvider = auth.hasAccount ? .microsoft : nil
         } else {
             self.api = WorkshopAPI(baseURL: base, tokenProvider: StaticTokenProvider(nil))
             self.isSignedIn = false
+            self.accountProvider = nil
         }
     }
 
     private static func baseURL() -> URL {
+        #if DEBUG
         if let override = ProcessInfo.processInfo.environment["WORKSHOP_API_BASE"],
            let url = URL(string: override) { return url }
+        #endif
         return WorkshopAPI.productionBaseURL
     }
 
@@ -127,6 +156,7 @@ final class AppModel: ObservableObject {
             try await msalAuth.signInInteractively(presenting: viewController)
             api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: MSALTokenProvider(auth: msalAuth))
             isSignedIn = msalAuth.hasAccount
+            accountProvider = isSignedIn ? .microsoft : nil
             UserDefaults.standard.removeObject(forKey: Self.suppressAutomaticSignInKey)
             authError = nil
         } catch let error as NSError {
@@ -163,6 +193,7 @@ final class AppModel: ObservableObject {
             )
             api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: SessionTokenProvider(service: appleAuth))
             isSignedIn = true
+            accountProvider = .apple
             UserDefaults.standard.removeObject(forKey: Self.suppressAutomaticSignInKey)
             authError = nil
         } catch {
@@ -203,6 +234,10 @@ final class AppModel: ObservableObject {
             authError = "Workshop signed out, but Microsoft could not clear its cached account. Restart the app before signing in again."
         }
         isSignedIn = false
+        accountProvider = nil
+        #if DEBUG
+        uiTestUserName = nil
+        #endif
         selectedTab = AppDestination.dashboard.rawValue
         pendingProjectId = nil
         pendingShowCutPlan = false
@@ -223,6 +258,7 @@ final class AppModel: ObservableObject {
         authError = nil
         isDemoMode = true
         isSignedIn = true
+        accountProvider = nil
         api = DemoWorkshopData.makeAPI()
         selectedTab = AppDestination.dashboard.rawValue
         pendingProjectId = nil
@@ -236,6 +272,7 @@ final class AppModel: ObservableObject {
         guard isDemoMode else { return }
         isDemoMode = false
         isSignedIn = false
+        accountProvider = nil
         api = WorkshopAPI(baseURL: Self.baseURL(), tokenProvider: StaticTokenProvider(nil))
         selectedTab = AppDestination.dashboard.rawValue
         pendingProjectId = nil

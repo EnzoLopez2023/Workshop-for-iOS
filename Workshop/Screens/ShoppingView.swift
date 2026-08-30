@@ -42,7 +42,7 @@ struct ShoppingView: View {
                 .contentColumn(700)
                 .padding(20)
             }
-            .boardBackground()
+            .planBackground()
             .navigationTitle("Shopping List")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -51,8 +51,8 @@ struct ShoppingView: View {
                         // Lock Screen / Dynamic Island checklist for a shopping
                         // trip (Phase 7.9+) — mirrors ProjectDetailView's "Track
                         // Cuts" toggle exactly, one Live Activity at a time.
-                        BoardToolbarButton(symbol: trackingShopping ? "checklist.checked" : "checklist",
-                                           label: "Track Shopping", tone: trackingShopping ? .amber : .steel) {
+                        PlanToolbarButton(symbol: trackingShopping ? "checklist.checked" : "checklist",
+                                          label: "Track Shopping", tone: trackingShopping ? .accent : .plain) {
                             Task {
                                 if trackingShopping {
                                     await ShoppingActivityController.end()
@@ -66,17 +66,17 @@ struct ShoppingView: View {
                         .accessibilityValue(trackingShopping ? "On" : "Off")
                         .accessibilityAddTraits(trackingShopping ? .isSelected : [])
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    BoardToolbarButton(symbol: "printer", label: "Print List", tone: .amber) {
+                    PlanToolbarButton(symbol: "printer", label: "Print List", tone: .accent) {
                         if let url = ShoppingListPDFExporter.export(groups: grouped, allItems: items) {
                             exportURL = IdentifiableURL(url: url)
                         }
                     }
                     .disabled(grouped.isEmpty)
                 }
-                .boardToolbarItem()
+                .planToolbarItem()
             }
             .sheet(item: $exportURL) { ActivityShareSheet(items: [$0.url]) }
             .task { await load() }
@@ -91,10 +91,10 @@ struct ShoppingView: View {
             HStack(spacing: 12) {
                 Image(systemName: "cart.fill")
                     .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                     .frame(width: 40, height: 40)
                     .background(
-                        Theme.tint(Theme.accent),
+                        Theme.tint(Theme.annotation),
                         in: RoundedRectangle(cornerRadius: 12, style: .continuous)
                     )
                 VStack(alignment: .leading, spacing: 2) {
@@ -113,7 +113,7 @@ struct ShoppingView: View {
                     .foregroundStyle(Theme.ink)
             }
             .toggleStyle(.switch)
-            .tint(Theme.accentDeep)
+            .tint(Theme.action)
             .padding(16)
             .planGlass(elevated: false)
         }
@@ -155,7 +155,7 @@ struct ShoppingView: View {
                 .foregroundStyle(Theme.ink)
             VStack(spacing: 0) {
                 ForEach(Array(group.items.enumerated()), id: \.element.id) { i, item in
-                    if i > 0 { Divider().overlay(Theme.line) }
+                    if i > 0 { Divider().overlay(Theme.divider) }
                     itemRow(item)
                 }
             }
@@ -163,7 +163,7 @@ struct ShoppingView: View {
             .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
             )
         }
     }
@@ -193,7 +193,7 @@ struct ShoppingView: View {
         HStack(spacing: 14) {
             Image(systemName: item.purchased ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 21, weight: .medium))
-                .foregroundStyle(item.purchased ? Theme.accentDeep : Theme.muted)
+                .foregroundStyle(item.purchased ? Theme.action : Theme.muted)
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.name)
                     .font(.body.weight(.medium))

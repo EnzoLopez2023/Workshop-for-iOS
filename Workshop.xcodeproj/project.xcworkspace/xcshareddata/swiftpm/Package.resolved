@@ -1,5 +1,5 @@
 {
-  "originHash" : "20e9cd9441bb03e390f872299559fe58d0db5c89069533c3f69f7c004eb928ed",
+  "originHash" : "3249a3fd84f27ff24eef0961655b815a7ee41fbe6bf6a87eb46ff64f8334d99b",
   "pins" : [
     {
       "identity" : "microsoft-authentication-library-for-objc",
@@ -8,6 +8,14 @@
       "state" : {
         "revision" : "be848ee7fa9516cec47ae6de47cf1087d51bc774",
         "version" : "1.9.0"
+      }
+    },
+    {
+      "identity" : "nintekkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/EnzoLopez2023/NintekKit",
+      "state" : {
+        "revision" : "f7584b531170431fb7ea219473e1970631383111"
       }
     }
   ],

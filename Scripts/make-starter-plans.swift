@@ -10,13 +10,13 @@
 //  are the same ones the seeded cut lists use, so if you change a part size,
 //  change it in both places.
 //
-//  Deliberately monochrome. The signal lamp is user-swappable (amber, signal,
-//  platform, beacon, violet) and these bytes are baked at build time, so a sheet
-//  drawn in amber would clash for four users out of five.
+//  The sheets use the fixed structural and Pencil Blue roles from the Living
+//  Plan Table system. User-selected annotation colors remain app UI only.
 //
-//  Usage:  swift Scripts/make-starter-plans.swift [output-dir] [fonts-dir]
+//  Usage:  swift Scripts/make-starter-plans.swift [output-dir]
 //
 
+import AppKit
 import Foundation
 import CoreGraphics
 import CoreText
@@ -36,12 +36,12 @@ func rgb(_ hex: UInt32, _ alpha: CGFloat = 1) -> CGColor {
 }
 
 enum Ink {
-    static let ground = rgb(0x0F1315)   // the sheet itself
-    static let frame = rgb(0x2C3335)    // border rule
-    static let object = rgb(0xEFF2ED)   // visible edges
-    static let hidden = rgb(0x6E7A78)   // edges behind something
-    static let dim = rgb(0x8B9794)      // dimensions and their text
-    static let faint = rgb(0x3A4245)    // hatching, grid
+    static let ground = rgb(0xF7FAF9)   // raised vellum
+    static let frame = rgb(0xC9DAD5)    // divider
+    static let object = rgb(0x15332E)   // spruce drawing ink
+    static let hidden = rgb(0x58716B)   // muted construction line
+    static let dim = rgb(0x356D85)      // Pencil Blue dimensions
+    static let faint = rgb(0xE0EBE7)    // recessed hatching and grid
 }
 
 // MARK: - Type
@@ -53,18 +53,14 @@ let repoRoot = scriptDir.deletingLastPathComponent()
 let outDir = CommandLine.arguments.count > 1
     ? URL(fileURLWithPath: CommandLine.arguments[1])
     : repoRoot.appendingPathComponent("Workshop/Resources/StarterPlans")
-let fontsDir = CommandLine.arguments.count > 2
-    ? URL(fileURLWithPath: CommandLine.arguments[2])
-    : repoRoot.appendingPathComponent("Fonts")
-
-func loadFont(_ file: String, size: CGFloat) -> CTFont {
-    let url = fontsDir.appendingPathComponent(file) as CFURL
-    guard let descs = CTFontManagerCreateFontDescriptorsFromURL(url) as? [CTFontDescriptor],
-          let first = descs.first else {
-        FileHandle.standardError.write("warning: could not load \(file), falling back to Menlo\n".data(using: .utf8)!)
-        return CTFontCreateWithName("Menlo" as CFString, size, nil)
+func systemFont(size: CGFloat, weight: NSFont.Weight, rounded: Bool = false) -> CTFont {
+    let base = NSFont.systemFont(ofSize: size, weight: weight)
+    guard rounded,
+          let descriptor = base.fontDescriptor.withDesign(.rounded),
+          let font = NSFont(descriptor: descriptor, size: size) else {
+        return base as CTFont
     }
-    return CTFontCreateWithFontDescriptor(first, size, nil)
+    return font as CTFont
 }
 
 enum Align { case left, center, right }
@@ -264,11 +260,11 @@ struct Proj {
 
 // MARK: - Fonts
 
-let fTitle = loadFont("MartianMonoBoard-Bold.ttf", size: 30)
-let fSub = loadFont("MartianMonoBoard-Regular.ttf", size: 15)
-let fView = loadFont("MartianMonoBoard-SemiBold.ttf", size: 17)
-let fDim = loadFont("MartianMonoBoard-Regular.ttf", size: 14)
-let fNote = loadFont("ArchivoWS-Medium.ttf", size: 16)
+let fTitle = systemFont(size: 30, weight: .bold, rounded: true)
+let fSub = systemFont(size: 15, weight: .regular, rounded: true)
+let fView = systemFont(size: 17, weight: .semibold, rounded: true)
+let fDim = systemFont(size: 14, weight: .regular, rounded: true)
+let fNote = systemFont(size: 16, weight: .medium)
 
 // MARK: - Chrome
 
@@ -407,7 +403,7 @@ func servingTray() -> Sheet {
             to: CGPoint(x: e.x(6), y: e.y(4.2)), font: fNote, align: .center)
 
     sh.dimV(e.y(0), e.y(2.25), x: e.x(-0.7), "2¼\"", font: fDim, witnessFrom: e.x(0))
-    // Martian Mono has no ⅝ glyph — spelling it out beats a fallback box.
+    // Use an ASCII fraction so the drawing remains portable across system fonts.
     sh.dimH(e.x(0), e.x(0.625), y: e.y(2.9), "5/8\"", font: fDim, witnessFrom: e.y(2.25))
     viewLabel(sh, "End section", at: CGPoint(x: e.x(6), y: 244))
 

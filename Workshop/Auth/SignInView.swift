@@ -6,6 +6,7 @@ struct SignInView: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// Which provider is mid-flight, so only that plate shows the busy state.
     @State private var signingIn: SignInProvider?
     @State private var appleSignIn = AppleSignInController()
@@ -22,28 +23,38 @@ struct SignInView: View {
 
                 ScrollView {
                     VStack(spacing: 30) {
-                        titleBoard
+                        titlePanel
 
                         if let err = model.authError {
                             Text(err)
                                 .font(Theme.ui(13))
-                                .foregroundStyle(Theme.red)
+                                .foregroundStyle(Theme.danger)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: 460)
                         }
 
                         VStack(spacing: 12) {
-                            SignInPlate(provider: .microsoft, busy: signingIn == .microsoft) {
+                            SignInPlate(style: .microsoft, busy: signingIn == .microsoft) {
                                 Task { await signInWithMicrosoft() }
                             }
                             .disabled(busy)
 
-                            SignInPlate(provider: .apple, busy: signingIn == .apple) {
+                            AppleSignInPlate(busy: signingIn == .apple) {
                                 startAppleSignIn()
                             }
                             .disabled(busy)
 
-                            SignInPlate(provider: .demo, busy: false) {
+                            Text(WorkshopAccountCopy.signInDisclosure)
+                                .font(.footnote)
+                                .foregroundStyle(Theme.muted)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 4)
+                                .accessibilityIdentifier("provider-scope-disclosure")
+
+                            SignInPlate(style: .demo, busy: false) {
                                 model.enterDemo()
                             }
                             .disabled(busy)
@@ -65,15 +76,15 @@ struct SignInView: View {
         }
     }
 
-    private var titleBoard: some View {
+    private var titlePanel: some View {
         VStack(alignment: .leading, spacing: 24) {
             HStack(spacing: 12) {
                 Image(systemName: "hammer.fill")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(Theme.accentDeep)
+                    .foregroundStyle(Theme.action)
                     .frame(width: 44, height: 44)
                     .background(
-                        Theme.tint(Theme.accent),
+                        Theme.tint(Theme.annotation),
                         in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                     )
                 Text("Workshop")
@@ -93,6 +104,26 @@ struct SignInView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
+            stageTrack
+        }
+        .frame(maxWidth: 660)
+        .padding(28)
+        .planGlass()
+    }
+
+    @ViewBuilder private var stageTrack: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    stage("Idea", complete: true)
+                    stage("Plan", complete: true)
+                }
+                HStack(spacing: 8) {
+                    stage("Build", complete: false)
+                    stage("Finish", complete: false)
+                }
+            }
+        } else {
             HStack(spacing: 8) {
                 stage("Idea", complete: true)
                 connector(complete: true)
@@ -103,23 +134,23 @@ struct SignInView: View {
                 stage("Finish", complete: false)
             }
         }
-        .frame(maxWidth: 660)
-        .padding(28)
-        .planGlass()
     }
 
     private func stage(_ label: String, complete: Bool) -> some View {
         Text(label)
             .font(.caption.weight(.semibold))
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(complete ? .white : Theme.muted)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(complete ? Theme.accentDeep : Theme.flapShade, in: Capsule())
+            .background(complete ? Theme.action : Theme.recessed, in: Capsule())
+            .accessibilityLabel("\(label), \(complete ? "complete" : "upcoming")")
     }
 
     private func connector(complete: Bool) -> some View {
         Capsule()
-            .fill(complete ? Theme.accentDeep : Theme.line)
+            .fill(complete ? Theme.action : Theme.divider)
             .frame(maxWidth: .infinity)
             .frame(height: 2)
     }
@@ -170,28 +201,29 @@ struct SignInView: View {
 // MARK: - The plate pair
 
 private enum SignInProvider {
-    case microsoft, apple, demo
+    case microsoft, apple
+}
+
+private enum SignInPlateStyle {
+    case microsoft, demo
 
     var title: String {
         switch self {
         case .microsoft: "Sign in with Microsoft"
-        case .apple:     "Sign in with Apple"
         case .demo:      "Browse Demo"
         }
     }
 
     var fill: Color {
         switch self {
-        case .microsoft: Theme.accentDeep
-        case .apple:     Color(uiColor: UIColor(rgb: 0x14181A))
-        case .demo:      Theme.flap
+        case .microsoft: Color(uiColor: UIColor(rgb: 0x2F2F2F))
+        case .demo:      Theme.raised
         }
     }
 
     var foreground: Color {
         switch self {
         case .microsoft: .white
-        case .apple:     .white
         case .demo:      Theme.ink
         }
     }
@@ -199,7 +231,7 @@ private enum SignInProvider {
 
 /// One sign-in action using native continuous geometry.
 private struct SignInPlate: View {
-    let provider: SignInProvider
+    let style: SignInPlateStyle
     let busy: Bool
     let action: () -> Void
 
@@ -207,47 +239,97 @@ private struct SignInPlate: View {
         Button(action: action) {
             HStack(spacing: 9) {
                 if busy {
-                    ProgressView().tint(provider.foreground)
+                    ProgressView().tint(style.foreground)
                 } else {
                     mark
                 }
-                Text(busy ? "Signing in…" : provider.title)
+                Text(busy ? "Signing in…" : style.title)
                     .font(.system(.body, design: .rounded, weight: .semibold))
+                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
             }
-            .foregroundStyle(provider.foreground)
+            .foregroundStyle(style.foreground)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 52)
-            .background(provider.fill)
+            .background(style.fill)
             .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                     .strokeBorder(
-                        provider == .demo ? Theme.line.opacity(0.7) : .clear,
+                        style == .demo ? Theme.divider.opacity(0.7) : .clear,
                         lineWidth: 1
                     )
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(provider.title.capitalized)
+        .accessibilityLabel(style.title)
     }
 
     @ViewBuilder private var mark: some View {
-        switch provider {
+        switch style {
         case .microsoft:
             MicrosoftLogo(size: 13)
                 .padding(3)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-        case .apple:
-            Image(systemName: "applelogo")
-                .font(.system(size: 16))
-                // The glyph sits high in its box; nudge it onto the cap line.
-                .offset(y: -1)
         case .demo:
             Image(systemName: "eye.fill")
                 .font(.system(size: 15, weight: .semibold))
+        }
+    }
+}
+
+private struct AppleSignInPlate: View {
+    let busy: Bool
+    let action: () -> Void
+
+    var body: some View {
+        ZStack {
+            SystemAppleSignInButton(action: action)
+            if busy {
+                Color.black.opacity(0.72)
+                ProgressView().tint(.white)
+            }
+        }
+        .frame(height: 52)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
+        .accessibilityLabel("Sign in with Apple")
+        .accessibilityValue(busy ? "In progress" : "")
+    }
+}
+
+private struct SystemAppleSignInButton: UIViewRepresentable {
+    let action: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(action: action)
+    }
+
+    func makeUIView(context: Context) -> ASAuthorizationAppleIDButton {
+        let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
+        button.cornerRadius = Theme.rPanel
+        button.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.didTap),
+            for: .touchUpInside
+        )
+        return button
+    }
+
+    func updateUIView(_ button: ASAuthorizationAppleIDButton, context: Context) {
+        context.coordinator.action = action
+    }
+
+    final class Coordinator: NSObject {
+        var action: () -> Void
+
+        init(action: @escaping () -> Void) {
+            self.action = action
+        }
+
+        @objc func didTap() {
+            action()
         }
     }
 }
@@ -260,7 +342,7 @@ private struct WorkshopLoginBackdrop: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack {
-                Theme.steel
+                Theme.navigationMaterial
                 if let file = Bundle.main.url(
                     forResource: "plan-hand-tool-cabinet",
                     withExtension: "png"
@@ -279,9 +361,9 @@ private struct WorkshopLoginBackdrop: View {
 
                 LinearGradient(
                     colors: [
-                        Theme.concourse.opacity(reduceTransparency ? 0.96 : 0.82),
-                        Theme.concourse.opacity(reduceTransparency ? 0.90 : 0.66),
-                        Theme.concourse.opacity(reduceTransparency ? 0.96 : 0.86),
+                        Theme.canvas.opacity(reduceTransparency ? 0.96 : 0.82),
+                        Theme.canvas.opacity(reduceTransparency ? 0.90 : 0.66),
+                        Theme.canvas.opacity(reduceTransparency ? 0.96 : 0.86),
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -289,8 +371,8 @@ private struct WorkshopLoginBackdrop: View {
 
                 RadialGradient(
                     colors: [
-                        Theme.concourse.opacity(reduceTransparency ? 0.08 : 0.02),
-                        Theme.concourse.opacity(reduceTransparency ? 0.78 : 0.50),
+                        Theme.canvas.opacity(reduceTransparency ? 0.08 : 0.02),
+                        Theme.canvas.opacity(reduceTransparency ? 0.78 : 0.50),
                     ],
                     center: .center,
                     startRadius: 40,
@@ -332,9 +414,7 @@ private struct MicrosoftLogo: View {
     }
 }
 
-/// Drives Sign in with Apple from our own plate. `SignInWithAppleButton` bundles
-/// the request with an appearance we can't match to the Microsoft plate, so the
-/// request is issued here and the button is left to `SignInPlate`.
+/// Drives the authorization request started by the system Apple sign-in button.
 @MainActor
 final class AppleSignInController: NSObject, ASAuthorizationControllerDelegate,
                                    ASAuthorizationControllerPresentationContextProviding {

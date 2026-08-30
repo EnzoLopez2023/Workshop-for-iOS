@@ -23,6 +23,19 @@ final class EntraIdentityTests: XCTestCase {
         )
     }
 
+    func testSameObjectIDDifferentTenantsCannotShareWorkspace() {
+        let first = EntraIdentity.userKey(
+            tenantID: "399388F8-9DCD-4BE8-B6D5-AF07D1168285",
+            objectID: objectID
+        )
+        let second = EntraIdentity.userKey(
+            tenantID: "6E697268-FC7D-4EC9-A53C-A9FD3D99CA60",
+            objectID: objectID
+        )
+
+        XCTAssertNotEqual(first, second)
+    }
+
     func testPersonalMicrosoftAccountIsNamespaced() {
         XCTAssertEqual(
             EntraIdentity.userKey(tenantID: personalTenantID, objectID: objectID),

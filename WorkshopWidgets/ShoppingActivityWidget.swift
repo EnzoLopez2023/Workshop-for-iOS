@@ -43,30 +43,30 @@ struct ShoppingActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: ShoppingActivityAttributes.self) { context in
             ShoppingLockScreenView(context: context)
-                .activityBackgroundTint(WSWidget.concourse)
+                .activityBackgroundTint(WSWidget.canvas)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Image(systemName: "cart.fill").foregroundStyle(WSWidget.accent)
+                    Image(systemName: "cart.fill").foregroundStyle(WSWidget.annotation)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text(progressText(context.state, of: context.attributes))
-                        .font(WSWidget.board(11, .bold)).foregroundStyle(WSWidget.accentFill)
+                        .font(WSWidget.rounded(11, .bold)).foregroundStyle(WSWidget.annotationFill)
                 }
                 DynamicIslandExpandedRegion(.center) {
                     Text("SHOPPING LIST")
-                        .font(WSWidget.board(11, .bold)).tracking(0.6).lineLimit(1)
+                        .font(WSWidget.rounded(11, .bold)).tracking(0.6).lineLimit(1)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     ShoppingChecklistView(context: context)
                 }
             } compactLeading: {
-                Image(systemName: "cart.fill").foregroundStyle(WSWidget.accent)
+                Image(systemName: "cart.fill").foregroundStyle(WSWidget.annotation)
             } compactTrailing: {
                 Text(progressText(context.state, of: context.attributes))
-                    .font(WSWidget.board(11, .bold)).foregroundStyle(WSWidget.accentFill)
+                    .font(WSWidget.rounded(11, .bold)).foregroundStyle(WSWidget.annotationFill)
             } minimal: {
-                Image(systemName: "cart.fill").foregroundStyle(WSWidget.accent)
+                Image(systemName: "cart.fill").foregroundStyle(WSWidget.annotation)
             }
             .widgetURL(WSDeepLink.dashboard)
         }
@@ -85,14 +85,14 @@ private struct ShoppingLockScreenView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: "cart.fill")
-                    .font(.system(size: 9)).foregroundStyle(WSWidget.accentFill)
+                    .font(.system(size: 9)).foregroundStyle(WSWidget.annotationFill)
                 Text("SHOPPING LIST")
-                    .font(WSWidget.board(12, .bold)).tracking(0.8)
+                    .font(WSWidget.rounded(12, .bold)).tracking(0.8)
                     .foregroundStyle(WSWidget.ink).lineLimit(1)
                 Spacer(minLength: 6)
-                WSFlapNumber(value: "\(context.state.purchasedItemIds.count)", size: 11,
-                             tone: WSWidget.accentFill)
-                WSCaps("of \(context.attributes.items.count)", size: 8.5)
+                WSMetric(value: "\(context.state.purchasedItemIds.count)", size: 11,
+                             tone: WSWidget.annotationFill)
+                WSLabel("of \(context.attributes.items.count)", size: 8.5)
             }
             ShoppingChecklistView(context: context, maxRows: 5)
         }
@@ -113,11 +113,11 @@ private struct ShoppingChecklistView: View {
             ForEach(remaining.prefix(maxRows), id: \.id) { item in
                 Button(intent: ToggleShoppingActivityItemIntent(itemId: item.id)) {
                     HStack(spacing: 8) {
-                        RoundedRectangle(cornerRadius: WSWidget.rFlap)
+                        RoundedRectangle(cornerRadius: WSWidget.rCompact)
                             .fill(.clear)
                             .frame(width: 13, height: 13)
-                            .overlay(RoundedRectangle(cornerRadius: WSWidget.rFlap)
-                                .strokeBorder(WSWidget.subtle, lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: WSWidget.rCompact)
+                                .strokeBorder(WSWidget.muted, lineWidth: 1.5))
                         Text(item.name)
                             .font(WSWidget.ui(13, .medium))
                             .foregroundStyle(WSWidget.ink)
@@ -125,17 +125,17 @@ private struct ShoppingChecklistView: View {
                         Spacer(minLength: 4)
                         if let qty = item.qtyLabel {
                             Text(qty)
-                                .font(WSWidget.board(11, .semibold))
-                                .foregroundStyle(WSWidget.subtle)
+                                .font(WSWidget.rounded(11, .semibold))
+                                .foregroundStyle(WSWidget.muted)
                         }
                     }
                 }
                 .buttonStyle(.plain)
             }
             if remaining.isEmpty {
-                WSCaps("All items checked off", size: 9)
+                WSLabel("All items checked off", size: 9)
             } else if remaining.count > maxRows {
-                WSCaps("+ \(remaining.count - maxRows) more", size: 8.5)
+                WSLabel("+ \(remaining.count - maxRows) more", size: 8.5)
             }
         }
     }

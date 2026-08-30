@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "status": "authoritative",
+  "product": "Workshop",
+  "bundleId": "com.nintek.workshop",
+  "version": "2.2.1",
+  "build": "13",
+  "sourceCommit": "c3e6aab6b8fe081d5b9eee9781bd59378e0ed07a",
+  "captureDateUTC": "2026-08-23",
+  "designDirection": "Living Plan Table",
+  "visualAuthority": {
+    "designDocument": {
+      "path": "DESIGN.md",
+      "byteSize": 24054,
+      "sha256": "cb74cd427a0e1d07b10303dd39fddff957c0617a6eebc2ae10b19883f6937060"
+    },
+    "sharedTokens": {
+      "path": "Shared/LivingPlanTokens.swift",
+      "byteSize": 2403,
+      "sha256": "53b110776a9ba0e7aaef4ece2435e8e309b63f7c006044643cd79ba3cf88877d"
+    },
+    "approvedReference": {
+      "path": ".impeccable/review/hero-repro.png",
+      "byteSize": 1741062,
+      "sha256": "040f58f625046227cb0ba553399f56c64598405bc071984a7f8909dc93672a4a",
+      "width": 1600,
+      "height": 1000,
+      "role": "review reference, not a shipping asset"
+    }
+  },
+  "appIcon": {
+    "sourcePolicy": "The tracked opaque 1024px PNG renditions are the release source. No separate vector source exists. iOS supplies the outer mask; do not add rounded corners or alpha.",
+    "catalog": {
+      "path": "Workshop/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "byteSize": 736,
+      "sha256": "3753a8333b540a48a7693340a359f8ef76b79bfe0138b612b4b14fc2891b9731"
+    },
+    "renditions": [
+      {
+        "appearance": "default",
+        "canonical": true,
+        "path": "Workshop/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
+        "byteSize": 194735,
+        "sha256": "cdf1ceedf57c10f71d543cae9aa0688683fb17d01dd503a5f9ebd275f0b8cc3e",
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false
+      },
+      {
+        "appearance": "dark",
+        "canonical": false,
+        "path": "Workshop/Assets.xcassets/AppIcon.appiconset/AppIcon-1024-dark.png",
+        "byteSize": 144569,
+        "sha256": "8934fc9829f330f87da1d8f13514269dc29e804603f8fca692e91c22a6ef9ff2",
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false
+      },
+      {
+        "appearance": "tinted",
+        "canonical": false,
+        "path": "Workshop/Assets.xcassets/AppIcon.appiconset/AppIcon-1024-tinted.png",
+        "byteSize": 119338,
+        "sha256": "78a309f32d884acf2928870dd98f66b060d47e2e0a384b4bf3b3e152bb7f4db0",
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false
+      }
+    ]
+  },
+  "targetVariants": [
+    {
+      "target": "Workshop",
+      "bundleId": "com.nintek.workshop",
+      "visualBehavior": "Full Living Plan Table app surface with selectable annotation palette, native system type, adaptive light/dark structure, and the three app-icon appearances.",
+      "sourceFiles": [
+        {
+          "path": "Workshop/App/Theme.swift",
+          "byteSize": 17886,
+          "sha256": "73c6fea250e470bfb8e3c051af0aee7e0c187761b19d577959cbaafa198caa6f"
+        },
+        {
+          "path": "Workshop/App/Palette.swift",
+          "byteSize": 5945,
+          "sha256": "ba890f792007009f924fab689281d5e2a51d1f430bf9e3ad1260beed5238c88b"
+        },
+        {
+          "path": "Workshop/Screens/DashboardView.swift",
+          "byteSize": 48261,
+          "sha256": "52ec733c43613a5f323ad26d9ece072c3ff22f8858d57d4cea5566971765b48b"
+        }
+      ]
+    },
+    {
+      "target": "WorkshopWidgetsExtension",
+      "bundleId": "com.nintek.workshop.widgets",
+      "visualBehavior": "Default Spruce adaptation of the shared Living Plan Table tokens across Home Screen, Lock Screen, StandBy, shopping, cut-list, and Live Activity surfaces. No independent marketing icon.",
+      "sourceFiles": [
+        {
+          "path": "Shared/LivingPlanTokens.swift",
+          "byteSize": 2403,
+          "sha256": "53b110776a9ba0e7aaef4ece2435e8e309b63f7c006044643cd79ba3cf88877d"
+        },
+        {
+          "path": "WorkshopWidgets/WorkshopWidgetBundle.swift",
+          "byteSize": 587,
+          "sha256": "d6989c5ca35f392bd43e70b1dbf596013b651355097fddb179cae077f4df611d"
+        }
+      ]
+    },
+    {
+      "target": "WorkshopShareExtension",
+      "bundleId": "com.nintek.workshop.share",
+      "visualBehavior": "Default Spruce extension-safe confirmation surface using shared adaptive tokens, system type, native material, and an opaque Reduce Transparency fallback. No independent marketing icon.",
+      "sourceFiles": [
+        {
+          "path": "Shared/LivingPlanTokens.swift",
+          "byteSize": 2403,
+          "sha256": "53b110776a9ba0e7aaef4ece2435e8e309b63f7c006044643cd79ba3cf88877d"
+        },
+        {
+          "path": "Shared/ShareConfirmationView.swift",
+          "byteSize": 4212,
+          "sha256": "ca72b4601596950c4694198dd03b977b8c051c758dc8d1a952f170fd66319b47"
+        }
+      ]
+    }
+  ],
+  "screenshots": {
+    "locale": "en-US",
+    "content": "Synthetic read-only Demo Workshop data; no credentials or personal data.",
+    "captureCommand": "Scripts/capture-app-store-screenshots.sh \"$IPHONE_69_SIMULATOR_UDID\" \"$IPAD_13_SIMULATOR_UDID\"",
+    "captureTest": "WorkshopUITests/WorkshopVisualUITests/testAppStoreScreenshotStory",
+    "flattenCommand": "Scripts/flatten-simulator-screenshot.swift <xcresult-png> <output.jpg> <simulator-mask.png>",
+    "pipelineGuarantees": [
+      "The prior screenshot set is preserved until a five-file staging set passes filename, dimension, and no-alpha checks.",
+      "iPhone masters are captured on a pristine 6.9-inch simulator so no unrelated Live Activity appears in the Dynamic Island.",
+      "Files are ordered lexically from 01-dashboard through 05-insights.",
+      "Every App Store Connect asset reached COMPLETE with no errors or warnings before the prior build-12 asset was deleted."
+    ],
+    "sets": [
+      {
+        "displayType": "APP_IPHONE_67",
+        "appStoreConnectSetId": "918e928d-f1df-4b86-80f7-7a20be86df98",
+        "device": "iPhone 17 Pro Max",
+        "operatingSystem": "iOS 26.5 (23F77)",
+        "assets": [
+          {
+            "order": 1,
+            "appStoreConnectId": "e738f0c8-04af-476e-963f-a63ad6353ec0",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "01-dashboard.jpg",
+            "byteSize": 465647,
+            "sha256": "c1d4e6644886781b86ed90638d6ce37dbe1b22878120cc4e8a917c604e0afd75",
+            "width": 1320,
+            "height": 2868,
+            "hasAlpha": false
+          },
+          {
+            "order": 2,
+            "appStoreConnectId": "6e054111-e0d6-44ba-8a76-21e43889e895",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "02-project-detail.jpg",
+            "byteSize": 496565,
+            "sha256": "6f20a100f4f3e484c63d01f3f1db33e6b15185974d4f8ca4d3f01a7d57ec7d5f",
+            "width": 1320,
+            "height": 2868,
+            "hasAlpha": false
+          },
+          {
+            "order": 3,
+            "appStoreConnectId": "01279e0b-7c01-4e8d-9c09-979ca6face19",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "03-shopping-list.jpg",
+            "byteSize": 500195,
+            "sha256": "6ed257d6584e2fc58faabd241ad3f3ddb390c4f0e5ef2f18cf0ed4ad5dad429e",
+            "width": 1320,
+            "height": 2868,
+            "hasAlpha": false
+          },
+          {
+            "order": 4,
+            "appStoreConnectId": "af3230a3-506b-4bc8-add1-a32fe179142a",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "04-conversion-tables.jpg",
+            "byteSize": 478558,
+            "sha256": "447faed71ebd02cfcded1c1dcf5f826f5923b3ad827212f78a5db31d4685b18b",
+            "width": 1320,
+            "height": 2868,
+            "hasAlpha": false
+          },
+          {
+            "order": 5,
+            "appStoreConnectId": "07b248a4-a598-4906-a6ef-0f7ae4f74181",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "05-insights.jpg",
+            "byteSize": 407797,
+            "sha256": "6c71120486c6bcecf6a14a0449f961988aa0ccb6219c864564143f93bc3d14d7",
+            "width": 1320,
+            "height": 2868,
+            "hasAlpha": false
+          }
+        ]
+      },
+      {
+        "displayType": "APP_IPAD_PRO_3GEN_129",
+        "appStoreConnectSetId": "81034025-b164-44b2-a8e2-eafbcc1b1267",
+        "device": "iPad Pro 13-inch (M5)",
+        "operatingSystem": "iPadOS 26.5 (23F77)",
+        "assets": [
+          {
+            "order": 1,
+            "appStoreConnectId": "24b58da1-abba-4373-9493-cc7b225ae477",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "01-dashboard.jpg",
+            "byteSize": 705871,
+            "sha256": "5a63837b530afaae30f2b0ac036234257a48f41729810d09f0265f2127cd8abe",
+            "width": 2064,
+            "height": 2752,
+            "hasAlpha": false
+          },
+          {
+            "order": 2,
+            "appStoreConnectId": "2d33c6c1-8a48-4f06-a22b-4ed36a13b7bc",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "02-project-detail.jpg",
+            "byteSize": 913687,
+            "sha256": "6d1cb3fdc72fee8153d416ce53fcd158ac9a73db83ee0976f2922cfe6e62e293",
+            "width": 2064,
+            "height": 2752,
+            "hasAlpha": false
+          },
+          {
+            "order": 3,
+            "appStoreConnectId": "d577fbe6-94e4-469e-82f3-759630eaa093",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "03-shopping-list.jpg",
+            "byteSize": 622525,
+            "sha256": "dfc7a729bbffead27c1bb9df0208d59a53a8103b777a417c143182cd16a649b5",
+            "width": 2064,
+            "height": 2752,
+            "hasAlpha": false
+          },
+          {
+            "order": 4,
+            "appStoreConnectId": "a173a319-e878-4e37-b5db-0c858c41aa9a",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "04-conversion-tables.jpg",
+            "byteSize": 613506,
+            "sha256": "8c3a7323b85404e36c8cb60548cb321c0f1da629f10560a512d80df90eb882a4",
+            "width": 2064,
+            "height": 2752,
+            "hasAlpha": false
+          },
+          {
+            "order": 5,
+            "appStoreConnectId": "55275f2a-19e7-4dbe-b3e2-bdf1be070280",
+            "appStoreConnectState": "COMPLETE",
+            "fileName": "05-insights.jpg",
+            "byteSize": 515299,
+            "sha256": "ffa5a3a8f7db7ef31d06f3d62c463b107ce2a73d60aa1ae66fa23ff91db07d01",
+            "width": 2064,
+            "height": 2752,
+            "hasAlpha": false
+          }
+        ]
+      }
+    ]
+  },
+  "nintekAndSocialHandoff": {
+    "publicProductPage": "https://www.nintek.com/workshop",
+    "publicIconUrl": "https://www.nintek.com/apps/workshop.png",
+    "publicIconVerifiedUTC": "2026-08-23",
+    "publicIconByteSize": 194735,
+    "publicIconSha256": "cdf1ceedf57c10f71d543cae9aa0688683fb17d01dd503a5f9ebd275f0b8cc3e",
+    "publicIconMatchesCanonicalDefault": true,
+    "handoffInstructions": [
+      "Use the canonical default app icon for nintek.com and social avatars.",
+      "Use the ordered screenshot masters and hashes in this manifest for store or social crops; do not use retired title-art composites.",
+      "Dark and tinted icon renditions are iOS appearance inputs, not standalone social marks.",
+      "Do not add claims, prices, availability, or release status that are not present in APP_STORE_STATUS.md."
+    ]
+  },
+  "concourseResidueAudit": {
+    "status": "passed",
+    "verificationCommand": "SRCROOT=\"$PWD\" Scripts/check-shipping-residue.sh",
+    "shippingPaths": [
+      "Shared",
+      "Workshop",
+      "WorkshopWidgets",
+      "WorkshopShareExtension",
+      "project.yml"
+    ],
+    "result": "No Concourse-era names, fonts, palette values, components, or tracked release assets remain in shipping surfaces.",
+    "retiredScreenshotHistory": {
+      "commit": "5e1d064",
+      "assetCount": 7,
+      "policy": "Historical recovery only; none of these blobs or filenames may be uploaded or used for nintek/social handoff."
+    }
+  }
+}

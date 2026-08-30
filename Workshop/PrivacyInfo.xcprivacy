@@ -8,8 +8,9 @@
   to ship even though the answers are boring. Keep it in step with the App
   Privacy answers in App Store Connect — the two are cross-checked.
 
-  Workshop has no analytics, no ad SDK and no third-party tracking of any kind;
-  the only network destination is the Nintek API the user signed in to.
+  Workshop has no analytics, no ad SDK and no third-party tracking of any kind.
+  The only app-data endpoint is the Nintek API; authentication also uses Apple
+  and Microsoft identity services.
 -->
 <plist version="1.0">
 <dict>

@@ -55,7 +55,7 @@ struct BambuDetailView: View {
                     if let deleteError {
                         Text(deleteError)
                             .font(.footnote)
-                            .foregroundStyle(Theme.red)
+                            .foregroundStyle(Theme.danger)
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityLabel("Delete error: \(deleteError)")
                     }
@@ -76,7 +76,7 @@ struct BambuDetailView: View {
             }
             .padding(16)
         }
-        .boardBackground()
+        .planBackground()
         .navigationTitle(project?.title ?? "Bambu Hub")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -89,17 +89,17 @@ struct BambuDetailView: View {
                     }
                 } else {
                     ToolbarItem(placement: .topBarTrailing) {
-                        BoardToolbarButton(
+                        PlanToolbarButton(
                             symbol: "pencil",
                             label: "Edit project",
-                            tone: .amber
+                            tone: .accent
                         ) {
                             showEditForm = true
                         }
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                     ToolbarItem(placement: .topBarTrailing) {
-                        BoardToolbarButton(
+                        PlanToolbarButton(
                             symbol: "trash",
                             label: "Delete project",
                             tone: .danger
@@ -107,7 +107,7 @@ struct BambuDetailView: View {
                             confirmDelete = true
                         }
                     }
-                    .boardToolbarItem()
+                    .planToolbarItem()
                 }
             }
         }
@@ -207,10 +207,10 @@ struct BambuDetailView: View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: "cube.fill")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Theme.accentDeep)
+                .foregroundStyle(Theme.action)
                 .frame(width: 42, height: 42)
                 .background(
-                    Theme.tint(Theme.accent),
+                    Theme.tint(Theme.annotation),
                     in: RoundedRectangle(cornerRadius: 12, style: .continuous)
                 )
             VStack(alignment: .leading, spacing: 8) {
@@ -218,7 +218,15 @@ struct BambuDetailView: View {
                     .font(Theme.display(24))
                     .foregroundStyle(Theme.ink)
                     .fixedSize(horizontal: false, vertical: true)
-                Flag(project.sourceSite.workshopDisplayName, tone: .steel)
+                Label(
+                    project.sourceSite.workshopDisplayName,
+                    systemImage: project.sourceSite.workshopSymbol
+                )
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.action)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Theme.tint(Theme.annotation), in: Capsule())
                 if let source = BambuUI.httpURL(project.sourceUrl) {
                     Link(destination: source) {
                         Label(
@@ -226,7 +234,7 @@ struct BambuDetailView: View {
                             systemImage: "arrow.up.forward.square"
                         )
                         .font(.subheadline)
-                        .foregroundStyle(Theme.accentDeep)
+                        .foregroundStyle(Theme.action)
                         .minimumHitTarget()
                     }
                 }
@@ -238,18 +246,18 @@ struct BambuDetailView: View {
     private func metadataSection(_ project: BambuProject) -> some View {
         VStack(spacing: 0) {
             metadataRow("Images", value: project.imageCount.formatted(), symbol: "photo")
-            Divider().overlay(Theme.line)
+            Divider().overlay(Theme.divider)
             metadataRow("Local files", value: project.fileCount.formatted(), symbol: "doc.zipper")
             if let creator = project.creatorName, !creator.isEmpty {
-                Divider().overlay(Theme.line)
+                Divider().overlay(Theme.divider)
                 metadataRow("Creator", value: creator, symbol: "person")
             }
             if let license = project.licenseName, !license.isEmpty {
-                Divider().overlay(Theme.line)
+                Divider().overlay(Theme.divider)
                 metadataRow("License", value: license, symbol: "checkmark.seal")
             }
             if let modelId = project.sourceModelId, !modelId.isEmpty {
-                Divider().overlay(Theme.line)
+                Divider().overlay(Theme.divider)
                 metadataRow("Model ID", value: modelId, symbol: "number")
             }
         }
@@ -358,10 +366,10 @@ struct BambuDetailView: View {
                 } label: {
                     Label("Add Files", systemImage: "doc.badge.plus")
                         .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(Theme.accentDeep)
+                        .foregroundStyle(Theme.action)
                         .frame(maxWidth: .infinity, minHeight: 48)
                         .background(
-                            Theme.tint(Theme.accent),
+                            Theme.tint(Theme.annotation),
                             in: RoundedRectangle(
                                 cornerRadius: Theme.rPanel,
                                 style: .continuous
@@ -382,7 +390,7 @@ struct BambuDetailView: View {
             if let fileImportError {
                 Text(fileImportError)
                     .font(.footnote)
-                    .foregroundStyle(Theme.red)
+                    .foregroundStyle(Theme.danger)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityLabel("File import error: \(fileImportError)")
             }
@@ -398,7 +406,7 @@ struct BambuDetailView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(assets.enumerated()), id: \.element.id) { index, asset in
                         if index > 0 {
-                            Divider().overlay(Theme.line)
+                            Divider().overlay(Theme.divider)
                         }
                         fileRow(asset)
                     }
@@ -407,7 +415,7 @@ struct BambuDetailView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                        .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                        .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
                 )
             }
         }
@@ -422,7 +430,7 @@ struct BambuDetailView: View {
                     HStack(alignment: .center, spacing: 12) {
                         Image(systemName: asset.kind.workshopSymbol)
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(Theme.accentDeep)
+                            .foregroundStyle(Theme.action)
                             .frame(width: 30)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 4) {
@@ -439,12 +447,12 @@ struct BambuDetailView: View {
                         if downloadingAssetId == asset.id {
                             ProgressView()
                                 .controlSize(.small)
-                                .tint(Theme.accentDeep)
+                                .tint(Theme.action)
                                 .accessibilityHidden(true)
                         } else {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(Theme.accentDeep)
+                                .foregroundStyle(Theme.action)
                                 .accessibilityHidden(true)
                         }
                     }
@@ -466,7 +474,7 @@ struct BambuDetailView: View {
                         if deletingAssetId == asset.id {
                             ProgressView()
                                 .controlSize(.small)
-                                .tint(Theme.red)
+                                .tint(Theme.danger)
                         } else {
                             Image(systemName: "trash")
                                 .font(.system(size: 15, weight: .semibold))
@@ -474,7 +482,7 @@ struct BambuDetailView: View {
                     }
                     .frame(width: 44, height: 44)
                     .buttonStyle(.plain)
-                    .foregroundStyle(Theme.red)
+                    .foregroundStyle(Theme.danger)
                     .disabled(downloadingAssetId != nil || deletingAssetId != nil)
                     .accessibilityLabel(
                         deletingAssetId == asset.id
@@ -487,7 +495,7 @@ struct BambuDetailView: View {
             if let failure = assetActionFailure, failure.assetId == asset.id {
                 Text(failure.message)
                     .font(.footnote)
-                    .foregroundStyle(Theme.red)
+                    .foregroundStyle(Theme.danger)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityLabel("File action error: \(failure.message)")
             }

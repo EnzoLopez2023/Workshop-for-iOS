@@ -46,7 +46,10 @@ CNC/Shaper work, and public 3D-model references in one durable record.
   existing product capabilities.
 - Notebook is deferred to v2; Insights is native-only.
 - Microsoft Entra and Sign in with Apple authentication must retain the current
-  shared-backend identity contract.
+  shared-backend identity contract. They are independent provider-scoped
+  Workshop accounts: the same email can have separate Apple and Microsoft
+  workspaces, no automatic linking or merge occurs, and deletion affects only
+  the currently authenticated provider identity.
 - Official Thingiverse API tokens are write-only account connections: they are
   encrypted by the backend, never returned, and never persisted by the iOS app.
   Workshop never collects MakerWorld credentials or cookies; protected
@@ -63,8 +66,8 @@ CNC/Shaper work, and public 3D-model references in one durable record.
 The product name is Workshop and it remains part of the Nintek app family. The
 hammer mark remains recognizable through visual redesigns. Its language should
 be practical, direct, and grounded in real woodworking tasks. The current
-Concourse Board visual world is not a binding commitment and is open to
-replacement.
+Living Plan Table system is the shipping visual direction: native system type,
+cool vellum surfaces, spruce drawing ink, and restrained drafting annotations.
 
 ## Evidence on Hand
 
@@ -73,7 +76,8 @@ replacement.
   Shaper, and imported 3D-project data models.
 - Bundled demo content and starter projects for realistic empty, populated, and
   read-only states.
-- Existing app screenshots and direct device-testing feedback.
+- Current simulator and physical-device captures of the shipping app; archived
+  marketing screenshots are historical evidence only.
 - No testimonials, performance claims, or external proof should be invented.
 
 ## Product Principles

@@ -30,7 +30,7 @@ struct ConversionTablesView: View {
                 .contentColumn(700)
                 .padding(20)
             }
-            .boardBackground()
+            .planBackground()
             .navigationTitle("Tables")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -42,10 +42,10 @@ struct ConversionTablesView: View {
         HStack(spacing: 12) {
             Image(systemName: "ruler.fill")
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(Theme.accentDeep)
+                .foregroundStyle(Theme.action)
                 .frame(width: 40, height: 40)
                 .background(
-                    Theme.tint(Theme.accent),
+                    Theme.tint(Theme.annotation),
                     in: RoundedRectangle(cornerRadius: 12, style: .continuous)
                 )
             VStack(alignment: .leading, spacing: 2) {
@@ -77,7 +77,7 @@ struct ConversionTablesView: View {
                     .font(.body.weight(.medium))
                     .padding(.horizontal, 14).padding(.vertical, 10)
                     .background(
-                        Theme.flapShade,
+                        Theme.recessed,
                         in: RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
                     )
                     .frame(maxWidth: 160)
@@ -118,7 +118,7 @@ struct ConversionTablesView: View {
             Text(value)
                 .font(.system(.title3, design: .rounded, weight: .bold))
                 .monospacedDigit()
-                .foregroundStyle(accent ? Theme.accentDeep : Theme.ink)
+                .foregroundStyle(accent ? Theme.action : Theme.ink)
         }
     }
 
@@ -151,14 +151,14 @@ struct ConversionTablesView: View {
                         cell(row.frac, weight: .semibold, color: Theme.ink)
                     }
                     .padding(.horizontal, 14).padding(.vertical, 9)
-                    .background(row.mm.isMultiple(of: 2) ? Theme.flapShade : Color.clear)
+                    .background(row.mm.isMultiple(of: 2) ? Theme.recessed : Color.clear)
                 }
             }
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
             )
         }
     }
@@ -178,14 +178,14 @@ struct ConversionTablesView: View {
                         cell(String(format: "%.1f mm", row.mm), weight: .semibold, color: Theme.ink)
                     }
                     .padding(.horizontal, 14).padding(.vertical, 9)
-                    .background(row.inches.isMultiple(of: 2) ? Theme.flapShade : Color.clear)
+                    .background(row.inches.isMultiple(of: 2) ? Theme.recessed : Color.clear)
                 }
             }
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
             )
         }
     }
@@ -214,21 +214,21 @@ struct ConversionTablesView: View {
                                 }
                                 .padding(.horizontal, 10).padding(.vertical, 6)
                                 .background(
-                                    Theme.flapShade,
+                                    Theme.recessed,
                                     in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 )
                             }
                         }
                     }
                     .padding(.horizontal, 14).padding(.vertical, 12)
-                    .background(wholeIdx.isMultiple(of: 2) ? Theme.flapShade.opacity(0.4) : Color.clear)
+                    .background(wholeIdx.isMultiple(of: 2) ? Theme.recessed.opacity(0.4) : Color.clear)
                 }
             }
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                    .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                    .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
             )
         }
     }
@@ -245,9 +245,9 @@ struct ConversionTablesView: View {
             }
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
-        .background(Theme.flapShade)
+        .background(Theme.recessed)
     }
-    private var rowDivider: some View { Divider().overlay(Theme.line) }
+    private var rowDivider: some View { Divider().overlay(Theme.divider) }
     private func cell(_ t: String, weight: Font.Weight, color: Color) -> some View {
         Text(t)
             .font(.system(.subheadline, design: .rounded, weight: weight))

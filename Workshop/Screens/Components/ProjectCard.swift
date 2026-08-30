@@ -11,7 +11,7 @@ struct ProjectCard: View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .topTrailing) {
                 Rectangle()
-                    .fill(Theme.flapShade)
+                    .fill(Theme.recessed)
                     .aspectRatio(16.0 / 9.0, contentMode: .fit)
                     .overlay {
                         if heroURL != nil {
@@ -22,7 +22,7 @@ struct ProjectCard: View {
                                 .overlay {
                                     Image(systemName: "ruler")
                                         .font(.system(size: 28, weight: .medium))
-                                        .foregroundStyle(Theme.accent.opacity(0.44))
+                                        .foregroundStyle(Theme.annotation.opacity(0.44))
                                 }
                         }
                     }
@@ -72,9 +72,9 @@ struct ProjectCard: View {
         .contentShape(RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: Theme.rPanel, style: .continuous)
-                .strokeBorder(Theme.line.opacity(0.62), lineWidth: 1)
+                .strokeBorder(Theme.divider.opacity(0.62), lineWidth: 1)
         )
-        .shadow(color: Theme.steelDark.opacity(0.1), radius: 14, x: 0, y: 7)
+        .shadow(color: Theme.navigationDeep.opacity(0.1), radius: 14, x: 0, y: 7)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilitySummary)
     }

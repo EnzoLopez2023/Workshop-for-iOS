@@ -13,8 +13,8 @@ related_targets: ["Workshop/App/RootView.swift","Workshop/Screens/Components/Pro
   project without searching through one long mixed project feed.
 - **Direction:** Living Plan Table. Plans, photos, stages, and actions behave as
   layered tracing sheets on a cool plan surface. Native frosted glass, SF
-  typography, the hammer mark, and 14-point squircles replace the Concourse
-  Board system completely.
+  typography, the hammer mark, and 14-point squircles replace the retired
+  control-panel styling completely.
 - **Memorable moment:** The active project's plan/photo owns the first viewport
   and a translucent next-action layer appears physically on top of it.
 - **Navigation model:** One Dashboard destination and one `NavigationStack`.

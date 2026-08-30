@@ -34,7 +34,7 @@ struct InsightsView: View {
                     .padding(20)
                 }
             }
-            .boardBackground()
+            .planBackground()
             .navigationTitle("Insights")
             .navigationBarTitleDisplayMode(.inline)
             .task { await load() }
@@ -53,10 +53,10 @@ struct InsightsView: View {
             } else {
                 Chart(points, id: \.date) { point in
                     LineMark(x: .value("Date", point.date), y: .value("Cumulative Cost", point.cumulative))
-                        .foregroundStyle(Theme.accentDeep)
+                        .foregroundStyle(Theme.action)
                         .interpolationMethod(.monotone)
                     AreaMark(x: .value("Date", point.date), y: .value("Cumulative Cost", point.cumulative))
-                        .foregroundStyle(Theme.accent.opacity(0.16))
+                        .foregroundStyle(Theme.annotation.opacity(0.16))
                         .interpolationMethod(.monotone)
                 }
                 .chartYAxis { AxisMarks { value in
@@ -86,7 +86,7 @@ struct InsightsView: View {
                     BarMark(x: .value("Cost", p.totalCost ?? 0), y: .value("Project", p.title))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Theme.accentDeep, Theme.pencil],
+                                colors: [Theme.action, Theme.pencilBlue],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -112,7 +112,7 @@ struct InsightsView: View {
             } else {
                 Chart(months, id: \.month) { row in
                     BarMark(x: .value("Month", row.month, unit: .month), y: .value("Entries", row.count))
-                        .foregroundStyle(Theme.accentDeep)
+                        .foregroundStyle(Theme.action)
                 }
                 .chartXAxis { AxisMarks(values: .stride(by: .month)) { AxisValueLabel(format: .dateTime.month(.abbreviated)) } }
                 .frame(height: 180)

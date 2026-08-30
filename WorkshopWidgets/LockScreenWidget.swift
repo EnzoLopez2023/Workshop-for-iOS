@@ -5,10 +5,7 @@ import NintekKit
 /// Lock Screen / StandBy widget (Phase 7.9+) — the same App-Group snapshot
 /// every other widget reads, just in the three accessory families. Unlike the
 /// Home Screen widgets, these render in the system's own monochrome/tinted
-/// rendering intent (Lock Screen ignores custom colour entirely; StandBy
-/// sometimes doesn't), so this deliberately does not reach for the board's
-/// flap/steel vocabulary — plain SF Symbols + system text, same as any other
-/// Lock Screen complication.
+/// rendering intent, so they use plain SF Symbols and system text.
 struct LockScreenWidget: Widget {
     let kind = "WorkshopLockScreen"
 
@@ -17,7 +14,7 @@ struct LockScreenWidget: Widget {
             LockScreenWidgetView(snapshot: entry.snapshot)
                 .containerBackground(.clear, for: .widget)
         }
-        .configurationDisplayName("Shop Board")
+        .configurationDisplayName("Workshop Glance")
         .description("In-progress build count for your Lock Screen or StandBy.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
     }
@@ -53,7 +50,7 @@ private struct LockScreenWidgetView: View {
 
     private var rectangular: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Label("Shop Board", systemImage: "hammer.fill")
+            Label("Workshop", systemImage: "hammer.fill")
                 .font(.caption2.bold())
             Text("\(snapshot.inProgressCount) in progress")
                 .font(.caption)
