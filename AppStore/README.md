@@ -6,6 +6,7 @@
 > <https://workshop.nintek.com> exclusively and did not use the native-only
 > features. Do not regenerate release assets, upload a build, restore beta
 > access, prepare a reviewer account, create a submission, or release the app.
+> The final repository state is GitHub-archived, readable, and read-only.
 
 ## Retirement record
 
@@ -57,4 +58,6 @@ accounts.
 
 The prior title-art compositor and seven outputs remain recoverable from git
 history at commit `5e1d064`. They are historical, not current submission assets.
-Repository archival or deletion remains a separate owner action.
+After the final retirement change merges, archive the GitHub repository as the
+reversible read-only preservation state. It must remain readable and must never
+be deleted; unarchive only under separately approved native reactivation.

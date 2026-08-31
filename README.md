@@ -7,6 +7,8 @@
 > native-only features were unused. The web app is the canonical, supported
 > Workshop client. Do not resume native development, distribution, or App Store
 > submission from this repository without a separately approved reactivation.
+> After this final retirement change lands, the repository's intended state is
+> GitHub-archived, readable, and read-only.
 
 ## Retirement contract
 
@@ -51,8 +53,10 @@ intentionally preserved until a separate approved phase.
 - Do not change the shared Azure backend or canonical web app as part of native
   retirement. Ongoing Workshop product work belongs in the
   [web repository](https://github.com/EnzoLopez2023/workshop).
-- Repository archival or deletion is a separate owner action and is not part of
-  this retirement documentation.
+- Archive the GitHub repository as the final retirement action immediately after
+  this change merges. Archival is reversible preservation, not deletion: the
+  repository must remain readable and must never be deleted. Unarchive it only
+  under a separately approved native reactivation.
 - `APP_STORE_STATUS.md` is the retirement authority. Files under `AppStore/`
   preserve historical release evidence; active-sounding steps inside frozen
   evidence are not authorization to execute them.

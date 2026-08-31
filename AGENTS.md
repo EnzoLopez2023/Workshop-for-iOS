@@ -6,7 +6,9 @@
 > had one owner/tester, was displaced by exclusive use of the web client, and
 > had unused native-only features. The canonical supported client is
 > <https://workshop.nintek.com>. Do not make product, runtime, release, or
-> App Store changes here without separately approved reactivation.
+> App Store changes here without separately approved reactivation. The durable
+> repository state after this final retirement change is GitHub-archived,
+> readable, and read-only.
 
 ## Authoritative retirement record
 
@@ -28,9 +30,9 @@ completed, and its only item was removed before any public release.
 1. Do not modify Swift source, tests, `project.yml`, generated Xcode files,
    runtime configuration, assets, screenshots, or evidence payloads for routine
    work. Do not run generators that can rewrite preserved project files.
-2. Do not build a new release, increment a version, archive/export/upload a
-   binary, restore TestFlight access, change App Store metadata, create a review
-   submission, or publish this app.
+2. Do not build a new release, increment a version, create an Xcode archive,
+   export or upload a binary, restore TestFlight access, change App Store
+   metadata, create a review submission, or publish this app.
 3. Do not propagate future web API, schema, identity, or cut-plan changes into
    this retired client. The web app owns active Workshop evolution. Preserve
    dormant Apple backend/account compatibility until a separate phase is
@@ -39,8 +41,9 @@ completed, and its only item was removed before any public release.
    assets, history, tags, branches, the Xcode project, or signing evidence.
    Allow app-specific provisioning profiles to expire naturally. Never revoke
    shared certificates or keys.
-5. Do not archive or delete the GitHub repository. That remains a separate,
-   explicit owner action.
+5. Keep the GitHub repository archived, readable, and read-only after the final
+   retirement commit. Never delete it. Unarchive only under a separately
+   approved native reactivation.
 
 ## RETIRED - RESERVED
 

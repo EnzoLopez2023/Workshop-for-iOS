@@ -7,7 +7,9 @@ Retirement recorded: **2026-08-31**
 > TestFlight and had one owner/tester. The owner uses
 > <https://workshop.nintek.com> exclusively, and native-only features were
 > unused. The web app is the canonical, supported Workshop client. There is no
-> remaining native release work.
+> remaining native release work. After this final documentation merges, the
+> GitHub repository is intentionally archived as a readable, reversible,
+> read-only preservation action.
 
 ## Retirement authority
 
@@ -27,12 +29,13 @@ functional main source. No Swift source, tests, project configuration, generated
 Xcode files, assets, screenshots, evidence payloads, or runtime configuration
 are part of retirement.
 
-## Phase 3 and 4 record
+## Phase 2 through 4 record
 
 | Phase | Result |
 |---|---|
-| Phase 3 - distribution retirement | All TestFlight builds and beta access were retired; no public release remains |
-| Phase 4 - preservation handoff | Source and Apple records remain reserved under this contract; GitHub repository archival is intentionally deferred to a separate owner action |
+| Phase 2 - TestFlight distribution retirement | All TestFlight builds and beta access were retired; no public release remains |
+| Phase 3 - RETIRED - RESERVED | Apple identifiers, capabilities, records, metadata, and signing evidence remain reserved and must never be reused |
+| Phase 4 - final docs and GitHub archival | This final contract lands, then the GitHub repository is archived as a reversible read-only state; it remains readable, is never deleted, and is unarchived only under separately approved reactivation |
 | Scheduled automation | No `.github/workflows` directory, GitHub Actions workflow, project workflow, or session automation exists; no automatic release trigger required a workflow commit |
 
 ## App Store Connect and TestFlight state at retirement
@@ -71,8 +74,8 @@ These identifiers must never be deleted, transferred, recycled, or repurposed:
 
 ## Preservation contract
 
-- Do not archive/export/upload another build, restore beta access, change the
-  version record, create a submission, or release the app.
+- Do not create an Xcode archive, export or upload another build, restore beta
+  access, change the version record, create a submission, or release the app.
 - Do not remove Sign in with Apple capability, Apple keys, screenshots,
   metadata, source, tests, assets, history, tags, branches, the Xcode project,
   or signing evidence.
@@ -82,7 +85,9 @@ These identifiers must never be deleted, transferred, recycled, or repurposed:
   explicitly approved. Retirement does not authorize backend or account cleanup.
 - Do not alter the canonical web client or shared Azure backend as part of this
   native retirement.
-- Do not archive or delete the GitHub repository as part of this phase.
+- Archive the GitHub repository immediately after this final retirement change
+  merges. Keep it readable and read-only; never delete it. Unarchive only under
+  separately approved native reactivation.
 - Treat active-sounding steps in preserved release evidence as historical gates,
   not current instructions.
 
